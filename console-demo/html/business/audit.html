@@ -1,0 +1,315 @@
+<div style="position: relative; padding: 5px;">
+    <!-- start 按钮-->
+    <div style="width: 98%; border: 1px solid #ddd; height: 32px; margin: 0 auto; background:#ecf0f1;" class="audit-btn">
+        <a href="javascript:void(0)"  class="easyui-linkbutton l-btn l-btn-small" onclick="identification();">标的认证</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton l-btn l-btn-small" onclick="preliminaryAudit();">设置担保</a>
+        <a href="#" class="easyui-linkbutton l-btn l-btn-small" onclick="bidOpenDialog();">开标</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton l-btn l-btn-small" onclick="auditDialog();">审核</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton l-btn l-btn-small" onclick="imgUpload();">附件管理</a>
+    </div>
+    <!-- end 按钮-->
+    <!--start 借款项目信息-->
+    <dl class="audit-box">
+        <dt class="audit-title">借款项目信息</dt>
+        <dd class="audit-content">
+            <table class="table-detail" cellpadding="0" cellspacing="0" border="0">
+                <tbody><tr>
+                    <th width="15%">项目名称:</th>
+                    <td width="35%">
+                        2222
+                    </td>
+                    <th width="15%">实贷金额:</th>
+                    <td>
+                        0.00
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">申请金额:</th>
+                    <td>
+                        2,222.00
+                    </td>
+                    <th width="15%">年利率:</th>
+                    <td>
+                        3.00%
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">还款方式:</th>
+                    <td>
+                        按月付息,到期还本
+                    </td>
+                    <th width="15%">手续费比例:</th>
+                    <td>
+                        1.00%
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">标的类型:</th>
+                    <td>
+
+
+                    </td>
+                    <th width="15%">项目状态:</th>
+                    <td>
+                        新申请
+                    </td>
+                </tr>
+
+                <tr>
+                    <th width="15%">期限:</th>
+                    <td>
+                        2个月
+                    </td>
+                    <th width="15%">开标天数:</th>
+                    <td>
+                        6
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">申请人:</th>
+                    <td>
+                        黄娟华
+                    </td>
+                    <th width="15%">申请时间:</th>
+                    <td>
+                        2016-04-07 16:53
+                    </td>
+                </tr>
+                <tr>
+                    <th>平台审核备注:</th>
+                    <td colspan="3"></td>
+                </tr>
+                </tbody></table>
+        </dd>
+    </dl>
+    <!--end 借款项目信息-->
+
+    <!-- start 借款条件进度-->
+    <dl class="audit-box">
+        <dt class="audit-title">借款条件进度</dt>
+        <dd class="audit-content clearfloat">
+            <div class="fl"  style="width: 100px;">资料完成情况：</div>
+            <div class="audit-condition fl">
+                <label><input type="checkbox" name="condition" value="" checked="checked" disabled="disabled">个人实名认证</label>
+                <label><input type="checkbox" name="condition" value="" checked="checked" disabled="disabled">个人手机绑定</label>
+                <label><input type="checkbox" name="condition" value="" disabled="disabled">个人其他联系人信息</label>
+                <label><input type="checkbox" name="condition" value="" disabled="disabled">家庭信息通过审核</label>
+                <label><input type="checkbox" name="condition" value="" disabled="disabled">用户公司信息通过审核</label>
+            </div>
+        </dd>
+    </dl>
+    <!-- end 借款条件进度-->
+
+    <!-- start 用户信息-->
+    <dl class="audit-box" style="">
+        <dt class="audit-title">用户信息</dt>
+        <dd class="audit-content clearfloat">
+            <table class="table-detail" cellpadding="0" cellspacing="0" border="0">
+                <tbody><tr>
+                    <th width="15%">用户名:</th>
+                    <td width="35%">
+                        黄娟华
+                    </td>
+                    <th width="15%">借入信用:</th>
+                    <td>
+                        AA
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">借出信用:</th>
+                    <td>
+                        AA
+                    </td>
+                    <th width="15%">公司行业:</th>
+                    <td>
+                        机构组织
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">收入范围:</th>
+                    <td>
+                        2000元以内
+                    </td>
+                    <th width="15%">年龄:</th>
+                    <td>
+                        107岁
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">公司规模:</th>
+                    <td>
+                        小于50人
+
+                    </td>
+                    <th width="15%">房产:</th>
+                    <td>
+                        新申请
+                    </td>
+                </tr>
+
+                <tr>
+                    <th width="15%">期限:</th>
+                    <td>
+                        2个月
+                    </td>
+                    <th width="15%">开标天数:</th>
+                    <td>
+                        6
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">学历:</th>
+                    <td>
+                        研究生及以上
+                    </td>
+                    <th width="15%">岗位职位:</th>
+                    <td>
+                        测试部
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">房贷:</th>
+                    <td>
+                        否
+                    </td>
+                    <th width="15%">学校:</th>
+                    <td>
+                        二流学校
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">工作城市:</th>
+                    <td>
+                        单位地址
+                    </td>
+                    <th width="15%">车产:</th>
+                    <td>
+                        是
+                    </td>
+                </tr>
+                <tr>
+                    <th>备注:</th>
+                    <td colspan="3"></td>
+                </tr>
+                </tbody></table>
+        </dd>
+    </dl>
+    <!-- end 用户信息-->
+
+    <!--start dialog-->
+    <div id="identification">标的认证</div>
+    <div id="preliminaryAuditDB">设置担保</div>
+    <div id="bidOpenDialog">开标</div>
+    <div id="auditDialog">对标的审核</div>
+    <div id="imgUpload">附件管理</div>
+    <!-- end dialog-->
+</div>
+
+<script type="text/javascript">
+    function preliminaryAudit(){
+        $('#preliminaryAuditDB').dialog({closed: false});
+    };
+    function identification(){
+        $('#identification').dialog({closed: false});
+    };
+    function bidOpenDialog(){
+        $('#bidOpenDialog').dialog({closed: false});
+    };
+    function auditDialog(){
+        $('#auditDialog').dialog({closed: false});
+    };
+    function imgUpload(){
+        $('#imgUpload').dialog({closed: false});
+    }
+    $(function(){
+       // console.log(listTable.rootScope.rowData);
+        //alert(listTable.rootScope.rowData[0].user)
+        $('#identification').dialog({
+            title: '标的认证',
+            width: 860,
+            height: 450,
+            closed: true,
+            cache: false,
+            href: 'html/business/identification.html',
+            modal: true,
+            buttons:[{text:'提交',iconCls:'icon-ok',
+                handler:function(){
+                    alert("开发中..");
+                }},
+                {text:'取消',iconCls:'icon-cancel',handler:function(){
+                    $('#identification').dialog({ closed: true});
+                }}
+            ]
+        });
+        $('#preliminaryAuditDB').dialog({
+            title: '设置担保',
+            width: 600,
+            height: 300,
+            closed: true,
+            cache: false,
+            href: 'html/business/preliminaryAuditDB.html',
+            modal: true,
+            buttons:[{text:'提交',iconCls:'icon-ok',
+                handler:function(){
+                    preliminaryAuditDB.submitForm();
+                }},
+                {text:'取消',iconCls:'icon-cancel',handler:function(){
+                    $('#preliminaryAuditDB').dialog({ closed: true});
+                    preliminaryAuditDB.clearForm();
+                }}
+            ]
+        });
+        $('#bidOpenDialog').dialog({
+            title: '设定开标时间',
+            width: 450,
+            height: 130,
+            closed: true,
+            cache: false,
+            href: 'html/business/bidOpen.html',
+            modal: true,
+            buttons:[{text:'提交',iconCls:'icon-ok',
+                handler:function(){
+                    bidOpen.submit();
+                }},
+                {text:'重置',handler:function(){
+                    bidOpen.reset();
+                }}
+            ]
+        });
+        $('#auditDialog').dialog({
+            title: '对标的审核',
+            width: 550,
+            height: 200,
+            closed: true,
+            cache: false,
+            href: 'html/business/aduitDialog.html',
+            modal: true,
+            buttons:[{text:'提交',iconCls:'icon-ok',
+                handler:function(){
+
+                }},
+                {text:'取消',iconCls:'icon-cancel',handler:function(){
+                    $('#auditDialog').dialog({ closed: true});
+                }}
+            ]
+        });
+        $('#imgUpload').dialog({
+            title: '附件管理',
+            width: 650,
+            height: 450,
+            closed: true,
+            cache: false,
+            href: 'html/business/imgUpload.html',
+            modal: true,
+            buttons:[{text:'提交',iconCls:'icon-ok',
+                handler:function(){
+
+                }},
+                {text:'取消',iconCls:'icon-cancel',handler:function(){
+                    $('#imgUpload').dialog({ closed: true});
+                }}
+            ]
+        });
+        //imgUpload
+    });
+</script>

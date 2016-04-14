@@ -1,0 +1,63 @@
+<!--提成记录审核-->
+<!--start businessList-->
+<div id="trebaterecordList">
+    <!--start 查询条件-->
+    <div class="form-search"></div>
+    <!--end 查询条件-->
+    <table id="trebaterecord" class="easyui-datagrid"
+           data-options="singleSelect:true,remoteSort:false,method:'get',striped:true,fit:false, rownumbers:true" style="height:450px; width:100%">
+        <thead>
+        <tr>
+            <!--<th data-options="field:'ck',checkbox:true"></th>-->
+            <th data-options="field:'other',width:70,formatter:gridTable.updateRowData">操作</th>
+            <th data-options="field:'productid',hidden:true"></th>
+            <th data-options="field:'productname'">提成来源项目</th>
+            <th data-options="field:'productname',width:160">提成类型</th>
+            <th data-options="field:'serviceimplname',width:160">提成比例%</th>
+            <th data-options="field:'safekey',width:160">提成总额（元）</th>
+            <th data-options="field:'encryptflag',width:160">提成来源用户</th>
+            <th data-options="field:'subcompanyflag',width:160">提成者</th>
+            <th data-options="field:'remark',width:160">代理商</th>
+            <th data-options="field:'createdby',width:150">所属团队</th>
+            <th data-options="field:'createdby',width:150">提成者类型</th>
+            <th data-options="field:'createdby',width:150">审核状态</th>
+            <th data-options="field:'createdby',width:150">审核意见</th>
+            <th data-options="field:'createdtime',width:160">创建日期</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+<!--end businessList-->
+<script type="text/javascript">
+    var gridTable = {
+        url:"data/datagrid.json",
+        params:{},
+        init:function(url,params){
+            if(url !=undefined){
+                gridTable.url = url;
+            }
+            if(params && typeof params ==="object"){
+                $.extend(gridTable.params, params);
+            }
+            gridTable.render();
+        },
+        reload:function(){
+            $('#trebaterecord').datagrid("reload");
+        },
+        render:function(){
+            $('#trebaterecord').datagrid({
+                queryParams:gridTable.params,
+                url:gridTable.url
+            });
+        },
+        updateRowData:function(value,rowData,rowIndex){
+            return "<a href='#' onclick='openDetailpage("+JSON.stringify(rowData)+");'>审核</a>&nbsp;&nbsp;" + "<a href='#' onclick='updatepage("+JSON.stringify(rowData)+","+rowIndex+");'>修改</a>";
+        }
+    };
+    $(function(){
+        gridTable.init();
+        //异步加载div片段--查询条件
+        $("#trebaterecordList div.form-search").load("html/financialManagement/trebaterecord.form-search.html");
+        $.parser.parse("#trebaterecordList");
+    });
+</script>

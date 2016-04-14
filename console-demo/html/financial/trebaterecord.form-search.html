@@ -1,0 +1,28 @@
+<form action="#" class="h-form-search clearfloat" style="padding-bottom: 15px;">
+    <!-- start h-search-box-->
+    <div class="h-search-box">
+        <ul class="form-search-row clearfloat" >
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">提成来源项目：</span>
+                <input type="text" name="Q_applyName_S"  class="easyui-textbox" style="height: 22px; width: 70%;" value=""/>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">创建时间：</span>
+                <input type="text" name="Q_applyName_S"  class="easyui-datebox" style="height: 22px; width: 70%;" value=""/>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">至：</span>
+                <input type="text" name="Q_pname_SL"  class="easyui-datebox" style="height: 22px; width: 70%" value=""/>
+            </li>
+        </ul>
+    </div>
+    <!-- end h-search-box-->
+    <div class="h-search-btn">
+        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width:80px">查询</a>
+    </div>
+</form>
+<script>
+    $(function () {
+        $.parser.parse(".h-form-search");
+    })
+</script>

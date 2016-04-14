@@ -1,0 +1,115 @@
+<table id="payOffTable" class="easyui-datagrid"
+       data-options="remoteSort:false,striped:true,fit:false,  pagination : true, rownumbers:true" style="height:450px; width:100%">
+    <thead frozen="true">
+    <tr>
+        <th data-options="field:'ck',checkbox:true"></th>
+    </tr>
+    </thead>
+    <thead>
+    <tr>
+        <th data-options="field:'contractId',hidden:true"></th>
+        <th data-options="field:'code'">登录名</th>
+        <th data-options="field:'content',width:160">姓名</th>
+        <th data-options="field:'user',width:160">项目名称</th>
+        <th data-options="field:'createTime',width:60">项目状态</th>
+        <th data-options="field:'createTime',width:80">实际借款金额</th>
+        <th data-options="field:'createTime',width:80">借款年利率(%)</th>
+        <th data-options="field:'createTime',width:80">实际总利息</th>
+        <th data-options="field:'createTime',width:50">借款期限</th>
+        <th data-options="field:'createTime',width:40">投标数</th>
+        <th data-options="field:'createTime',width:40">是否逾期</th>
+        <th data-options="field:'createTime',width:40">逾期天数</th>
+    </tr>
+    </thead>
+</table>
+<div id="contractDialog">详情页</div>
+<script type="text/javascript">
+    var payOffTable = {
+        rootScope:{},
+        url:"data/contract.json",
+        params:{},
+        //初始化
+        init:function(url,params){
+            if(url !=undefined){
+                payOffTable.url = url;
+            }
+            if(params && typeof params ==="object"){
+                $.extend(payOffTable.params, params);
+            }
+            payOffTable.render();
+        },
+        //刷新
+        reload:function(){
+            $('#payOffTable').datagrid("reload");
+        },
+        //渲染datagrid
+        render:function(){
+            $('#payOffTable').datagrid({
+                singleSelect:true,
+                pagination : true,
+                nowrap : true,
+                fitColumns : true,
+                striped : true,
+                queryParams:payOffTable.params,
+                toolbar:payOffTable.toolbar,
+                url:payOffTable.url,
+                method:'post'
+            });
+        },
+        //定义工具条
+        toolbar:[{
+            text:'查看详情',
+            iconCls:'icon-add',
+            handler:function(){
+               if($('#payOffTable').datagrid('getSelections').length){
+                   payOffTable.showDialog();
+               }else{
+                   $.messager.alert('提示','请勾选数据'+'<br><br>或者双击某行查看详情!','info');
+               }
+            }
+        }],
+        state:function(value,row,index){
+            if(row.state){
+                switch (row.state){
+                    case "1":
+                        return "还款中";
+                    case "2":
+                        return "招标中";
+                    default :
+                        return "测试默认值"
+                }
+            }else{
+                return " ";
+            }
+        },
+        initDialog:function(){
+            //dialog
+            $('#contractDialog').dialog({
+                title: '借款合同--协议详情',
+                width: 800,
+                height: 600,
+                closed: true,
+                cache: false,
+                href: 'html/post-lend/contractDialog.html',
+                modal: true
+            });
+        },
+        showDialog:function(){
+            $('#contractDialog').dialog({closed: false});
+        }
+    };
+
+    $(function(){
+        //调用表格初始化函数
+        payOffTable.init();
+        payOffTable.initDialog();
+        //解决jq/easyui异步加载组件
+        //$.parser.parse("#payOffTable");
+        $('#payOffTable').datagrid({
+            //双击查看详情
+            onDblClickRow: function(index,row){
+                payOffTable.showDialog();
+            }
+        });
+    });
+</script>

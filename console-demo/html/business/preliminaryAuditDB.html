@@ -1,0 +1,88 @@
+<!-- start dialog-->
+<form id="preliminaryAuditDB">
+    <table class="table-detail" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+            <th>项目名称:</th>
+            <td colspan="3">渔业</td>
+        </tr>
+        <tr>
+            <th width="20%">担保机构:</th>
+            <td width="30%">
+               <!-- <select name="typeId"  class="easyui-combobox"  required="true" missingMessage="不能为空">
+                    <option>请选择</option>
+                    <option value="1"  >信用认证标</option>
+                    <option value="2" >实地认证标</option>
+                    <option value="3"  >担保机构标</option>
+                    <option value="4"  >智能理财标</option>
+                    <option value="5"  >平台代理标</option>
+                    <option value="6"  >体验标</option>
+                </select>-->
+                <input id="cc" name="aa" value="bb" class="easyui-combobox"  required="true" missingMessage="不能为空" style="width: 90%;">
+            </td>
+            <th>借款金额:</th>
+            <td colspan="3">
+                <input type="hidden" id="loanMoney_id"   name="loanMoney"  value="6000.000"/>
+                <label>6,000.00元</label>
+            </td>
+        </tr>
+        <tr>
+            <th>担保金比例:</th>
+            <td style="position: relative;">
+                <input type="text" id="prriskRate_id" onchange="modfiy_loan();" name="prriskRate"  class="easyui-textbox easyui-numberbox"  required="true" missingMessage="不能为空"  value="" style="width:90%;" class="inputText"/><span>%</span>
+            </td>
+            <th>担保金额:</th>
+            <td >
+                <label id="prrisk_id">52.80</label>元
+            </td>
+        </tr>
+        <tr>
+            <th>风控意见:</th>
+            <td colspan="3"><input type="text" name="pradvice" id="pradvice_id" class="easyui-textbox" data-options="multiline:true"  required="true"  missingMessage="不能为空" style="width:70%;height:120px; line-height: 25px;" class="inputText"/>
+            </td>
+        </tr>
+    </table>
+   <!-- <div style="padding:10px 5px 5px 15px;">
+        <a href="javascript:void(0)" class="easyui-linkbutton l-btn l-btn-small"  onclick="preliminaryAuditDB.submitForm();" >提交</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton l-btn l-btn-small" onclick="preliminaryAuditDB.clearForm();">取消</a>
+    </div>-->
+</form>
+<!-- end dialog-->
+
+<script>
+    var preliminaryAuditDB = {
+        url:"http://www.baidu.com",
+        submitForm:function(){
+            $('#preliminaryAuditDB').form('submit',{
+                url:preliminaryAuditDB.url,
+                onSubmit:function(param){
+                    if(!($(this).form('enableValidation').form('validate'))){
+                        $.messager.alert('提示','请检查数据完整性!','info');
+                        return false;
+                    }
+                    return true;
+                },
+                success:function(data){
+                    console.log(data)
+                    $.messager.show({
+                        title:'提示',
+                        msg:'提交成功！',
+                        timeout:3000,
+                        showType:'slide'
+                    });
+                }
+            });
+        },
+        //重置
+        clearForm:function(obj){
+            $('#preliminaryAuditDB').form('clear');
+        }
+    };
+$(function(){
+    //初始化combobox---担保机构
+    $('#cc').combobox({
+        url:'data/combobox_data.json',
+        valueField:'id',
+        textField:'text'
+    });
+})
+</script>

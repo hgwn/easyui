@@ -1,0 +1,26 @@
+[{
+        "id":11,
+        "groupname":"借款管理",
+        "list":[
+                {"name":"所有借款","url":"html/business/list.html"}]
+    },{
+        "id":12,
+        "groupname":"贷后管理",
+        "list":[
+          {"name":"所有贷后","url":"html/post-lend/postList.html"},
+          {"name":"借款合同","url":"html/post-lend/contract.html"}]
+          },{
+      "id":13,
+      "groupname":"债权转让管理",
+      "list":[
+        {"name":"待审核的债权转让","url":"html/main_nav.html"},
+        {"name":"竞标中的债权转让","url":"html/demo.htmml"},
+        {"name":"待放款的债权转让","url":"html/test/demo.htmml"},
+        {"name":"已放款的债权转让","url":"html/test/demo.htmml"},
+        {"name":"已撤销的债权转让","url":"html/test/demo.htmml"},
+        {"name":"审核不通过","url":"html/test/demo.htmml"},
+        {"name":"所有债权转让","url":"html/test/demo.htmml"},
+        {"name":"债权转让合同-协议","url":"html/test/demo.htmml"}]
+}
+]
+

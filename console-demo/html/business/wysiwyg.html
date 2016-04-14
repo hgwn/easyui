@@ -1,0 +1,31 @@
+<style>
+    body {
+        text-align: center;
+    }
+
+    div#editor {
+        width: 100%;
+        margin: auto;
+        text-align: left;
+        height: 220px;
+    }
+    .fr-basic .fr-element{height: 130px;}
+</style>
+<div id="editor">
+      <textarea id='wysiwyg' style="margin-top: 30px;" placeholder="请输入借款描述...">
+
+      </textarea>
+
+</div>
+<script>
+    $(function(){
+        $('#wysiwyg')
+                .on('froalaEditor.initialized', function (e, editor) {
+                    $('#wysiwyg').parents('form').on('submit', function () {
+                        console.log($('#wysiwyg').val());
+                        return false;
+                    })
+                })
+                .froalaEditor({enter: $.FroalaEditor.ENTER_P, placeholderText: null,language:'zh_cn'})
+    });
+</script>

@@ -1,0 +1,60 @@
+<!--选择借款产品-->
+<table id="selectProduct" class="easyui-datagrid"
+       data-options="remoteSort:false,striped:true,fit:false,pagination : true" style="height:400px; width:100%">
+    <thead>
+    <tr>
+        <th data-options="field:'productid',hidden:true"></th>
+        <th data-options="field:'productname'">产品名称</th>
+        <th data-options="field:'productname',width:50">最小额度</th>
+        <th data-options="field:'serviceimplname',width:50">最大额度</th>
+        <th data-options="field:'safekey',width:60">最小年利率</th>
+        <th data-options="field:'encryptflag',width:60">最大年利率</th>
+        <th data-options="field:'subcompanyflag',width:60">最小期限</th>
+        <th data-options="field:'remark',width:60">最小期限</th>
+        <th data-options="field:'createdby',width:70">最小投标天数</th>
+        <th data-options="field:'createdby',width:70">最大投标天数</th>
+    </tr>
+    </thead>
+</table>
+<script type="text/javascript">
+    var selectProduct = {
+        url:"data/selectProduct.json",
+        params:{},
+        //初始化
+        init:function(url,params){
+            if(url !=undefined){
+                selectProduct.url = url;
+            }
+            if(params && typeof params ==="object"){
+                $.extend(selectProduct.params, params);
+            }
+            selectProduct.render();
+        },
+        reload:function(){
+            $('#selectProduct').datagrid("reload");
+        },
+        render:function(){  //data-options 也可设置
+            $('#selectProduct').datagrid({
+                singleSelect:true,
+                fitColumns:true,//自动适应宽度
+                method:'post',//请求方式  get 或post
+                queryParams:selectProduct.params, //请求参数
+                url:selectProduct.url
+            });
+        }
+    };
+
+    $(function () {
+        //调用初始化函数
+        selectProduct.init();
+        //对表格操作
+        $('#selectProduct').datagrid({
+            //单击行事件
+            onClickRow:function(index,row){
+                console.log(row.productname);
+                $('#addProjectForm').form('load',{productName:row.productname});
+                $('#selectProductDialog').dialog({closed:true});
+            }
+        })
+    })
+</script>

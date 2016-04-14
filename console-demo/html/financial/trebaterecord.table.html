@@ -1,0 +1,79 @@
+<!--提成记录审核-->
+<table id="trebaterecord" class="easyui-datagrid"
+       data-options="remoteSort:false,striped:true,fit:false,  pagination : true, rownumbers:true" style="height:450px; width:100%">
+    <thead frozen="true">
+        <tr>
+            <!--<th data-options="field:'ck',checkbox:true"></th>-->
+            <th data-options="field:'other',width:120,formatter:gridTable.updateRowData">操作</th>
+        </tr>
+    </thead>
+    <thead>
+    <tr>
+        <th data-options="field:'productid',hidden:true"></th>
+        <th data-options="field:'productname'">提成来源项目</th>
+        <th data-options="field:'productname',width:160">提成类型</th>
+        <th data-options="field:'serviceimplname',width:160">提成比例%</th>
+        <th data-options="field:'safekey',width:160">提成总额（元）</th>
+        <th data-options="field:'encryptflag',width:160">提成来源用户</th>
+        <th data-options="field:'subcompanyflag',width:160">提成者</th>
+        <th data-options="field:'remark',width:160">代理商</th>
+        <th data-options="field:'createdby',width:150">所属团队</th>
+        <th data-options="field:'createdby',width:150">提成者类型</th>
+        <th data-options="field:'createdby',width:150">审核状态</th>
+        <th data-options="field:'createdby',width:150">审核意见</th>
+        <th data-options="field:'createdtime',width:160">创建日期</th>
+    </tr>
+    </thead>
+</table>
+<!-- start 对话框-->
+<div id="dd">Dialog Content.</div>
+<!-- end 对话框-->
+<script type="text/javascript">
+    var gridTable = {
+        url:"data/datagrid.json",
+        params:{"user":"李鸿文","id":10086},
+        init:function(url,params){
+            if(url !=undefined){
+                gridTable.url = url;
+            }
+            if(params && typeof params ==="object"){
+                $.extend(gridTable.params, params);
+            }
+            gridTable.render();
+        },
+        reload:function(){
+            $('#trebaterecord').datagrid("reload");
+        },
+        render:function(){  //data-options 也可设置
+            $('#trebaterecord').datagrid({
+                singleSelect:true,
+                method:'post',//请求方式  get 或post
+                queryParams:gridTable.params, //请求参数
+                url:gridTable.url
+            });
+        },
+        updateRowData:function(value,rowData,rowIndex){
+            return "<a href='#' class='h-field-link' onclick='gridTable.openDetailpage("+JSON.stringify(rowData)+");'>审核</a>" + "<a href='#' class='h-field-link' onclick='updatepage("+JSON.stringify(rowData)+","+rowIndex+");'>修改</a>";
+        },
+        openDetailpage:function (rowData){
+            console.log("dddd");
+            console.log(rowData);
+            $('#dd').dialog({closed:false});
+            //$('#dd').dialog('refresh', 'html/financialManagement/trebaterecord.dialog2.html');
+
+        }
+    };
+
+    $(function () {
+        gridTable.init();
+        $('#dd').dialog({
+            title: 'My Dialog',
+            width: 400,
+            height: 200,
+            closed: true,
+            cache: false,
+            href: 'html/financial/trebaterecord.dialog.html',
+            modal: true
+        });
+    })
+</script>

@@ -1,0 +1,55 @@
+<!-- start 标的认证-->
+<form action="">
+    <table class="table-detail" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+
+            <th width="15%">标的认证: <span class="required" style="color:red">*</span></th>
+            <td  width="35%">
+                <input id="tpyeid" name="dept" value="aa" class="easyui-combobox"  required="true" missingMessage="不能为空" style="width: 90%;">
+            </td>
+            <th width="15%">借款利率(借入): <!-- <span class="required" style="color: red">*</span> --></th>
+            <td width="35%"><input type="hidden" id="prateIn" readonly="readonly" name="prateIn"  value="14.000" style="width:240px !important" class="inputText"/>14.00%</td>
+            <input type="hidden" id="prateOut" readonly="readonly" name="prateOut"  value="14.000">
+        </tr>
+        <tr>
+            <th>跟进业务员: </th>
+            <td >
+                <!--<select id="combotree" class="easyui-combotree"  multiple style="width:90%;"></select>-->
+                <select id="combotree" class="easyui-combotree"  multiple style="width:90%;"></select>
+            </td>
+            <th width="15%">担保审核：</th>
+            <td width="35%">
+                <input type="radio" id="pIsNeedGuarantee" name="pIsNeedGuarantee" value="1" checked/>
+                <span>需要</span>
+                <input type="radio" name="pIsNeedGuarantee" value="0" checked/>
+                <span>不需要</span>
+                (借款人意向：不需要)
+            </td>
+        </tr>
+        <tr><th colspan="4" style="text-align: center;">项目评估(说明：您的项目评估将显示在投资详情页面，对于项目的投标会起到重要的作用，请认真填写。)</th></tr>
+        <tr>
+            <td colspan="4" style="position: relative; padding: 8px;">
+
+                <textarea class="ckeditor" name="pcheckRemarksPlatform" id="pcheckRemarksPlatform"></textarea>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<!-- end 标的认证-->
+<script>
+    $(function () {
+        $('#pcheckRemarksPlatform').froalaEditor({enter: $.FroalaEditor.ENTER_P, placeholderText: null,language:'zh_cn'});
+        //初始化combobox---标的认证
+        $('#tpyeid').combobox({
+            url:'data/combobox_data-ident.json',
+            valueField:'id',
+            textField:'text'
+        });
+        //初始化combotree--跟进业务员
+        $('#combotree').combotree({
+            url: 'data/combotree.json',
+            required: true
+        });
+    })
+</script>

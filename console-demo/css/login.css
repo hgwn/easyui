@@ -1,0 +1,56 @@
+/*login.css 抽取 lihongwen 2016/4/1*/
+html,body,div,p,ul,ol,li,dl,dt,dd,h1,h2,h3,h4,h5,h6,object,iframe,form,blockquote,fieldset,input,textarea,button,table,th,tr,td{margin:0px;padding:0px;}
+body{text-align:center; font-size:14px; font-family:Microsoft YaHei,'微软雅黑',Verdana,"宋体"; color:#555;}
+table,tr,td{ font-size:14px;  line-height:140%;}
+div{ font-size:14px; line-height:150%; text-align:left;}
+p{ padding:0;}
+img{ border:0px;}
+input,textarea,button{color:#555; font-size:14px; padding-left:2px; font-family:Microsoft YaHei,'微软雅黑',Verdana,"宋体"; }
+ul,dl,li{list-style:none;}
+a{ font-size:14px; color:#555; text-decoration:none;}
+a:link{ text-decoration:none;}
+a:hover{ text-decoration:none; color:#1d78cc;}
+a:active{ text-decoration:none;}
+.img_but{ cursor:pointer;}
+.input{border:1px solid #666666;}
+.clear{overflow:hidden;zoom:1;}
+.line{ border-top:1px solid #cccccc; font-size:0px; background:#cccccc; margin:0 0 10px 0;}
+/*---字体颜色----*/
+.f_blue{ color:#06F;}
+/*---各种链接样式---*/
+a.blue{color:#06F;}
+/*---登录页面样式------------------------*/
+.log_top{height:100px;width:1000px;margin:0 auto;background:no-repeat 0 15px;}
+.log_top .tel{ background:url(../images/login/xgx_02.jpg) no-repeat 0 0; height:40px; width:180px; font-size:18px; color:#bcbcbc; padding:18px 0 0 38px; float:right; margin:35px 0 0 0;}
+.log_body{ height:480px; width:100%; background: center 0 no-repeat #fcfef1; padding:0; }
+.log_body_mask{ height:440px; width:100%; background:url(../images/login/xgx_bg_mask01.png) repeat-y center 0; padding:40px 0 0 0; }
+/*输入框居中*/
+.log_box{ width:495px; height:405px; margin:0 auto; position:relative;}
+.log_box .u_name{ position:absolute; top:100px; left:168px; width:220px; height:20px; }
+.log_box .u_pw{ position:absolute; top:147px; left:168px; width:220px; height:20px; }
+.log_box .u_yzm{ position:absolute; top:195px; left:168px; width:80px; height:20px; }
+.log_box .yzm_img{ position:absolute; top:190px; left:275px; width:125px; height:35px; }
+
+.log_box .yzm_img img{ width:80px; height:35px; margin:0 5px 0 0 ; }
+.log_box .yzm_img a{ color:#2677c2; }
+.log_box .sjyzm_img{ position:absolute; top:195px; left:275px; width:125px; height:35px; }
+.log_box .sjyzm_img a{ color:#2677c2; }
+.log_box .u_input{ border:none; height:22px; line-height:22px;  width:220px; font-size:16px; outline:none; color:#888;}
+.log_box .u_input_yzm{ border:none; height:22px; line-height:22px;  width:80px; font-size:16px; outline:none; color:#888;}
+.log_box .zhuangtai{ position:absolute; top:243px; left:90px; width:220px; height:20px; }
+.log_box .btn{ position:absolute; top:299px; left:90px; width:315px; height:40px; }
+.log_box .btn .sub{ width:314px; height:40px; padding:0; text-align:center; font-size:20px; letter-spacing:5px; color:#f9f9f9; border:none; background:#4e9bdc; cursor:pointer; outline:none;}
+.log_box .btn .sub:hover{background:#2477bd;}
+.banquan{ width:1000px; height:30px; line-height:30px; text-align:center; margin:0 auto; padding:20px 0 0 0; font-size:12px; }
+
+/*后台登录页面，没有验证码*/
+.log_box{ width:495px; height:405px; margin:0 auto; background:url(../images/login/xgx_03-2.png) 0 0 no-repeat; position:relative;}
+.log_box .u_name{ position:absolute; top:120px; left:168px; width:220px; height:20px; }
+.log_box .u_pw{ position:absolute; top:168px; left:168px; width:220px; height:20px; }
+.log_box .u_input{ border:none; height:22px; line-height:22px;  width:220px; font-size:16px; outline:none; color:#888;}
+.log_box .zhuangtai{ position:absolute; top:243px; left:90px; width:220px; height:20px; }
+.log_box .btn{ position:absolute; top:299px; left:90px; width:315px; height:40px; }
+.log_box .btn .sub{ width:314px; height:40px; padding:0; text-align:center; font-size:20px; letter-spacing:5px; color:#f9f9f9; border:none; background:#4e9bdc; cursor:pointer; outline:none;}
+.log_box .btn .sub:hover{background:#2477bd;}
+
+

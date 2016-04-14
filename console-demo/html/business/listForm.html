@@ -1,0 +1,82 @@
+<form action="#" class="h-form-search clearfloat" id="listForm" style="padding-bottom: 15px;">
+    <!-- start h-search-box-->
+    <div class="h-search-box">
+        <ul class="form-search-row clearfloat" >
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">借款人：</span>
+                <input type="text" name="user"  class="easyui-textbox" style="height: 22px; width: 70%;" value=""/>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">项目名称：</span>
+                <input type="text" name="name"  class="easyui-textbox" style="height: 22px; width: 70%" value=""/>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">项目状态：</span>
+                <select name="state"   class="easyui-combobox" style="height: 22px; width: 70%;">
+                    <option value="">请选择</option>
+                    <option value="1"  >新申请</option>
+                    <option value="2"  >平台初审</option>
+                    <option value="3"  >担保审核</option>
+                    <option value="4"  >招标中</option>
+                    <option value="5"  >满标</option>
+                    <option value="6"  >还款中</option>
+                    <option value="7"  >已还完</option>
+                    <option value="8"  >流标</option>
+                </select>
+            </li>
+        </ul>
+        <ul class="form-search-row clearfloat">
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">还款方式：</span>
+                <select name="Q_pstatusId_S"  id=""  class="easyui-combobox" style="height: 22px; width: 70%;">
+                    <option value="">请选择</option>
+                    <option value="1"  >一次性还本付息</option>
+                    <option value="2"  >按月付息,到期还本</option>
+                    <option value="3"  >等额本息,每月还款</option>
+                    <option value="4"  >等额本金,每月还款</option>
+                </select>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">更新时间：</span>
+                <input type="text" name="Q_applyName_S"  class="easyui-datebox" style="height: 22px; width: 70%;" value=""/>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">至：</span>
+                <input type="text" name="Q_pname_SL"  class="easyui-datebox" style="height: 22px; width: 70%" value=""/>
+            </li>
+        </ul>
+    </div>
+    <!-- end h-search-box-->
+    <div class="h-search-btn">
+        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="listForm.getValue();" style="width:80px">查询</a>
+    </div>
+</form>
+<script>
+    var listForm ={
+        temObj:{},
+        search:function(url,params){
+            console.log("search....");
+            console.log(params);
+            listTable.init(url,params);
+        },
+        getValue:function(){
+            //debugger;
+            listForm.setNull(listForm.temObj);
+            //获取表单value，返回是对象
+           Utils.bindProps("#listForm",listForm.temObj,false);
+           listForm.search(listTable.url,listForm.temObj);
+        },
+        setNull:function(obj){
+            if(typeof obj ==="object"){
+                for(var p in obj){
+                    obj[p]=null;
+                }
+            }
+        }
+    };
+    $(function () {
+        $.parser.parse(".h-form-search");
+
+    })
+</script>
+

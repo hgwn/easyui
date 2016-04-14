@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../commonjs/css/easyui/default/easyui.css" />
+    <link rel="stylesheet" type="text/css" href="../commonjs/css/easyui/icon.css" />
+    <link rel="stylesheet" type="text/css" href="../commonjs/lib/wysiwyg/css/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="../commonjs/lib/wysiwyg/css/froala_editor.min.css" />
+    <link rel="stylesheet" type="text/css" href="../commonjs/lib/wysiwyg/css/froala_style.min.css" />
+    <!-- reset css及公共样式-->
+    <link rel="stylesheet" type="text/css" href="css/base.css" />
+    <!-- 自定义css-->
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <title>P2P运营后台管理</title>
+</head>
+
+ <body class="easyui-layout panel-fit" id="layout">
+
+        <div id="header" region="north" border="false"  style="height:60px; border-bottom: 1px solid #4a8dd4;" ></div>
+
+        <div id="sidebar" region="west" split="false" border="false"  style="width:250px;padding:0px;"></div>
+
+        <div id="main" region="center" border="false" style="background: #eee; overflow-y:hidden">
+            <!-- start easyui-tabs-->
+            <div class="easyui-tabs" id="mainTab" fit="true" border="false">
+                <div title="首页" style="padding:10px">
+                    <div class="content" id="home"></div>
+                </div>
+            </div>
+            <!-- end easyui-tabs-->
+        </div>
+
+        <!--<div region="south" title="" split="false" border="false" style="height:5px;padding:5px;">footer</div>-->
+<script src="../commonjs/lib/jquery-2.2.2.min.js"></script>
+<script src="../commonjs/lib/easyui/jquery.easyui.min.js"></script>
+<script src="../commonjs/lib/easyui/easyui-lang-zh_CN.js"></script>
+<script src="../commonjs/utils.js"></script>
+<script src="../commonjs/lib/wysiwyg/js/froala_editor.min.js"></script>
+<script src="../commonjs/lib/wysiwyg/js/languages/zh_cn.js"></script>
+<script src="js/common.js"></script>
+<script type="text/javascript" >
+	    $(function(){
+	    	    $("#header").load("html/header.html");
+	    	    $("#home").load("html/home.html");
+	    	    $("#sidebar").load("html/sidebar.html");
+                $("#layout").layout('hidden', "west");
+	    	})
+	</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+[{
+        "id":11,
+        "groupname":"借款管理",
+        "list":[
+                {"name":"发布借款","url":"html/businessManagement/productloanAddProject.html"},
+                {"name":"借款初审","url":"html/main_nav.html"},
+                {"name":"担保审核","url":"html/main-index.html"},
+                {"name":"放标审核","url":"html/main-index.html"},
+                {"name":"招标中的借款","url":"html/main-index.html"},
+                {"name":"满标审核","url":"html/main-index.html"},
+                {"name":"确认放款","url":"html/main-index.html"},
+                {"name":"流标的借款","url":"html/main-index.html"},
+                {"name":"所有借款","url":"html/main-index.html"},
+                {"name":"待退款的借款","url":"html/test/demo.htmml"}]
+},{
+        "id":12,
+        "groupname":"贷后管理",
+        "list":[
+                {"name":"提前还款的借款","url":"html/main_nav.html"},
+                {"name":"待收款的借款","url":"html/demo.htmml"},
+                {"name":"逾期的借款","url":"html/test/demo.htmml"},
+                {"name":"3天后逾期的借款","url":"html/test/demo.htmml"},
+                {"name":"已还清的借款","url":"html/test/demo.htmml"},
+                {"name":"可担保垫付的借款","url":"html/test/demo.htmml"},
+                {"name":"借款合同","url":"html/test/demo.htmml"}]
+},{
+        "id":13,
+        "groupname":"债权转让管理",
+        "list":[
+                {"name":"待审核的债权转让","url":"html/main_nav.html"},
+                {"name":"竞标中的债权转让","url":"html/demo.htmml"},
+                {"name":"待放款的债权转让","url":"html/test/demo.htmml"},
+                {"name":"已放款的债权转让","url":"html/test/demo.htmml"},
+                {"name":"已撤销的债权转让","url":"html/test/demo.htmml"},
+                {"name":"审核不通过","url":"html/test/demo.htmml"},
+                {"name":"所有债权转让","url":"html/test/demo.htmml"},
+                {"name":"债权转让合同-协议","url":"html/test/demo.htmml"}]
+}
+]
+

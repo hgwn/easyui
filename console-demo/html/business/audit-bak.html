@@ -1,0 +1,208 @@
+<div style="position: relative; padding: 5px; margin:20px auto;">
+    <!--start 借款项目信息-->
+    <dl class="audit-box">
+        <dt class="audit-title">借款项目信息</dt>
+        <dd class="audit-content">
+            <table class="table-detail" cellpadding="0" cellspacing="0" border="0">
+                <tbody><tr>
+                    <th width="15%">项目名称:</th>
+                    <td width="35%">
+                        2222
+                    </td>
+                    <th width="15%">实贷金额:</th>
+                    <td>
+                        0.00
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">申请金额:</th>
+                    <td>
+                        2,222.00
+                    </td>
+                    <th width="15%">年利率:</th>
+                    <td>
+                        3.00%
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">还款方式:</th>
+                    <td>
+                        按月付息,到期还本
+                    </td>
+                    <th width="15%">手续费比例:</th>
+                    <td>
+                        1.00%
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">标的类型:</th>
+                    <td>
+
+
+                    </td>
+                    <th width="15%">项目状态:</th>
+                    <td>
+                        新申请
+                    </td>
+                </tr>
+
+                <tr>
+                    <th width="15%">期限:</th>
+                    <td>
+                        2个月
+                    </td>
+                    <th width="15%">开标天数:</th>
+                    <td>
+                        6
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">申请人:</th>
+                    <td>
+                        黄娟华
+                    </td>
+                    <th width="15%">申请时间:</th>
+                    <td>
+                        2016-04-07 16:53
+                    </td>
+                </tr>
+                <tr>
+                    <th>平台审核备注:</th>
+                    <td colspan="3"></td>
+                </tr>
+                </tbody></table>
+        </dd>
+    </dl>
+    <!--end 借款项目信息-->
+
+    <!-- start 借款条件进度-->
+    <dl class="audit-box">
+        <dt class="audit-title">借款条件进度</dt>
+        <dd class="audit-content clearfloat">
+            <div class="fl"  style="width: 100px;">资料完成情况：</div>
+            <div class="audit-condition fl">
+                <label><input type="checkbox" name="condition" value="" checked="checked" disabled="disabled">个人实名认证</label>
+                <label><input type="checkbox" name="condition" value="" checked="checked" disabled="disabled">个人手机绑定</label>
+                <label><input type="checkbox" name="condition" value="" disabled="disabled">个人其他联系人信息</label>
+                <label><input type="checkbox" name="condition" value="" disabled="disabled">家庭信息通过审核</label>
+                <label><input type="checkbox" name="condition" value="" disabled="disabled">用户公司信息通过审核</label>
+            </div>
+        </dd>
+    </dl>
+    <!-- end 借款条件进度-->
+
+    <!-- start 审核状态-->
+    <dl class="audit-box" style="">
+        <dt class="audit-title">审核状态</dt>
+        <dd class="audit-content clearfloat">
+            <div class="fl"  style="width: 100px;">审核状态：</div>
+            <div class="audit-condition fl">
+                <label><input type="radio" name="states" value="" checked="checked">同意</label>
+                <label><input type="radio" name="states" value="" >流标</label>
+                <label><input type="radio" name="states" value="" disabled="disabled">放标</label>
+                <label><input type="radio" name="states" value="">招标中</label>
+                <label><input type="radio" name="states" value="">满标</label>
+            </div>
+        </dd>
+    </dl>
+    <!-- end 审核状态-->
+
+    <!-- start 标的认证-->
+    <dl class="audit-box" style="">
+        <dt class="audit-title">标的认证</dt>
+        <dd class="audit-content clearfloat">
+            <table class="table-detail" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+
+                    <th width="15%">标的认证: <span class="required" style="color:red">*</span></th>
+                    <td  width="35%"><select name="typeId"  id="typeId" >
+                        <option value="">请选择</option>
+                        <option value="1"  >信用认证标</option>
+                        <option value="2" selected >实地认证标</option>
+                        <option value="3"  >担保机构标</option>
+                        <option value="4"  >智能理财标</option>
+                        <option value="5"  >平台代理标</option>
+                        <option value="6"  >体验标</option>
+                    </select>
+                    </td>
+                    <th width="15%">借款利率(借入): <!-- <span class="required" style="color: red">*</span> --></th>
+                    <td width="35%"><input type="hidden" id="prateIn" readonly="readonly" name="prateIn"  value="14.000" style="width:240px !important" class="inputText"/>14.00%</td>
+                    <input type="hidden" id="prateOut" readonly="readonly" name="prateOut"  value="14.000">
+                </tr>
+                <tr>
+                    <th>跟进业务员: </th>
+                    <td >
+                        <input type="text" id="pclerk" name="pclerk" readonly="readonly"
+                               value="" style="width:240px !important" class="inputText"/>
+                        <a href="javascript:void(0);" onclick="addClick()" class="link get">选择</a>
+                        <a href="javascript:void(0);" onclick="reSet()" class="link del">清空</a>
+                        <input type="hidden" id="pclerkId" name="pclerkId" value=""  class="inputText"/>
+                        <input type="hidden" name="projectId" id="projectId" value="10000041891034"/>
+                    </td>
+                    <th width="15%">担保审核：</th>
+                    <td width="35%">
+                        <input type="radio" id="pIsNeedGuarantee" name="pIsNeedGuarantee" value="1" checked/>
+                        <span>需要</span>
+                        <input type="radio" name="pIsNeedGuarantee" value="0" checked/>
+                        <span>不需要</span>
+                        (借款人意向：不需要)
+                        <a href="#" class="easyui-linkbutton l-btn l-btn-small" onclick="preliminaryAudit();">修改担保金</a>
+                    </td>
+                </tr>
+                <tr><th colspan="4" style="text-align: center;">项目评估(说明：您的项目评估将显示在投资详情页面，对于项目的投标会起到重要的作用，请认真填写。)</th></tr>
+                <tr>
+                    <td colspan="4">
+
+                        <textarea class="ckeditor" name="pcheckRemarksPlatform" id="pcheckRemarksPlatform"></textarea>
+                    </td>
+                </tr>
+            </table>
+
+        </dd>
+    </dl>
+    <!-- end 标的认证-->
+
+
+
+    <!-- start 审核-->
+    <dl class="audit-box">
+        <dt class="audit-title">审核意见</dt>
+        <dd class="audit-content clearfloat">
+            <input type="text" class="easyui-textbox" name="" data-options="multiline:true" style=" height: 100px; width: 500px;" placeholder="请填写审核意见">
+        </dd>
+    </dl>
+    <!-- end 审核-->
+    <!-- start 按钮-->
+    <div style="padding:10px 5px 5px 15px;" class="audit-btn">
+        <a href="javascript:void(0)" class="easyui-linkbutton l-btn l-btn-small" >通过</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton l-btn l-btn-small" >保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton l-btn l-btn-small" >流标</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton l-btn l-btn-small" >重置</a>
+        <!--<a href="javascript:void(0)" class="easyui-linkbutton l-btn l-btn-small" >
+        <span class="l-btn-left l-btn-icon-left"><span class="l-btn-text">重置</span>
+        <span class="l-btn-icon icon-reload"></span></span>
+        </a>-->
+    </div>
+    <!-- end 按钮-->
+    <!--start -->
+    <div id="preliminaryAuditDB">修改担保金比例</div>
+</div>
+
+<script type="text/javascript">
+    function preliminaryAudit(){
+        $('#preliminaryAuditDB').dialog({closed: false,});
+    };
+    $(function(){
+        $('#pcheckRemarksPlatform').froalaEditor({enter: $.FroalaEditor.ENTER_P, placeholderText: null,language:'zh_cn'});
+        $('#preliminaryAuditDB').dialog({
+            title: '修改担保金比例',
+            width: 800,
+            height: 450,
+            closed: true,
+            cache: false,
+            href: 'html/business/preliminaryAuditDB.html',
+            modal: true
+        });
+
+    });
+</script>

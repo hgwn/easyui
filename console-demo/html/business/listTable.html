@@ -1,0 +1,157 @@
+<table id="listTable" class="easyui-datagrid"
+       data-options="remoteSort:false,striped:true, pagination : true,collapsible:true, rownumbers:true" style="height:450px; width:100%">
+    <thead frozen="true">
+    <tr>
+        <th data-options="field:'ck',checkbox:true"></th>
+    </tr>
+    </thead>
+    <thead>
+    <tr>
+        <th data-options="field:'contractId',hidden:true"></th>
+        <th data-options="field:'name',width:100">项目名称</th>
+        <th data-options="field:'state',width:40,formatter:listTable.state">项目状态</th>
+        <th data-options="field:'user',width:100">借款人</th>
+        <th data-options="field:'loan',width:40">申请借款金额</th>
+        <th data-options="field:'loan',width:40">实际借款金额</th>
+        <th data-options="field:'rate',width:40">利率(%)</th>
+        <th data-options="field:'productname',width:100">期限</th>
+        <th data-options="field:'applicationTime',width:100">申请时间</th>
+        <th data-options="field:'productname',width:40">是否放款</th>
+        <th data-options="field:'productname',width:100">打款时间</th>
+        <th data-options="field:'isClosed',width:40">是否还清</th>
+        <th data-options="field:'loan',width:50">应偿还金额</th>
+        <th data-options="field:'unitcost',width:50">已偿还金额</th>
+    </tr>
+    </thead>
+</table>
+<script type="text/javascript">
+    var listTable = {
+        rootScope:{},
+        url:"data/datagrid2.json",
+        params:{},
+        //初始化
+        init:function(url,params){
+            if(url !=undefined){
+                listTable.url = url;
+            }
+            if(params && typeof params ==="object"){
+                $.extend(listTable.params, params);
+            }
+            listTable.render();
+        },
+        //刷新
+        reload:function(){
+            $('#listTable').datagrid("reload");
+        },
+        //渲染datagrid
+        render:function(){
+            $('#listTable').datagrid({
+                fitColumns : true,
+                queryParams:listTable.params,
+                toolbar:listTable.toolbar,
+                url:listTable.url,
+                method:'post'
+
+            });
+        },
+        //格式化单元格
+        formatterAction:function(value,rowData,rowIndex){
+            return "<a href='#' title='项目明细' class='h-field-link' onclick='listTable.openDetailpage("+JSON.stringify(rowData)+");'>项目明细</a>" + "<a href='#' class='h-field-link' title='跟踪流程' onclick='followDetailpage("+JSON.stringify(rowData)+","+rowIndex+");'>跟踪流程</a>";
+        },
+        openDetailpage: function (rowData) {
+            console.log(rowData);
+        },
+        //定义工具条
+        toolbar:[{
+            text:'发布借款',
+            iconCls:'icon-add',
+            handler:function(){
+                mainTab.addTab("发布借款","html/business/addProject.html");
+            }
+        },'-',{
+            text:'项目审核',
+            iconCls:'icon-cut',
+            handler:function(){
+                var profitids = $('#listTable').datagrid('getSelections');
+                listTable.rootScope.rowData = profitids;  //将选中行数据复制
+                if(profitids.length){
+                    if(profitids.length!=1){
+                        $.messager.alert('提示','只能勾选一条数据进行审核!','info');
+                        return;
+                    }else{
+                        //debugger;
+                        mainTab.addTab("项目审核","html/business/audit.html?userId="+profitids[0].userId+"&user="+profitids[0].user);
+                    }
+                }else{
+                    $.messager.alert('提示','请勾选数据进行操作'+'<br><br>或者双击某行进行操作!','info');
+                }
+            }
+        },'-',{
+                text:'满标',
+                iconCls:'icon-save',
+                handler:function(){
+                    if($('#listTable').datagrid('getSelections').length){
+                        $.messager.confirm('满标','确认满标吗?',function(r){
+                            if (r){
+                                alert('ok');
+                            }
+                        });
+                    }else{
+                        $.messager.alert('提示','请勾选数据进行操作!','info');
+                    }
+                }
+            },'-',{
+            text:'确认放款',
+            iconCls:'icon-save',
+            handler:function(){
+                if($('#listTable').datagrid('getSelections').length){
+                    $.messager.confirm('确认放款','确认放款吗?',function(r){
+                        if (r){
+                            alert('ok');
+                        }
+                    });
+                }else{
+                    $.messager.alert('提示','请勾选数据进行操作!','info');
+                }
+            }
+        }],
+        //打开tab选项卡
+        addTab:function(title,url){
+            if ($('#businessTab').tabs('exists', title)){
+                $('#businessTab').tabs('select', title);
+            } else {
+                $('#businessTab').tabs('add',{
+                    title:title,
+                    href:url,
+                    closable:true
+                });
+            }
+        },
+        state:function(value,row,index){
+           if(row.state){
+                switch (row.state){
+                    case "1":
+                        return "还款中";
+                    case "2":
+                        return "招标中";
+                    default :
+                        return "测试默认值"
+                }
+           }else{
+               return " ";
+           }
+        }
+    };
+    $(function(){
+        //调用表格初始化函数
+        listTable.init();
+        //解决jq/easyui异步加载组件
+        $.parser.parse("#listTable");
+        $('#listTable').datagrid({
+            //双击打开项目审核tab
+            onDblClickRow: function(index,row){
+                mainTab.addTab("项目审核","html/business/audit.html");
+            }
+        });
+    });
+</script>

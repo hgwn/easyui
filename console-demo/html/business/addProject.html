@@ -1,0 +1,197 @@
+<div style="padding:10px 5px 5px;">
+    <a href="javascript:void(0)" class="easyui-linkbutton l-btn l-btn-small" onclick="addProjectForm.submitForm();">
+        <span class="l-btn-left l-btn-icon-left"><span class="l-btn-text">确认无误，发布</span>
+        <span class="l-btn-icon icon-save">&nbsp;</span></span>
+    </a>
+    <a href="javascript:void(0)" class="easyui-linkbutton l-btn l-btn-small"  onclick="addProjectForm.clearForm();" >
+        <span class="l-btn-left l-btn-icon-left"><span class="l-btn-text">重置表单</span>
+        <span class="l-btn-icon icon-reload">&nbsp;</span></span>
+    </a>
+
+</div>
+<!--start form-->
+<form id="addProjectForm" method="post">
+    <table class="table-detail" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+            <th>借款产品：<span class="required" style=" color:red;">*</span></th><td><input class="easyui-textbox" required="true"  missingMessage="不能为空" id="productName" style="width:200px" readonly="readonly" name="productName" onclick="addProjectForm.selectProduct();"><a class="link add easyui-linkbutton" style="color:#F3EEEE;"  href="javascript:addProjectForm.selectProduct();">选择产品</a>（请选择产品再填以下信息）</td>
+            <th>借款会员：<span class="required" style=" color:red;">*</span></th><td><input class="inputText" style="width:100px;" type="hidden" id="papplicant" name="papplicant"/>
+            <input class="easyui-textbox" required="true"  missingMessage="不能为空"   style="width:160px;" type="text" id="papplicantName" name="papplicantName" readonly="readonly" onfocus="addProjectForm.userSelect();"/><a class="link add easyui-linkbutton" style="color:#F3EEEE;" href="javascript:addProjectForm.userSelect();">选择会员</a>&nbsp;&nbsp;&nbsp;&nbsp;
+            <div class="fsh16lh16" id="div_0" style="line-height:34px;"></div>
+        </td>
+        </tr>
+        <tr>
+            <th width="15%">借款标题：<span class="required" style=" color:red;">*</span></th>
+            <td colspan="3">
+                <input class="easyui-textbox"  required="true" missingMessage="不能为空" validType="length[0,30]" invalidMessage="不能超过30个字符！" style="width:90%"  type="text" id="pname" name="pname"/>
+                <div class="fsh16lh16" id="div_1" style="line-height:34px;"></div>
+            </td>
+        </tr>
+        <tr>
+            <th width="15%">借款金额：<span class="required" style=" color:red;">*</span></th>
+            <td><input class="easyui-textbox easyui-numberbox" required="true" missingMessage="不能为空" style="width:100px;" type="text" onkeyup="num(this)" onblur="interest()" id="ploan" name="ploan"/>元&nbsp;&nbsp;<label id="ploan_label"></label>
+                <div class="fsh16lh16" id="div_2"></div>
+            </td>
+
+            <th width="15%">借款期限：<span class="required" style=" color:red;">*</span></th>
+            <td><input class="easyui-textbox easyui-numberbox"  required="true" missingMessage="不能为空" style="width:100px;" type="text" onkeyup="num(this)"  onblur="interest()" id="pdeadline" name="pdeadline"/><label id="pdeadline_label"></label>
+                <div class="fsh16lh16" id="div_3"></div>
+            </td>
+        </tr>
+
+
+        <tr>
+            <th width="15%">年利率：<span class="required" style=" color:red;">*</span></th>
+            <td><input class="easyui-textbox easyui-numberbox"  required="true" missingMessage="不能为空" style="width:100px;" type="text" onkeyup="num(this)"  onblur="interest()" id="prateIn" name="prateIn"/>%&nbsp;&nbsp;<label id="prateIn_label"></label>
+                <div class="fsh16lh16" id="div_4"></div>
+            </td>
+
+            <th width="15%">筹标期限：<span class="required" style=" color:red;">*</span></th>
+            <td><input class="easyui-textbox easyui-numberbox"  required="true" missingMessage="不能为空" style="width:100px;" type="text" onkeyup="num(this)" id="popenDays" name="popenDays"/>天&nbsp;&nbsp;<label id="popenDays_label"></label>
+                <div class="fsh16lh16" id="div_5"></div>
+            </td>
+        </tr>
+
+
+        <tr>
+            <th width="15%">还款方式：<span class="required" style=" color:red;">*</span></th>
+            <td>
+                <select name="prepayWay"  id="prepayWay" class="easyui-combobox"  required="true" missingMessage="不能为空" >
+                    <option value="1"  >一次性还本付息</option>
+                    <option value="2"  >按月付息,到期还本</option>
+                    <option value="3"  >等额本息,每月还款</option>
+                    <option value="4"  >等额本金,每月还款</option>
+                </select>
+
+                <div class="fsh16lh16" id="div_5"></div>
+            </td>
+            <th width="15%">按份投标：</th>
+            <td>
+                <input type="radio" name="isFixedAmount" value="1" onclick="showPortion()"/>是
+                <input type="radio" name="isFixedAmount" value="0" onclick="hidePortion()" checked="checked"/>否
+            </td>
+        </tr>
+        <tr id="portionTR" style="display: none;">
+            <th width="15%">份额：</th>
+            <td><input class="easyui-textbox" style="width:100px;" type="text" onkeyup="" id="portion" name="portion"/>份
+                <div class="fsh16lh16" id="div_9"></div>
+            </td>
+            <th width="15%"></th><td></td>
+        </tr>
+        <tr id="pInvestTR">
+            <th width="15%">起投金额：<span class="required" style=" color:red;">*</span></th>
+            <td><input class="easyui-textbox easyui-numberbox"  required="true" missingMessage="不能为空" style="width:100px;" type="text" onkeyup="" id="pminInvest" name="pminInvest"/>元
+                <div class="fsh16lh16" id="div_6"></div>
+            </td>
+            <th width="15%"></th><td></td>
+        </tr>
+        <tr>
+            <th width="15%">实际支付利息： </th><td><span id="interest"></span></td>
+
+            <th width="15%">投标返金比例：</th><td><input class="easyui-textbox easyui-numberbox" style="width:100px;" type="text" onkeyup="num(this)" id="pinvestReturnAmountRate" name="pinvestReturnAmountRate">%
+            <div class="fsh16lh16" id="div_7"></div>
+        </td>
+
+
+        </tr>
+        <tr>
+            <th width="15%">是否需要密码：</th>
+            <td>
+                <input type="radio" name="needPassword" value="1" onclick="showPpassword()"/>是
+                <input type="radio" name="needPassword" value="0" onclick="hidePpassword()" checked="checked"/>否
+            </td>
+            <th width="15%" id="ppasswordTH"></th>
+            <td id="ppasswordTD"></td>
+        </tr>
+        <tr>
+            <th width="15%">服务费用请参照：<td colspan="3"><a  href="javascript:void(0);">资费说明</a></td>
+        </tr>
+        <tr>
+            <th width="15%" >借款描述：</th>
+            <td colspan="3">
+                <div  style="position: relative; width: 100%;  overflow: hidden;">
+                    <div class="fsh16lh16" id="ueditor" style="padding: 10px; overflow: hidden;"></div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</form>
+<!--end form-->
+
+<div id="selectProductDialog">选择借款产品.</div>
+<div id="userSelectDialog">选择借款人.</div>
+
+<script type="text/javascript">
+    //发布借款--表单处理对象
+    var addProjectForm = {
+        //定义提交路径
+        url:"http://www.baidu.com",
+        //提交
+        submitForm:function(){
+            $('#addProjectForm').form('submit',{
+                url:addProjectForm.url,
+                //提交前处理
+                onSubmit:function(param){
+                    //获取富文本内容
+                   // param.ueditor = ueditor.getPlainTxt();
+                    param.ueditor = $('#wysiwyg').val();
+                    if(!($(this).form('enableValidation').form('validate'))){
+                        $.messager.alert('提示','请检查数据完整性!','info');
+                        return false;
+                    }
+                    return true;
+                    //return $(this).form('enableValidation').form('validate');
+                },
+                success:function(data){
+                    console.log(data)
+                    $.messager.show({
+                        title:'提示',
+                        msg:'提交成功！',
+                        timeout:3000,
+                        showType:'slide'
+                    });
+                    //成功后清空数据
+                    addProjectForm.clearForm();
+                }
+            });
+        },
+        //重置
+        clearForm:function(obj){
+            $('#addProjectForm').form('clear');
+        },
+        //选择产品对话框
+        selectProduct:function(){
+            $('#selectProductDialog').dialog({closed:false});
+        },
+        //选择借款人对话框
+        userSelect: function () {
+            $('#userSelectDialog').dialog({closed:false});
+        }
+    };
+    function num(th){
+        var reg = /^[0-9]{0}([0-9]|[.])+$/;
+        if(reg.test(th.value)!=true){th.value="";}
+    }
+    $(function(){
+        //加载富文本编辑器
+        $("#ueditor").load("html/business/wysiwyg.html");
+        $.parser.parse("#addProjectForm");
+        $('#selectProductDialog').dialog({
+            title: '选择借款产品',
+            width: 800,
+            height: 450,
+            closed: true,
+            cache: false,
+            href: 'html/business/selectProduct.html',
+            modal: true
+        });
+        $('#userSelectDialog').dialog({
+            title: '选择借款人',
+            width: 800,
+            height: 500,
+            closed: true,
+            cache: false,
+            href: 'html/business/userSelect.html',
+            modal: true
+        });
+    })
+</script>

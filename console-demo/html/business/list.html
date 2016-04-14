@@ -1,0 +1,14 @@
+<!--start businessList-->
+<div id="businessList">
+    <div class="form-search"></div>
+    <div class="form-table"></div>
+</div>
+<!--end businessList-->
+<script type="text/javascript">
+    $(function(){
+        //异步加载div片段--查询条件
+        $("#businessList div.form-search").load("html/business/listForm.html");
+        $("#businessList div.form-table").load("html/business/listTable.html");
+        $.parser.parse("#businessList");
+    });
+</script>

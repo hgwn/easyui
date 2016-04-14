@@ -1,0 +1,14 @@
+<!--start postList-->
+<div id="postList">
+    <div class="form-search"></div>
+    <div class="form-table"></div>
+</div>
+<!--end postList-->
+<script type="text/javascript">
+    $(function(){
+        //异步加载div片段--查询条件
+        $("#postList div.form-search").load("html/post-lend/postListForm.html");
+        $("#postList div.form-table").load("html/post-lend/postListTable.html");
+        $.parser.parse("#postList");
+    });
+</script>

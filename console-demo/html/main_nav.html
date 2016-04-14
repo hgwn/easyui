@@ -1,0 +1,34 @@
+
+<div id="main_nav">
+	
+	 <span id="main_nav_tmpl" style="display:none;">$name</span>
+	
+    	
+</div>
+<script>
+	  
+	  $(function(){
+    var  mainNav={
+    	
+    	
+    	    render:function(){
+    	    	
+    	    	
+    	    	
+    	       $.getJSON("data/mainnav.json",function(data){
+    	       
+    	       	
+    	       	    Utils.bindList("#main_nav","#main_nav_tmpl",data);
+    	       	    
+    	       	    //$.simpleTab();
+    	       	});	
+    	       	
+    	       	
+    	    }
+    	}
+    	
+    	mainNav.render();
+})
+	     	
+	
+	</script>

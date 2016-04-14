@@ -1,0 +1,20 @@
+<!--提成记录审核-->
+<!--start businessList-->
+<div id="trebaterecordList">
+    <!--start 查询条件-->
+    <div class="form-search"></div>
+    <!--end 查询条件-->
+    <!-- start 表格-->
+    <div class="form-table"></div>
+    <!-- end 表格-->
+
+</div>
+<!--end businessList-->
+<script type="text/javascript">
+    $(function(){
+        //异步加载div片段--查询条件
+        $("#trebaterecordList div.form-search").load("html/financial/trebaterecord.form-search.html");
+        $("#trebaterecordList div.form-table").load("html/financial/trebaterecord.table.html");
+        $.parser.parse("#trebaterecordList");
+    });
+</script>

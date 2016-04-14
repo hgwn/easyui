@@ -1,0 +1,36 @@
+<form id="bidOpen">
+   <div style="padding: 10px;"> <input class="easyui-datetimebox" value="" id="dt" name="dtime" required="true" style="width:200px"></div>
+</form>
+<script>
+    //var v = $('#dt').datetimebox('getValue');
+    var bidOpen={
+        url:"http://www.baidu.com",
+        //提交
+        submit:function(){
+            if(!($('#bidOpen').form('enableValidation').form('validate'))){
+                //$.messager.alert('提示','请设定开标时间!','info');
+                return ;
+            }
+            $.ajax({
+                type:"POST",
+                url:bidOpen.url,
+                data:{dtime:$('#dt').datetimebox('getValue'),testid:"88"},
+                datatype: "json",
+                success:function(data){
+                    $.messager.show({
+                        title:'提示',
+                        msg:'提交成功！',
+                        timeout:3000,
+                        showType:'slide'
+                    });
+                },
+                error: function(resp){
+                    console.log(resp);
+                }
+            });
+        },
+        reset:function(){
+            $('#dt').datetimebox('setValue', '');
+        }
+    };
+</script>

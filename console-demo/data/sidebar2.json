@@ -1,0 +1,9 @@
+[{
+        "id":11,
+        "groupname":"提成管理",
+        "list":[
+                {"name":"提成记录审核","url":"html/financial/trebaterecord.html"},
+                {"name":"会员可提成记录","url":"html/demo.html"},
+                {"name":"会员提成月结记录","url":"html/demo.htmml"}]
+    }
+]

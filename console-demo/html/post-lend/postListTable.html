@@ -1,0 +1,147 @@
+<table id="postListTable" class="easyui-datagrid"
+       data-options="remoteSort:false,striped:true,fitColumns:false, pagination : true, rownumbers:true" style="height:450px; width:100%;">
+    <thead frozen="true">
+    <tr>
+        <th data-options="field:'ck',checkbox:true"></th>
+    </tr>
+    </thead>
+    <thead>
+    <tr>
+        <th data-options="field:'contractId',hidden:true"></th>
+        <th data-options="field:'code',width:130">登录名</th>
+        <th data-options="field:'content',width:160">姓名</th>
+        <th data-options="field:'user',width:200">项目名称</th>
+        <th data-options="field:'user',width:60">项目状态</th>
+        <th data-options="field:'user',width:60">实际借款金额</th>
+        <th data-options="field:'user',width:50">借款年利率(%)</th>
+        <th data-options="field:'user',width:40">实际总利息</th>
+        <th data-options="field:'user',width:30">借款期限</th>
+        <th data-options="field:'user',width:30">投标数</th>
+        <th data-options="field:'user',width:30">是否逾期</th>
+        <th data-options="field:'user',width:50">逾期天数</th>
+        <th data-options="field:'user',width:50">违约金比率(%)</th>
+        <th data-options="field:'createTime',width:80">已还违约金</th>
+        <th data-options="field:'createTime',width:50">已还罚息</th>
+        <th data-options="field:'createTime',width:50">应付罚息</th>
+    </tr>
+    </thead>
+</table>
+<div id="overdueDialog">逾期详情页</div>
+<script type="text/javascript">
+    var postListTable = {
+        rootScope:{},
+        url:"data/contract.json",
+        params:{},
+        //初始化
+        init:function(url,params){
+            if(url !=undefined){
+                postListTable.url = url;
+            }
+            if(params && typeof params ==="object"){
+                $.extend(postListTable.params, params);
+            }
+            postListTable.render();
+        },
+        //刷新
+        reload:function(){
+            $('#postListTable').datagrid("reload");
+        },
+        //渲染datagrid
+        render:function(){
+            $('#postListTable').datagrid({
+                queryParams:postListTable.params,
+                toolbar:postListTable.toolbar,
+                url:postListTable.url,
+                method:'post'
+            });
+        },
+        //定义工具条
+        toolbar:[{
+            text:'查看详情',
+            iconCls:'icon-add',
+            handler:function(){
+                var profitids = $('#postListTable').datagrid('getSelections');
+                if(profitids.length){
+                    if(profitids.length!=1){
+                        $.messager.alert('提示','只能勾选一条数据进行审核!','info');
+                        return;
+                    }else{
+                        //debugger;
+                        mainTab.addTab("项目审核","html/business/audit.html?userId="+profitids[0].userId+"&user="+profitids[0].user);
+                    }
+                }else{
+                    $.messager.alert('提示','请勾选数据进行操作'+'<br><br>或者双击某行进行操作!','info');
+                }
+            }
+        },'-',{
+            text:'跟进',
+            iconCls:'icon-save',
+            handler:function(){
+
+            }
+        },'-',{
+            text:'垫付详情',
+            iconCls:'icon-save',
+            handler:function(){
+                var len = $('#postListTable').datagrid('getSelections').length;
+                if(len){
+                    if(len !=1){
+                        factory.alert("只能勾选一条数据进行操作!")
+                        return;;
+                    }else{
+                        factory.dialog("#overdueDialog","html/post-lend/overdueDialog.html",{closed:false,title:"垫付详情"});
+                    }
+                }else{
+                    factory.alert("请勾选数据进行操作!");
+                }
+            }
+        },'-',{
+            text:'逾期垫付',
+            iconCls:'icon-save',
+            handler:function(){
+
+            }
+        },'-',{
+            text:'提醒还款',
+            iconCls:'icon-cut',
+            handler:function(){
+                if($('#postListTable').datagrid('getSelections').length){
+                        var temdata = {'name':'李鸿文','age':28};
+                        factory.httpPost("data/contract.json",temdata,function(data){
+                            console.log(data);
+                            factory.alert(data.msg+"...httpPost");
+                        })
+                }else{
+                    factory.alert("请勾选数据进行操作!");
+                }
+            }
+        }],
+        state:function(value,row,index){
+            if(row.state){
+                switch (row.state){
+                    case "1":
+                        return "还款中";
+                    case "2":
+                        return "招标中";
+                    default :
+                        return "测试默认值"
+                }
+            }else{
+                return " ";
+            }
+        }
+    };
+
+    $(function(){
+        //调用表格初始化函数
+        postListTable.init();
+        //解决jq/easyui异步加载组件
+        $.parser.parse("#postListTable");
+        $('#postListTable').datagrid({
+            //双击查看详情
+            onDblClickRow: function(index,row){
+                mainTab.addTab("项目审核","html/business/audit.html");
+            }
+        });
+    });
+</script>

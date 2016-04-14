@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="stylesheet" type="text/css" href="css/login.css" />
+    <title>P2P运营后台管理</title>
+</head>
+
+ <body>
+ <div class="log_top" style=" background-image:url(images/login/logo01.png);">
+     <p class="tel">400-882-3186</p>
+ </div>
+ <form id="form-login" action="#" method="post">
+     <input type="hidden" id="subType" name="subType">
+     <input type="hidden" id="vcodeText" name="vcodeText">
+     <div class="log_body" style="background-image:url(images/login/xia_01.jpg);">
+         <div class="log_body_mask">
+             <div class="log_box">
+                 <p class="u_name"><input type="text" name="username" id="username" class="u_input" maxlength="20" placeholder="输入账号"></p>
+                 <p class="u_pw"><input type="password" name="password" id="password" class="u_input" maxlength="20" placeholder="输入密码"></p>
+
+                 <p class="zhuangtai">
+                     <input type="checkbox" id="remember" class="sub" name="_spring_security_remember_me" value="1"><label for="remember" >    记住登录状态</label>
+                 </p>
+                 <div class="confirm">
+                     <p class="btn"><input type="submit" class="sub" value="登录" onclick="document.getElementById('form-login').submit();"></p>
+                 </div>
+
+             </div>
+         </div>
+     </div>
+ </form>
+ <div class="banquan" style="font-size:12px;">帝隆科技 版权所有 粤ICP备:11044630号</div>
+<script src="js/lib/jquery-2.2.2.min.js"></script>
+<script src="js/lib/jquery.form.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/common.js"></script>
+<script type="text/javascript" >
+	    $(function(){
+                //
+	    	})
+	</script>
+</body>
+</html>
