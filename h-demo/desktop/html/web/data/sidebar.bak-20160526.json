@@ -1,0 +1,70 @@
+{
+  "code":0,
+  "msg":"",
+  "result":[{
+    "id":11,
+    "groupname":"我的账户",
+    "list":[
+      {"name":"支付账户","url":"index.html#page=bindinfo?bread=绑定账户"},
+      {"name":"我的礼品","url":"index.html#page=gift?bread=我的礼品"},
+      {"name":"我的积分记录","url":"index.html#page=pointlist?bread=我的积分记录"},
+      {"name":"我的提成记录","url":"index.html#page=percentage?bread=我的提成记录"},
+      {"name":"我的邀请用户","url":"index.html#page=invite?bread=我的邀请用户"}]
+  },{
+    "id":11,
+    "groupname":"借款管理",
+    "list":[
+      {"name":"我的借款","url":"index.html#page=my?bread=我的借款"},
+      {"name":"还款管理","url":"index.html#page=repay?bread=还款管理"},
+      {"name":"借款申请查询","url":"index.html#page=applysearch?bread=借款申请查询"},
+      {"name":"统计借款","url":"index.html#page=total?bread=统计借款"},
+      {"name":"借款条件进度","url":"index.html#page=progress?bread=借款条件进度"},
+      {"name":"额度申请记录","url":"index.html#page=apply?bread=额度申请记录"}]
+  }
+
+  ,{
+      "id":12,
+      "groupname":"理财管理",
+      "list":[
+        {"name":"我的投标","url":"index.html#page=bid?bread=我的投标"},
+        {"name":"关注的借款","url":"index.html#page=follow?bread=关注的借款"},
+        {"name":"预约的借款","url":"index.html#page=order?bread=预约的借款"},
+        {"name":"理财统计","url":"index.html#page=statistics?bread=理财统计"},
+        {"name":"自动投标","url":"index.html#page=autobid?bread=自动投标"}]
+    },{
+      "id":13,
+      "groupname":"债权转让",
+      "list":[
+        {"name":"债权转让","url":"index.html#page=credit?bread=债权转让"},
+        {"name":"债权竞标","url":"index.html#page=creditbid?bread=债权竞标"},
+        {"name":"关注债权","url":"index.html#page=creditfollow?bread=关注债权"}]
+    },{
+      "id":14,
+      "groupname":"资金管理 ",
+      "list":[
+        {"name":"充值","url":"index.html#page=recharge?bread=充值"},
+        {"name":"提现","url":"index.html#page=cash?bread=提现"},
+        {"name":"资金记录","url":"index.html#page=frecord?bread=资金记录"}]
+    },
+    {
+      "id":15,
+      "groupname":"基本设置 ",
+      "list":[
+        {"name":"编辑个人资料","url":"index.html#page=person?bread=编辑个人资料"},
+        {"name":"上传认证资料","url":"index.html#page=upload?bread=上传认证资料"},
+        {"name":"上传个人资料","url":"index.html#page=uploadperson?bread=上传个人资料"},
+        {"name":"安全中心","url":"index.html#page=basic?bread=安全中心"}]
+    },
+    {
+      "id":16,
+      "groupname":"服务通知 ",
+      "list":[
+        {"name":"我的通知","url":"index.html#page=notice?bread=我的通知"},
+        {"name":"我的留言","url":"index.html#page=message?bread=我的留言"},
+        {"name":"我的投诉","url":"index.html#page=complain?bread=我的投诉"}]
+    }
+  ]
+}
+
+
+

@@ -1,0 +1,131 @@
+<!-- accout_main S-->
+<div class="accout_main">
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;">我的借款</div>
+
+        <div class="member_tab">
+            <ul class="member_tab_menu business_my clearfix">
+                <li class="active" onclick="p2p_businessMy_search.toclick();">全部</li>
+                <li onclick="p2p_businessMy_search.toclick(1);">待审核</li>
+                <li onclick="p2p_businessMy_search.toclick(2);">筹集中</li>
+                <li onclick="p2p_businessMy_search.toclick(3);">放款中</li>
+                <li onclick="p2p_businessMy_search.toclick(4);">还款中</li>
+                <li onclick="p2p_businessMy_search.toclick(5);">已还清</li>
+                <li onclick="p2p_businessMy_search.toclick(6);">流标</li>
+            </ul>
+            <div class="member_tab_content">
+                <div class="member_tab_list">
+                    <p style="padding: 10px 0;">查询到借款共 <span class="font_red" id="totalElements">0</span> 笔，总借款金额 <span class="font_red" id="myLoanAmountTotal">0.00</span> 元</p>
+                    <table class="table-list" cellpadding="0" cellspacing="0" border="0">
+                        <thead>
+                        <tr>
+                            <th width="100">借款标题</th>
+                            <th width="100">借款金额（元）</th>
+                            <th width="100">年化利率（%）</th>
+                            <th width="100">申请时间</th>
+                            <th width="100">状态</th>
+                            <th width="100">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody id="my_temp" >
+
+
+                        </tbody>
+                        <tr id="my_tmpl" style="display: none;">
+                            <td>$name</td>
+                            <td><span class="font_red" id="loan">$loan</span></td>
+                            <td>$rate</td>
+                            <td>$applicationTime</td>
+                            <td>$stateName</td>
+                            <td><a href="#page=mydetail?bread=借款信息&projectId=$projectId" class="font_blue lookbtn"  >查看</a></td>
+                        </tr>
+                    </table>
+                    <!-- 分页 S-->
+                    <div id="p2p_businessMy_page" class="pagination"><!-- 这里显示分页 --></div>
+                    <!-- 分页 E-->
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+
+    var p2p_businessMy_search = {
+        toclick:function(state){
+            if(state){
+                p2p_businessMy_list.params.state = parseInt(state);
+            }else{
+                p2p_businessMy_list.params.state="";
+            }
+            p2p_businessMy_page.init(p2p_businessMy_list.url,p2p_businessMy_list.params);
+        }
+    };
+    //定义分页对象
+    var p2p_businessMy_page = {
+        init:function(url,params){
+            DeelonService.get(url,params,function(data){
+                $("#p2p_businessMy_page").pagination(data.result.totalElements, {
+                    prev_text: "前一页",
+                    next_text: "后一页",
+                    num_edge_entries: 2,   //两侧显示的首尾分页的条目数
+                    num_display_entries: 5 ,   //连续分页主体部分显示的分页条目数
+                    callback: p2p_businessMy_list.pageselectCallback,
+                    items_per_page:5     //每页显示的条目数
+                });
+            })
+        }
+    };
+    //定义列表对象
+    var p2p_businessMy_list = {
+        url:"/dlbiz/p2p/projects",
+        params:{userId:user.data.id,pageNum:1,pageSize:5},
+        init:function(url,params){
+            DeelonService.get(p2p_businessMy_list.url,p2p_businessMy_list.params,function(data){
+                p2p_businessMy_list.render(data);
+                p2p_businessMy_list.renderOfMy();
+            })
+        },
+        render:function(data){
+            $("#my_temp").empty();
+            var temp = ["新申请","招标中","满标","还款中","已还完","流标"];
+            for(var i=0; i<data.result.content.length; i++){
+                data.result.content[i].stateName = temp[parseInt(data.result.content[i].state)-1];
+            }
+            Utils.bindList("#my_temp", "#my_tmpl", data.result.content,null,function(item,data){
+            	item.find("#loan").html(addThousandSign(data.loan));
+            });
+        },
+        renderOfMy:function(){
+	        DeelonService.get("/dlbiz/p2p/projects/myLoanAmountTotal/" + user.data.id, p2p_businessMy_list.params, function(myTotalData){
+	        	if(myTotalData.result.myLoanTotal){
+		            $("#totalElements").text(myTotalData.result.myLoanTotal);
+	        	}else{
+	        		$("#totalElements").text(0);	
+	        	}
+	        	if(myTotalData.result.myLoanAmountTotal){
+	        		$("#myLoanAmountTotal").text(addThousandSign(myTotalData.result.myLoanAmountTotal));
+	        	}else{
+	        		$("#myLoanAmountTotal").text("0.00");
+	        	}
+	        });
+        },
+        pageselectCallback:function(index,jq){
+            p2p_businessMy_list.params.pageNum = index +1;
+            p2p_businessMy_list.init(p2p_businessMy_list.url,p2p_businessMy_list.params);
+            return false;
+        }
+    };
+    $(function(){
+        //调用tab选项卡
+        myTab();
+        //分页初始化
+        p2p_businessMy_page.init(p2p_businessMy_list.url,p2p_businessMy_list.params);
+    });
+</script>

@@ -1,0 +1,134 @@
+<!--充值-->
+<div class="accout_main">
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding: 15px 0;">充值</div>
+
+        <div class="accout_recharge">
+            <div class="accout_recharge_fl">
+                <p class="recharge_pl"><label>账户资产：</label><span id="accountamount" class="recharge_m1"></span>元</p>
+                <p class="recharge_pl"><label>可用资产：</label><span id="amount" class="recharge_m2"></span>元</p>
+                <div class="accout_recharge_money">
+                    <input type="text" class="accout_recharge_input" maxlength="9" onKeyPress="if (event.keyCode!=46 && event.keyCode!=45 &&
+(event.keyCode<48 || event.keyCode>57)) event.returnValue=false"  placeholder="请输入金额，最少充10元"/>
+                    <p class="recharge_btn"><button id="rechargeBtn" class="accout_recharge_btn">充值</button></p>
+                </div>
+            </div>
+            <div class="accout_recharge_tip">
+                <div class="accout_recharge_msg">
+                    <h4>温馨提示：</h4>
+                    <p>  1．为了您的账户安全，请在充值前进行身份认证、手机绑定以及提现密码设置。</p>
+                    <p>  2．您的账户资金将通过第三方平台进行充值。</p>
+                    <p>  3．请注意您的银行卡充值限制，以免造成不便。</p>
+                    <p>  4．禁止洗钱，信用卡套现，虚假交易等行为，一经发现并确认，将终止该用户的使用。</p>
+                    <p>  5．如果充值金额没有及时到账，请联系客服 。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form name="form" method="post" id="bindformsumbit" action="" target="_blank" style="display: none;">
+    <textarea rows="23" cols="120"  name="req">$req</textarea>
+    <input type="hidden" id="sign" name="sign" value="$sign">
+</form>
+
+<form name="form" method="post" id="useraccount" action="" target="_blank" style="display: none;">
+    <textarea rows="23" cols="120"  name="req">$req</textarea>
+    <input type="hidden" id="sign2" name="sign" value="$sign">
+</form>
+
+<!--dialog S-->
+<div id="dialog" class="h-dialog" style="display: none;">
+    <div class="h-dialog_title">系统提示<a id="hide" class="h-dialog_close" title="关闭">关闭</a>
+    </div>
+    <div class="h-dialog_show">
+        <div class="accout_recharge_db">
+            <img style="margin-top: 20px;" src="images/account/icon-warn.png" alt=""/>
+            <p id="warnMsg" style="text-align: center; padding:20px  50px;"></p>
+        </div>
+    </div>
+    <div class="h-dialog_bottom" style="right:50%; margin-right:-38px; bottom:20px;">
+        <button id="h-dialog_btn1"  class="h-dialog_btn">确定</button>
+        <button id="h-dialog_btn2" class="h-dialog_btn" style="display:none;">立即开通</button>
+    </div>
+</div>
+<!--dialog E-->
+<!-- accout_main E-->
+<script type="text/javascript">
+    var dialogBox= {
+        init:function(){
+            this.render();
+        },
+        render:function(){
+            $.getJSON("/dlsys/portal/wealth/assetJournal/incomeAndExpenses/"+user.data.account.id,function(data){
+                $("#accountamount").html(addThousandSign(parseFloat(data.result.account.amount+data.result.account.freezeAmount)));
+                $("#amount").html(addThousandSign(parseFloat(data.result.account.amount)));
+            });
+        },
+        recharge:function(){
+            var url="/dlsys/portal/tstransaction/pc/recharge/yeepayts/"+user.data.account.id,amount=$(".accout_recharge_input").val();
+            var str=window.location.href,result='',returnrul='';
+            locationurl = str.split("returnUrl=");
+            result=locationurl[1];
+            if(result==''||result==undefined){
+                returnrul =DeelonService.site+'/desktop/html/p2p/index.html#page=pagesuccess?type=recharge';
+            }else{
+                returnrul=encodeURIComponent(result);
+            }
+            DeelonService.ajax("/dlsys/portal/tstransaction/"+user.data.account.id+"/"+user.data.payChannel.code,'get',{},function(data){
+                if (data.accountId == null || data.accountId == "") {
+                    showDialog("#dialog", { "bgcolor": "black", "delay": 50 },function(){
+                        $("#warnMsg").html('托管账户还没有开通。');
+                        $("#h-dialog_btn1").hide();
+                        $("#h-dialog_btn2").show();
+                    });
+                }else{
+                    var y_mony=Fcheck.c_mony(amount);
+                    if(y_mony){
+                        DeelonService.ajax(url,'post',{amount:amount,urlReturn:returnrul},function(data){
+                            $("#bindformsumbit").attr("action",data.result.url);
+                            Utils.bindData($("#bindformsumbit"),data.result);
+                            $("#bindformsumbit").submit();
+                            jAlert.info('充值已经跳到虚拟充值支付页面，如果请求不合法，会给你提示<br>相关信息。充值完成后，请点击确认按钮。',null,null,function(){
+                                location.hash="#page=frecord?bread=资金记录";
+                                //window.location.reload();
+                            });
+                        },function(xhr, status, err){});
+                    }
+                }
+            },function(xhr, status, err){});
+        },
+        formsubit:function(){
+//            var url="/dlsys/portal/tstransaction/mobile/register/yeepayts/?token=" + encodeURIComponent(user.token);
+//            DeelonService.ajax(url,'post',{userId:user.data.id,accountId:user.data.account.id,name:n,phone:p,idCard:c,returnUrl:path.site+'/mobile/html/members/index.html#page=bindinfo'},function(data){
+//                $("#bindformsumbit").attr("action",data.result.url);
+//                Utils.bindData($("#bindformsumbit"),data.result);
+//                $("#bindformsumbit").submit();
+//            },function(xhr, status, err){});
+        },
+        show:function(){
+            //showDialog("#dialog", { "bgcolor": "black", "delay": 50 });
+        },
+        hide:function(){
+            hideDialog("#dialog");
+            $("#warnMsg").html('');
+            $("#h-dialog_btn").html('');
+        }
+    };
+
+    dialogBox.init();
+
+    $("#rechargeBtn").on("click",function(){
+        dialogBox.recharge();
+    });
+
+    $("#hide,#h-dialog_btn1").click(function(){
+        dialogBox.hide();
+    });
+
+    $("#h-dialog_btn2").on("click",function(){
+        $("#maskDiv").remove();
+        location.hash="#page=bindinfo?bread=支付账户"
+    });
+
+</script>

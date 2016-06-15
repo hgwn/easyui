@@ -1,0 +1,113 @@
+<!--个人中心-->
+<!-- accout_main S-->
+<div class="accout_main">
+
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;">安全中心</div>
+        <ul class="accout_safe_ul">
+            <li class="accout_safe_list">
+                <img src="images/account/safe-so.png">
+                <div class="accout_safe_title">登录密码<!--<span class="accout_safe_name">未设置</span>--></div>
+                <p><span class="font_999">定期更换登录密码让您的账户更安全。</span></p>
+                <a class="accout_safe_action" href="#page=password?bread=修改登录密码">修改</a>
+            </li>
+            <li class="accout_safe_list">
+                <img src="images/account/safe-person.png">
+                <div id="realname" class="accout_safe_title">实名认证</div>
+                <p><span class="font_999">作为基础安全工具，验证账户信息，保障账户安全。</span></p>
+                <a id="certification" class="accout_safe_action" href="#page=verified?bread=实名认证"></a>
+            </li>
+            <li class="accout_safe_list">
+                <img src="images/account/safe-mobile.png">
+                <div id="phoneNum" class="accout_safe_title">手机绑定</div>
+                <p><span class="font_999">用于实时了解账户变动，享受DEELON P2P手机服务。</span></p>
+                <a id="phoneSet" class="accout_safe_action" href="javascript:;"></a>
+            </li>
+
+            <li class="accout_safe_list">
+                <img src="images/account/safe-info.png">
+                <div id="emailNum" class="accout_safe_title">邮箱绑定</div>
+                <p><span class="font_999">享受DEELON P2P邮箱服务，接收账单信息，保障账号安全。</span></p>
+                <a  id="emailSet"class="accout_safe_action" href="javascript:;"></a>
+            </li>
+
+            <li class="accout_safe_list">
+                <img src="images/account/safe-help.png">
+                <div id="safequestion" class="accout_safe_title">安全问题</div>
+                <p><span class="font_999">作为基础安全工具，验证账户信息，保障账户安全。</span></p>
+                <a id="safequestionBtn" class="accout_safe_action" href="#page=question?bread=安全问题"></a>
+            </li>
+
+            <li class="accout_safe_list">
+                <img src="images/account/safe-pass.png">
+                <div class="accout_safe_title">支付密码</div>
+                <p><span class="font_999">作为基础安全工具，验证账户信息，保障账户安全。</span></p>
+                <a class="accout_safe_action" href="#page=paying?bread=支付密码">修改</a>
+            </li>
+
+
+
+            <!--<li class="accout_safe_list">-->
+                <!--<img src="images/account/safe-pass.png">-->
+                <!--<div class="accout_safe_title">交易密码(易宝托管)</div>-->
+                <!--<p><span class="font_999">作为第三方支付转账密码，此密码比较重要，请妥善保管。</span></p>-->
+                <!--<a id="resetyeepayts" class="accout_safe_action" href="javascript:;">修改</a>-->
+            <!--</li>-->
+
+            <!--<li class="accout_safe_list">-->
+                <!--<img src="images/account/safe-mobile.png">-->
+                <!--<div id="yeepaytsphoneNum" class="accout_safe_title">交易手机(易宝托管)</div>-->
+                <!--<p><span class="font_999">作为第三方绑定手机，用于实时了解账户变动情况。</span></p>-->
+                <!--<a id="yeepaytsphoneSet" class="accout_safe_action" href="javascript:;">修改</a>-->
+            <!--</li>-->
+
+
+        </ul>
+    </div>
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+    var safeCenter={
+        init:function(){
+            this.render();
+        },
+        render:function(){
+            if(user.data.phone==null||user.data.phone==''){
+                $("#phoneNum").append('<span class="accout_safe_name">未绑定</span>');
+                $("#phoneSet").attr("href","#page=mobile?bread=手机绑定").html('绑定');
+            }else{
+                var userPhone = user.data.phone.substring(0, 3) + "****" + user.data.phone.substring(8, 11);
+                $("#phoneNum").append('<span class="accout_safe_num">'+userPhone+'</span>');
+                $("#phoneSet").attr("href","#page=resetmobile?bread=手机修改").html('修改');
+            }
+            if(user.data.email===null||user.data.email==''){
+                $("#emailNum").append('<span class="accout_safe_name">未绑定</span>');
+                $("#emailSet").attr("href","#page=email?bread=邮箱绑定").html('绑定');
+            }else{
+                var userEmail = user.data.email.substring(0, 1) + "****" + user.data.email.substring(3, user.data.email.length);
+                $("#emailNum").append('<span class="accout_safe_num">'+userEmail+'</span>');
+                $("#emailSet").attr("href","#page=resetemail?bread=邮箱修改").html('修改');
+            }
+            if(user.data.certificationStatus==0){
+                $("#realname").append('<span class="accout_safe_name">未认证</span>');
+                $("#certification").html("立即认证");
+            }else if(user.data.certificationStatus==2){
+                $("#realname").append('<span class="accout_safe_name">审核中</span>');
+                $("#certification").html("查看");
+            }else{
+                $("#realname").append('<span class="accout_safe_num">已认证</span>');
+                $("#certification").html("查看");
+            }
+            var url="/dlapi/uc/user/safe/"+user.data.name;
+            DeelonService.ajax(url,'get',{},function(data){
+                if(data.q1==undefined){
+                    $("#safequestion").append('<span class="accout_safe_name">未设置</span>');
+                    $("#safequestionBtn").html("设置");
+                }else{
+                    $("#safequestionBtn").html("修改");
+                }
+            },function(xhr, status, err){});
+        }
+    };
+    safeCenter.init();
+</script>

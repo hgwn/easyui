@@ -1,0 +1,38 @@
+<!--p2p_wrapper S-->
+<div class="p2p_wrapper">
+     <div class="p2p_pageresult_box">
+       <img src="images/tip_wx2.png">
+       <h2 id="tip"></h2>
+     </div>
+</div>
+<!--p2p_wrapper E-->
+
+<script type="text/javascript">
+  $(function(){
+    var type=Utils.getUrlParam("type");
+    if(1==type){
+        $("#tip").html("投资成功！");
+    }else if(2==type){
+        $("#tip").html("竞拍成功！");
+    }else if(3==type){
+        $("#tip").html("还款成功！");
+    }else if('recharge'==type){
+        $("#tip").html("充值成功！");
+    }else if('cash'==type){
+        $("#tip").html("提现成功！");
+    }else if("yeepayts"==type){
+        $("#tip").html("开户成功！");
+    }else if("pooltransfer"==type){
+        $("#tip").html("转账成功！");
+    }else if("yeepaytspasswrod"==type){
+        $("#tip").html("交易密码修改成功！");
+    }else if("yeepaytsphone"==type){
+        $("#tip").html("交易手机修改成功！");
+    }else if("bindcard"==type){
+        $("#tip").html("绑卡成功！");
+    }else{
+    	$("#tip").html("操作成功！");
+    }
+
+  });
+</script>

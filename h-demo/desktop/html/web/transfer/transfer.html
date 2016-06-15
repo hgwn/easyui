@@ -1,0 +1,18 @@
+<div class="p2p_wrapper">
+    <!--S -->
+    <div  id="transfer_item_box"></div>
+    <!--E -->
+
+    <!-- 项目列表 S-->
+    <div id="transfer_list_box"></div>
+    <!-- 项目列表 E-->
+
+</div>
+
+<script type="text/javascript" >
+    $(function() {
+        PorletLoader.loadPorlet("transfer_item_box", [{ link: "transfer/item.html"}]);
+        PorletLoader.loadPorlet("transfer_list_box", [{link: "transfer/list.html"}]);
+    })
+
+</script>

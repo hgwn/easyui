@@ -1,0 +1,195 @@
+<!--放款-->
+<div class="accout_main">
+    <form name="form" method="post" id="transferForm" action="" style="display: none;" >
+        <input type="hidden" id="urlReturn" name="urlReturn" value="">
+        <input type="hidden" id="bizOrderId" name="bizOrderId" value="">
+        <input type="hidden" id="notifyUrl" name="notifyUrl" value="">
+        <input type="hidden" id="appKey" name="appKey" value="">
+        <input type="hidden" id="repayFlag" name="repayFlag" value="">
+        <div id="item"></div>
+        <input type="hidden" id="extraType" name="extraType" value="">
+        <input type="hidden" id="remark" name="remark" value="">
+        <input type="hidden" id="expandOne" name="expandOne" value="">
+        <input type="hidden" id="expandTwo" name="expandTwo" value="">
+        <input type="hidden" id="expandThree" name="expandThree" value="">
+    </form>
+</div>
+
+<script type="text/javascript">
+
+    var token='';
+    var rechargeFun={
+        init:function(){
+            $("#loadheader").html('');
+            $("#footernav").html('');
+            this.render();
+//			var pageStatus=sessionStorage.pageStatus;//根据状态判断是否重新提交表单  0 提交  1不提交跳转returnURL
+//			if(pageStatus==0){
+//				sessionStorage.pageStatus = 1;
+//				this.render();
+//			}else{
+//				var returnURL=sessionStorage.returnURL;
+//				window.location.href=returnURL;
+//			}
+        },
+        render:function(){
+            var returnUrl=(getHash("urlReturn")==undefined ? '':getHash("urlReturn"));
+            var notifyUrl=(getHash("notifyUrl")==undefined ? '':getHash("notifyUrl"));
+
+            var transfer=(getHash("transfer")==undefined ? '':getHash("transfer"));
+            var transferjson = unescape(transfer);
+            var json = JSON.parse(transferjson);
+            var bizOrderId=(json.bizOrderId==undefined ? '':json.bizOrderId);
+            var appKey=(json.appKey==undefined ? '':json.appKey);
+
+            var transfers=json.transfers;
+            var amountTemp = 0;
+            for(var i = 0 ; i < transfers.length ; i++){
+                amountTemp += (transfers[i].amount * 1);
+                transfers[i].no = i;
+            }
+            var tpl= '<p>' +
+                    '<input type="hidden" id="payeeAccountId" name="transfers[$no].transactionNo" value="$transactionNo">' +
+                    '<input type="hidden" id="payeeAccountOwnerId" name="transfers[$no].transactionMode" value="$transactionMode"> ' +
+                    '</p>';
+            Utils.bindList("#item", $(tpl), transfers);
+
+            $("#urlReturn").val(returnUrl);
+            $("#bizOrderId").val(bizOrderId);
+            $("#notifyUrl").val(notifyUrl);
+            $("#appKey").val(appKey);
+
+            var options = {
+                target: '',
+                beforeSubmit:showStart,
+                success:showSuccess,
+                dataType:  'json'
+            };
+
+            $('#transferForm').submit(function(){
+                $(this).ajaxSubmit(options);
+                return false;
+            });
+            function showStart(){
+                return true;
+            }
+            function showSuccess(res){
+                if(res.urlReturn==''||res.urlReturn==null){
+                    window.location.href= DeelonService.site+'/desktop/html/p2p/index.html#page=accout?bread=我的账户';
+                }else{
+                    window.location.href=res.urlReturn;
+                }
+            }
+            $("#transferForm").attr("action","/dlsys/portal/tstransaction/transfer");
+
+            $("#transferForm").submit();
+
+        }
+    };
+    rechargeFun.init();
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<script type="text/javascript">-->
+
+    <!--var rechargeFun={-->
+        <!--init:function(){-->
+            <!--$("#loadheader").html('');-->
+            <!--$("#footernav").html('');-->
+            <!--this.render();-->
+<!--//			var pageStatus=sessionStorage.pageStatus;//根据状态判断是否重新提交表单  0 提交  1不提交跳转returnURL-->
+<!--//			if(pageStatus==0){-->
+<!--//				sessionStorage.pageStatus = 1;-->
+<!--//				this.render();-->
+<!--//			}else{-->
+<!--//				var returnURL=sessionStorage.returnURL;-->
+<!--//				window.location.href=returnURL;-->
+<!--//			}-->
+        <!--},-->
+        <!--render:function(){-->
+            <!--var returnUrl=(getHash("urlReturn")==undefined ? '':getHash("urlReturn"));-->
+            <!--var notifyUrl=(getHash("notifyUrl")==undefined ? '':getHash("notifyUrl"));-->
+
+            <!--var transfer=(getHash("transfer")==undefined ? '':getHash("transfer"));-->
+            <!--var transferjson = unescape(transfer);-->
+            <!--var json = JSON.parse(transferjson);-->
+            <!--var bizOrderId=(json.bizOrderId==undefined ? '':json.bizOrderId);-->
+            <!--var appKey=(json.appKey==undefined ? '':json.appKey);-->
+
+            <!--var transfers=json.transfers;-->
+            <!--var amountTemp = 0;-->
+            <!--for(var i = 0 ; i < transfers.length ; i++){-->
+                <!--amountTemp += (transfers[i].amount * 1);-->
+                <!--transfers[i].no = i;-->
+            <!--}-->
+            <!--var tpl= '<p>' +-->
+                    <!--'<input type="hidden" id="payeeAccountId" name="transfers[$no].transactionNo" value="$transactionNo">' +-->
+                    <!--'<input type="hidden" id="payeeAccountOwnerId" name="transfers[$no].transactionMode" value="$transactionMode"> ' +-->
+                    <!--'</p>';-->
+            <!--Utils.bindList("#item", $(tpl), transfers);-->
+
+            <!--$("#urlReturn").val(returnUrl);-->
+            <!--$("#bizOrderId").val(bizOrderId);-->
+            <!--$("#notifyUrl").val(notifyUrl);-->
+            <!--$("#appKey").val(appKey);-->
+
+            <!--var options = {-->
+                <!--target: '',-->
+                <!--beforeSubmit:showStart,-->
+                <!--success:showSuccess,-->
+                <!--dataType:  'json'-->
+            <!--};-->
+
+            <!--$('#transferForm').submit(function(){-->
+                <!--$(this).ajaxSubmit(options);-->
+                <!--return false;-->
+            <!--});-->
+            <!--function showStart(){-->
+                <!--return true;-->
+            <!--}-->
+            <!--function showSuccess(res){-->
+                <!--if(res.urlReturn==''||res.urlReturn==null){-->
+                    <!--window.location.href= DeelonService.site+'/desktop/html/p2p/index.html#page=accout?bread=我的账户';-->
+                <!--}else{-->
+                    <!--window.location.href=res.urlReturn;-->
+                <!--}-->
+            <!--}-->
+
+            <!--$("#transferForm").attr("action","/dlsys/portal/tstransaction/transfer");-->
+
+            <!--$("#transferForm").submit();-->
+
+        <!--},-->
+        <!--hide:function(){-->
+            <!--hideDialog("#dialog");-->
+            <!--$("#warnMsg").html('');-->
+        <!--}-->
+    <!--};-->
+    <!--rechargeFun.init();-->
+
+    <!--$("#hide,.h-dialog_btn1").click(function(){-->
+        <!--rechargeFun.hide();-->
+    <!--});-->
+
+<!--</script>-->

@@ -1,0 +1,59 @@
+<!--绑定邮箱-->
+<div class="accout_main">
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;">绑定邮箱</div>
+        <div class="accout_basic_box">
+            <form>
+                <ul class="accout_person_ul">
+                    <li><span class="accout_person_n">邮箱号码：</span>
+                        <input id="email" type="text"  class="accout_person_text" value="" /></li>
+                    <li><span class="accout_person_n">邮箱验证：</span>
+                        <input id="emailcode" type="text" style="width: 172px;" class="accout_person_text"/>
+                        <button type="button" class="yz_btn" id="getcode">获取验证码</button>
+                        <button type="button" class="yz_btn" id="againcode" style="display:none;">60秒后重发</button>
+                    </li>
+                    <li><span class="accout_person_n">验证码：</span>
+                        <input id="checkNum" type="text" style="width: 172px;" class="accout_person_text"/>
+                        <img id="codesrc" class="yz_btn" src="" alt="验证码"></li>
+                    <li class="accout_person_btn" style="margin-left: 105px;">
+                        <button id="submit" type="button" class="zc_btn">确定</button>
+                    </li>
+                </ul>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    factory.getCode("#codesrc");
+    $("#codesrc").on('click',function(){
+        factory.getCode(this);
+    });
+    $('#getcode').on('click',function(){
+        var $email=$.trim($("#email").val());
+        factory.getEmailCode($email);
+    });
+    $("#submit").on("click",function(){
+        var y_email=Fcheck.c_email($("#email").val());
+        if(y_email){
+            var y_emailcode=Fcheck.c_emailcode($("#emailcode").val());
+        }
+        if(y_email&&y_emailcode){
+            var y_code=Fcheck.c_code($("#checkNum").val());
+        }
+        if(y_email&&y_emailcode&&y_code){
+            var url = '/dlsys/portal/sdk/user/bindemail/' + $("#email").val() + '/' + $("#emailcode").val() + '/' + $("#checkNum").val();
+            DeelonService.ajax(url,'get',{},function(data){},function(xhr, status, err){
+                var text=xhr.responseText;
+                if(text == '绑定成功'){
+                    user.data.email = $("#email").val();
+                    user.save(user.data);
+                    jAlert.success("邮箱绑定成功！",null,null,function(){
+                        location.hash="#page=basic?bread=安全中心";
+                    });
+                }else{
+                    jAlert.warn(text);
+                }
+            });
+        }
+    });
+</script>

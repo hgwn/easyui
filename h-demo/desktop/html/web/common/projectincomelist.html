@@ -1,0 +1,142 @@
+﻿<!--计算器-->
+
+<!--p2p_wrapper S-->
+<div class="p2p_wrapper">
+     <div class="projectincomelist_box">
+        <div class="title">计算器</div>
+         <dl class="projectincomelist_dl">
+             <dt>收益计算器</dt>
+             <dd>使用收益计算器，帮您计算一下借款的总成本，包括每月需要偿还的金额及月利率等；同时，一份完整的还款计划时间表让您更好地了解还款的情况。P2P贷采用的是通用的"等额本息还款法"，即借款人每月以相等的金额偿还借款本息。也是银行房贷等采用的方法。</dd>
+         </dl>
+         <dl class="projectincomelist_dl">
+             <dt>借款设置</dt>
+             <dd>
+                 <p class="jsq_input">借款金额：
+                     <input type="text" class="p2p_accout_text" id="principal" name="principal" value="" onkeyup="value=value.replace(/[^\d]/ig,'')">
+                     元<span>年利率：</span>
+                     <input type="text" class="p2p_accout_text" id="rate" name="rate" value="" onkeyup="">
+                     % <span>借款期限：</span>
+                     <input type="text" class="p2p_accout_text" id="months" name="months" value="" onkeyup="value=value.replace(/[^\d]/ig,'')">
+                     <select name="deadlineType" id="deadlineType" onchange="checkPrepayWay(this.value)" class="p2p_accout_text" style="height: 30px;">
+                         <option value="DAY">天</option>
+                         <option value="MONTH">个月</option>
+                         <option value="YEAR">年</option>
+                     </select>
+
+                     <span>还款方式：</span>
+                     <select class="p2p_accout_text" name="prepayWay" id="prepayWay" style="width: 160px; height: 30px;">
+                         <option value="1">一次性还本付息</option><option value="2">按月付息,到期还本</option><option value="3">等额本息,每月还款</option><option value="4">等额本金,每月还款</option>
+                     </select>
+                 </p>
+                 <p class="projectincomelist_btn">
+                     <button type="button" class="zc_btn" id="incom" onclick="startcalculate()">开始计算</button>
+                     <button type="button" class="zc_btn" id="incom_reset" onclick="reset()">重置</button>
+                 </p>
+                 <div id="projectincomelist_List" class="projectincomelist_List" style="margin:15px;">
+                     <p class="incomep">月利率：1.00%   还款本息总额：12.05元 [借款交易记录采用银行的截断处理（舍去小于0.01的金额），实际还款总金额可能会少 ]</p>
+                     <table class="table-list" cellpadding="0" cellspacing="0" border="0">
+                         <thead>
+                         <tr>
+                             <th width="100">期数</th>
+                             <th width="100">还本息</th>
+                             <th width="100">还本金</th>
+                             <th width="100">还利息</th>
+                             <th width="100">本息余额</th>
+                         </tr>
+                         </thead>
+                         <tbody id="projectincome_tbody"></tbody>
+                         <tr id="projectincome_tr" style="display:none;">
+                             <td id="current">$current</td>
+                             <td id="pay">$pay</td>
+                             <td id="principal">$principal</td>
+                             <td id="interest">$interest</td>
+                             <td id="balance">0.00</td>
+                         </tr>
+                     </table>
+                 </div>
+             </dd>
+         </dl>
+     </div>
+</div>
+<!--p2p_wrapper E-->
+
+<script type="text/javascript">
+var projectincome_box ={
+	per:'',
+    perate:'',
+    total:'',
+    url:"/dlbiz/p2p/common/projectincomelist?",
+    params:{
+    	principal:$("#principal").val(),
+        months:$("#months").val(),
+        deadlineType:$("#deadlineType").val(),
+        rate:$("#rate").val(),
+        prepayWay:$("#prepayWay").val(),
+    },
+    init:function(url, params){
+        if($('#principal').val()&&$('#rate').val()&&$('#months').val()){
+            if($('#months').val().indexOf('.')>-1){
+            	jAlert.info("请输入整数月份计算收益值。");
+                return false;
+            }
+            DeelonService.get(projectincome_box.url, projectincome_box.params, function(data){
+                projectincome_box.render(data);
+            });
+        }else{
+        	jAlert.info("请输入完整的本金、年利率、整数月份计算收益值。");
+        }
+    },
+    render:function(data){
+        $("#projectincome_tbody").empty();
+        console.log(data);
+        var jsonobj=eval('('+data.msg+')');
+        projectincome_box.per = jsonobj.per;
+        projectincome_box.perate = jsonobj.perate;
+        projectincome_box.total = jsonobj.total;
+        var thisPrepayWay = $("#prepayWay").val();
+        Utils.bindList($("#projectincome_tbody"),$("#projectincome_tr"),data.result,null,function(item,data){
+        	if("1" == thisPrepayWay){
+        		item.find("#balance").html(addThousandSign(projectincome_box.total - data.pay));
+        	}else if("2" == thisPrepayWay){
+        		item.find("#balance").html(addThousandSign(projectincome_box.total - data.interest*data.current-data.principal));
+        	}else if("3" == thisPrepayWay){
+        		item.find("#balance").html(addThousandSign(projectincome_box.total-data.pay*data.current));
+            }else{
+            	item.find("#balance").html(addThousandSign(projectincome_box.total-data.payLess));
+            }
+        	//金额格式化
+        	item.find("#pay").html(addThousandSign(data.pay));
+        	item.find("#principal").html(addThousandSign(data.pay));
+        	item.find("#principal").html(addThousandSign(data.pay));
+        });
+    }
+};  
+$(function(){
+    checkTextFoNumByTextId("rate");
+    checkPrepayWay($("#deadlineType").val());
+})
+function startcalculate(){
+	projectincome_box.params={
+		principal:$("#principal").val(),
+	    months:$("#months").val(),
+	    deadlineType:$("#deadlineType").val(),
+	    rate:$("#rate").val(),
+	    prepayWay:$("#prepayWay").val()
+    };
+	projectincome_box.init(projectincome_box.url,projectincome_box.params);
+}
+function checkPrepayWay(val){
+    if(val=='DAY' || val=='YEAR'){//天标与年标只有一种还款方式：一次性还本付息
+        $("#prepayWay").empty(); 
+        $("#prepayWay").append("<option value='1'>一次性还本付息</option>");
+    }else{
+    	$("#prepayWay").empty();
+    	$("#prepayWay").append("<option value='1'>一次性还本付息</option><option value='2'>按月付息,到期还本</option><option value='3'>等额本息,每月还款</option><option value='4'>等额本金,每月还款</option>");
+    }
+}
+function reset(){
+    $('#principal').val("");
+    $('#months').val("");
+    $('#rate').val("");
+}
+</script>

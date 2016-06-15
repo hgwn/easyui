@@ -1,0 +1,123 @@
+<!-- accout_main S-->
+<div class="accout_main">
+   <!-- <div class="accout_headBar">
+        <a href="#" class="visit">我的账户</a><span>&gt;</span>
+        <a href="#">我的积分记录</a>
+    </div>-->
+
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;">我的积分记录</div>
+
+        <div class="pointlist_git clearfix">
+            <div class="pointlist_git_red">
+                <span class="pointlist_git_num">2400</span>
+                <span class="pointlist_git_tip">可用积分</span>
+            </div>
+            <div class="pointlist_git_blue">
+                <span class="pointlist_git_num">2400</span>
+                <span class="pointlist_git_tip">已用积分</span>
+            </div>
+            <a href="#" class="pointlist_git_link"><img src="images/account/temp/temp1.jpg"></a>
+        </div>
+
+        <div class="member_tab">
+            <ul class="member_tab_menu clearfix">
+                <li class="active">积分收入记录</li>
+                <li>积分消费记录</li>
+            </ul>
+            <div class="member_tab_content">
+                <div class="member_tab_list">
+                    <table class="table-list" style="margin-top: 20px;" cellpadding="0" cellspacing="0" border="0">
+                        <tbody>
+                        <tr>
+                            <th width="100">积分数量</th>
+                            <th width="100">积分类型</th>
+                            <th width="100">备注信息</th>
+                            <th width="100">获得时间</th>
+                        </tr>
+                        <tr>
+                            <td>30</td>
+                            <td>其它</td>
+                            <td>常规投资奖励</td>
+                            <td>2016-05-09</td>
+                        </tr>
+                        <tr>
+                            <td>30</td>
+                            <td>借款奖励</td>
+                            <td>还款成功</td>
+                            <td>2016-05-09</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <!-- 分页 S-->
+                    <div class="m_pager" style="margin: 10px auto;">
+                        <div class="paging">
+                            <a href="javascript:void(0);" class="firstpage">首页</a>
+                            <a href="javascript:void(0);" class="next">&lt;</a>
+                            <a href="javascript:void(0);" class="active">1</a>
+                            <a href="javascript:void(0);">2</a>
+                            <a href="javascript:void(0);">3</a>
+                            <a href="javascript:void(0);">4</a>
+                            <a href="javascript:void(0);">5</a>
+                            <a href="javascript:void(0);" class="next">&gt;</a>
+                            <a href="javascript:void(0);" class="lastpage">尾页</a>
+                        </div>
+                    </div>
+                    <!-- 分页 E-->
+                </div>
+
+                <div class="member_tab_list">
+                    <table class="table-list" style="margin-top: 20px;" cellpadding="0" cellspacing="0" border="0">
+                        <tbody>
+                        <tr>
+                            <th width="100">获得积分数量</th>
+                            <th width="100">获得时间</th>
+                            <th width="300">备注信息</th>
+                        </tr>
+                        <tr>
+                            <td>-130</td>
+                            <td>2016-05-09</td>
+                            <td>兑换礼品</td>
+                        </tr>
+                        <tr>
+                            <td>-130</td>
+                            <td>2016-05-09</td>
+                            <td>兑换礼品</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <!-- 分页 S-->
+                    <div class="m_pager" style="margin: 10px auto;">
+                        <div class="paging">
+                            <a href="javascript:void(0);" class="firstpage">首页</a>
+                            <a href="javascript:void(0);" class="next">&lt;</a>
+                            <a href="javascript:void(0);" class="active">1</a>
+                            <a href="javascript:void(0);">2</a>
+                            <a href="javascript:void(0);">3</a>
+                            <a href="javascript:void(0);">4</a>
+                            <a href="javascript:void(0);">5</a>
+                            <a href="javascript:void(0);" class="next">&gt;</a>
+                            <a href="javascript:void(0);" class="lastpage">尾页</a>
+                        </div>
+                    </div>
+                    <!-- 分页 E-->
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+    $(function(){
+        $(".member_tab_menu  li").click(function(){
+            $(this).addClass("active").siblings().removeClass("active");
+            var index=$(this).index();
+            $(".member_tab_content > div").eq(index).show().siblings().hide();
+        });
+    });
+</script>

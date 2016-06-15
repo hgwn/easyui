@@ -1,0 +1,41 @@
+<ul class="project_companyNew_box clearfix">
+    <li class="project_companyNew_list">
+
+    </li>
+
+    <li class="project_companyNew_list">
+
+    </li>
+
+    <li class="project_companyNew_list project_companyNew_last">
+
+    </li>
+</ul>
+
+<script>
+
+    $(function() {
+
+        $(".project_companyNew_list:eq(0)").load("../articles/minilist.html", function() {
+           
+             createMiniList(this,"公司新闻",encodeURIComponent("/内容管理/关于我们/公司新闻/"));
+
+        });
+        
+        
+        
+        $(".project_companyNew_list:eq(1)").load("../articles/minilist.html", function() {
+           
+             createMiniList(this,"行业动态",encodeURIComponent("/内容管理/关于我们/行业动态/"));
+
+        });
+        
+        
+        $(".project_companyNew_list:eq(2)").load("../articles/minilist.html", function() {
+         
+             createMiniList(this,"媒体报道",encodeURIComponent("/内容管理/关于我们/媒体报道/"));
+
+        });
+
+    });
+</script>

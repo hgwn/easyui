@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="css/common.css">
+        <link rel="stylesheet" href="css/website.css">
+        <link rel="stylesheet" href="../members/css/style.css">
+        <link rel="stylesheet" href="../../../commons/lib/pagination/pagination.css">
+        <title>关于我们</title>
+    </head>
+    <body>
+        <div id="header_box"></div>
+
+        <!--p2p_wrapper S-->
+        <div class="p2p_wrapper">
+            <div class="accout_box">
+                <!-- accout_content S-->
+                <div class="accout_content clearfix">
+                    <div id="sidebar_box"></div>
+
+                    <div id="content_box">
+                        <div id="breadcrumb_box" class="accout_headBar">
+
+                        </div>
+
+                        <div id="main_box">
+
+                        </div>
+
+                    </div>
+                </div>
+                <!-- accout_content E-->
+            </div>
+        </div>
+        <!--p2p_wrapper E-->
+
+        <div id="footer_box"></div>
+
+        <script type="text/javascript" src="../../../commons/lib/jquery-2.2.2.min.js"></script>
+        <script src="../../../commons/lib/jquery.cookie.js"></script>
+        <script src="../../../commons/lib/jquery.form.js"></script>
+        <script src="../../../commons/lib/pagination/jquery.pagination.js"></script>
+  
+        
+        <script src="../../../commons/utils.js"></script>
+        <script src="../../../commons/provider.js"></script>
+        <script type="text/javascript" src="../../../commons/router.js"></script>
+        <script type="text/javascript" src="../../js/mappings.js"></script>
+        <script type="text/javascript" src="js/indexCtr.js"></script>
+        <script type="text/javascript" src="js/base.js"></script>
+        <script type="text/javascript" src="../../../commons/zz-plugin.js"></script>
+        <script type="text/javascript" src="../../js/deelon-sdk.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function() {
+                Router.init(mappings);
+                Router.goto("article", "folders");
+                 $("#breadcrumb_box").breadcrumb();
+
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,141 @@
+<!--还垫付明细-->
+<!-- accout_main S-->
+<form id="hiddenForm" method="post" target="_blank">
+	<input type="hidden" name="repaymentId" id="repaymentId">
+	<input type="hidden" name="userId" id="userId">
+	<input type="hidden" name="type" id="type" value="1">
+</form>
+<div class="accout_main">
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;" id="temp_repayment_name">还垫付款</div>
+        <div class="accout_repDetail clearfix" id="advanceDetailDiv">
+            <div style="padding: 15px;">
+                <p  class="accout_repDetail_tip" id="projectName"></p>
+                <dl class="accout_repDetail_dl">
+                    <dt><span class="fs-m">应还金额：</span></dt>
+                    <dd> <span><strong class="font_red" id="pay"></strong></span> </dd>
+                </dl>
+                <dl class="accout_repDetail_dl">
+                    <dt><span class="fs-m">应付罚金：</span></dt>
+                    <dd> <span><strong  class="font_red" id="repaymentLate"></strong></span></dd>
+                </dl>
+                <dl class="accout_repDetail_dl">
+                    <dt><span class="fs-m">垫付状态：</span></dt>
+                    <dd><span id="advanceState">未垫付</span></dd>
+                </dl>
+                <dl class="accout_repDetail_dl">
+                    <dt><span class="fs-m">垫付金额：</span></dt>
+                    <dd><span id="advanceAmount"></span></dd>
+                </dl>
+                <dl class="accout_repDetail_dl">
+                    <dt><span class="fs-m">已还金额：</span></dt>
+                    <dd> <span id="realPay"></span> </dd>
+                </dl>
+                <dl class="accout_repDetail_dl">
+                    <dt><button type="button" class="zc_btn" onclick="advanceDetail_list.submit();">立即还款</button></dt>
+                </dl>
+            </div>
+        </div>
+        <table class="table-list" cellpadding="0" cellspacing="0" border="0">
+            <thead>
+            <tr>
+                <th width="20"></th>
+                <th width="100">收款人</th>
+                <th width="100">应还金额</th>
+                <th width="100">还款状态</th>
+            </tr>
+            </thead>
+            <tbody id="advanceDetail_temp">
+            </tbody>
+            <tr id="advanceDetail_list" style="display:none;">
+                <td><input type="checkbox" checked="checked" disabled="disabled"></td>
+                <td>$recieverName</td>
+                <td id="repayAmout"></td>
+                <td id="repayState"></td>
+            </tr>
+        </table>
+        <!-- 分页 S-->
+        <div id="advanceDetail_list_page" class="pagination"><!-- 这里显示分页 --></div>
+        <!-- 分页 E-->
+    </div>
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+//定义列表对象
+	var advanceDetail_list = {
+	    url:"/dlbiz/p2p/projectRepayment/repaymentDetailPage",
+	    params:{repaymentId:Utils.getUrlParam("repaymentId")},
+	    init:function(url,params){
+	    	$("#advanceDetail_temp").empty();
+	        DeelonService.get(advanceDetail_list.url,advanceDetail_list.params,function(data){
+	        	advanceDetail_list.render(data);
+	        })
+	    },
+	    render:function(data){
+
+	    	$("#projectName").html(data.result.projectName);
+	    	$("#pay").html(addThousandSign(data.result.repayment.pay));
+	    	if(data.result.repayment.realPay==null){
+	    		data.result.repayment.realPay = 0;
+	    	}
+	    	$("#realPay").html(addThousandSign(data.result.repayment.realPay));
+	    	$("#repaymentLate").html(addThousandSign(data.result.repayment.repaymentLate));
+	    	$("#advanceAmount").html(addThousandSign(data.result.repayment.advanceAmount));
+	    	
+	    	if(data.result.repayment.advanceState==1){
+	    		$("#advanceAmount").html("已垫付 ");
+	    	}else if(data.result.repayment.advanceState==2){
+	    		$("#advanceAmount").html("垫付中");
+	    		
+	    	}
+	    	
+	    	var isPayOff = data.result.repayment.isPayOff;
+	        Utils.bindList("#advanceDetail_temp", "#advanceDetail_list", data.result.advanceDetails,null,function(item,data){
+	        	if(isPayOff==1){
+	        		item.find("#repayState").html("已还清");
+	        	}else{
+	        		item.find("#repayState").html("未还款");
+	        	}
+	        	item.find("#repayAmout").html(addThousandSign(data.repayAmount)+"("+data.payReason+")");
+	        });
+	        
+	        if(data.result.repayment.payLess>0){
+		        $('#repaymentId').val(data.result.repayment.repaymentId);
+	            $('#userId').val(user.data.id);
+	        }else{
+	        	$(".zc_btn").remove();
+	        }
+	    },
+	    pageselectCallback:function(index,jq){
+	    	advanceDetail_list.params.page = index +1;
+	    	advanceDetail_list.init(advanceDetail_list.url,advanceDetail_list.params);
+	        return false;
+	    },submit:function(){
+	    	jAlert.info('已经跳到还款支付页面，如果请求不合法，会给你提示相关信息。<br>支付完成后，请点击确认按钮。',null,null,function(){
+	    		advanceDetail_list.pageselectCallback(0);
+    		});
+            $('#hiddenForm').attr("action",'/dlbiz/p2p/projectRepayment/payAdvance').submit();
+	    }
+	};
+	
+  //定义分页对象
+  var advanceDetail_list_page = {
+      init:function(url,params){
+          DeelonService.get(url,params,function(data){
+              $("#advanceDetail_list_page").pagination(data.result.totalElements, {
+                  prev_text: "前一页",
+                  next_text: "后一页",
+                  num_edge_entries: 2,   //两侧显示的首尾分页的条目数
+                  num_display_entries: 5 ,   //连续分页主体部分显示的分页条目数
+                  callback: advanceDetail_list.pageselectCallback,
+                  items_per_page:5     //每页显示的条目数
+              });
+          })
+      }
+  };
+	//初始化
+	$(function(){
+		//分页初始化
+		advanceDetail_list_page.init(advanceDetail_list.url,advanceDetail_list.params);
+	});
+</script>

@@ -1,0 +1,97 @@
+<!--设置密码-->
+<div class="accout_main">
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;">实名认证</div>
+        <div class="accout_basic_box">
+            <form>
+                <ul class="accout_person_ul" id="setOne">
+                    <li><span class="accout_person_n">用户名：</span>
+                        <p id="username" class="accout_person_text" style="border:0;"></p>
+                    </li>
+                    <li><span class="accout_person_n">真实姓名：</span>
+                        <input id="realname" type="text"  class="accout_person_text" value="" />
+                    </li>
+                    <li><span class="accout_person_n">身份证号：</span>
+                        <input id="cardNum" type="text"  class="accout_person_text" value="" />
+                    </li>
+                    <li id="submit-box" class="accout_person_btn" style="margin-left: 105px;">
+
+                    </li>
+                </ul>
+            </form>
+        </div>
+        <div class="accout_cash_tip" style="top: 57px;">
+            <div class="accout_cashe_msg">
+                <h4>温馨提示：</h4>
+                <p>亲爱的用户，为节约您的宝贵时间，请认真准备填以下信息，否则评估会不准确，对您借款会有影响。</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var verified={
+        init:function(){
+            this.render();
+        },
+        render:function(){
+            $("#username").html(user.data.name);
+            var url='/dlsys/portal/sdk/user/info/'+user.data.id+'/personal';
+            DeelonService.ajax(url,'get',{},function(res){
+                if(res.certificationStatus==1){
+                    $("#realname").val(res.realName).attr("disabled","disabled");
+                    var idCard=res.idCard.substring(0, 4) + "** **** ***" + res.idCard.substring(res.idCard.length-3,res.idCard.length);
+                    $("#cardNum").val(idCard).attr("disabled","disabled");
+                    $("#submit-box").html('<button id="submit" type="button" class="zc_btn" style="background:#bbb; border:1px solid #bbb;">审核通过</button>');
+                }else if(res.certificationStatus==2){
+                    $("#realname").val(res.realName).attr("disabled","disabled");
+                    var idCard=res.idCard.substring(0, 4) + "** **** ***" + res.idCard.substring(res.idCard.length-3,res.idCard.length);
+                    $("#cardNum").val(idCard).attr("disabled","disabled");
+                    $("#submit-box").html('<button id="submit" type="button" class="zc_btn" style="background:#bbb; border:1px solid #bbb;">审核中</button>');
+                }else if(res.certificationStatus==3){
+                    $("#realname").val(res.realName).attr("disabled","disabled");
+                    var idCard=res.idCard.substring(0, 4) + "** **** ***" + res.idCard.substring(res.idCard.length-3,res.idCard.length);
+                    $("#cardNum").val(idCard).attr("disabled","disabled");
+                    $("#submit-box").html('<button id="resetsubmit" type="button" class="zc_btn" style="float:left;">重新申请</button><p style="color:#ff0000;float:left; margin-top:3px;">(审核不通过)</p>');
+                }else{
+                    $("#realname").val('');
+                    $("#cardNum").val('');
+                    $("#submit-box").html('<button id="submit" type="button" class="zc_btn" onclick="verified.versubmit();">申请认证</button>');
+                }
+
+                $("#resetsubmit").on("click",function(){
+                    $("#realname").val('').removeAttr("disabled");
+                    $("#cardNum").val('').removeAttr("disabled");
+                    $("#submit-box").html('<button id="submit" type="button" class="zc_btn" onclick="verified.versubmit();">申请认证</button>');
+                });
+
+
+            },function(xhr, status, err){});
+        },
+        versubmit:function(){
+
+            var jsonResult = {
+                "relname" : $("#realname").val(),
+                "idcard" : $("#cardNum").val()
+            };
+
+            var y_rname=Fcheck.c_realname(jsonResult.relname);
+            if(y_rname){ var y_cardid=Fcheck.c_icard(jsonResult.idcard)}
+            if(y_rname&&y_cardid){
+                var url='/dlsys/portal/sdk/user/info/'+user.data.id+'/personal?token='+encodeURIComponent(user.data.token);
+                DeelonService.ajax(url,'post',{realName:jsonResult.relname,idCard:jsonResult.idcard},function(data){
+                    user.data.certificationStatus = 2;
+                    user.save(user.data);
+                    jAlert.success("实名认证提交成功！",null,null,function(){
+                        location.hash="#page=basic?bread=安全中心";
+                    });
+                },function(xhr, status, err){});
+
+            }
+        }
+
+    };
+
+    verified.init();
+
+
+</script>

@@ -1,0 +1,110 @@
+<!-- 项目列表 S-->
+<ul id="getTenderProjects_box" class="getTenderProjects_box clearfix">
+</ul>
+<li id="getTenderProjects_list" class="getTenderProjects_list clearfix" style="display: none;">
+    <div class="fl">
+        <div class="project_invest_header">
+            <span class="project_invest_title font_555">$tprojectName</span>
+            <span id="auctionWay" class="icon-identity">$auctionWay</span>
+        </div>
+        <ul class="clearfix getTenderProjects_ul">
+            <li><div><span id="auctionHighestPrice" class="getTenderProjects_rate">$auctionHighestPrice</span><span id="unit">元</span></div><span id="auctionHighestPriceTxt">当前最高出价</span></li>
+            <li id="rateLi"><p><span class="getTenderProjects_num">$rate</span><span class="font_555">%</span></p>年化收益</li>
+            <li><p><span id="claimsSum" class="getTenderProjects_num">$claimsSum</span> 元</p>债权总额</li>
+            <li><p><span id="upsetPrice" class="getTenderProjects_num">$upsetPrice</span> 元</p>竞拍底价</li>
+        </ul>
+    </div>
+    <div class="fr">
+        <p class="getTenderProjects_menoy">剩余时间：<span id="residualTime" class="font_555">$remainTime</span></p>
+        <div class="transfer_btn"><button class="p2p_btn_s" onclick="transfer_list.toClick($transferId,$projectId);">立即竞标</button></div>
+    </div>
+</li>
+<!-- 项目列表 E-->
+
+<!-- 分页 S-->
+<div id="Pagination" class="pagination"><!-- 这里显示分页 --></div>
+<!-- 分页 E-->
+
+
+<script type="text/javascript">
+	//筛选条件
+	var queryformConditions = "";
+	var desktop_p2p_getTransfers_queryform ={
+	    init:function(params){
+	        queryformConditions = params;
+	        pagination.init(transfer_list.url, params);
+	    }
+    };
+	//分页对象
+	var pagination ={
+	    init:function(url,params){
+	        DeelonService.get(url,params,function(data){
+	           $("#Pagination").pagination(data.result.totalElements, {
+	               prev_text: "前一页",
+	               next_text: "后一页",
+	               num_edge_entries: 2,
+	               num_display_entries: 4,
+	               callback: transfer_list.pageselectCallback,
+	               items_per_page:5
+	           });
+	        });
+	    }
+	};
+
+    var transfer_list ={
+    	url:"/dlbiz/p2p/transfer/transfers?1=1&tprojectTransferState=0",
+    	params:{},
+        init:function(url, params){
+            DeelonService.get(url, params, function(data){
+            	transfer_list.render(data);
+            });
+        },
+        render:function(data){
+        	$("#getTenderProjects_box").empty();
+        	Utils.bindList($("#getTenderProjects_box"),$("#getTenderProjects_list"),data.result.content,null,function(item,data){
+                if(data.auctionWay == "1"){
+                    item.find("#auctionWay").text("明拍");
+                    item.find("#auctionHighestPrice").text(formatCurrency(data.auctionHighestPrice));
+                }else{
+                	item.find("#auctionWay").attr("class","icon-hr")
+                    item.find("#auctionWay").text("暗拍");
+                    item.find("#auctionHighestPrice").html(data.rate);
+                    item.find("#auctionHighestPriceTxt").html("年化收益");
+                    item.find("#unit").html("%");
+                    item.find("#rateLi").hide();
+                }
+                //剩余时间
+                //屏蔽从客户端读取，应读取服务器时间
+                //var now = new Date(),endDate = new Date(Utils.toCommonDateStr(data.closeDate.replace(/-/g, '/'))),diff = dateDiff(endDate, now);
+                // var residualTime = (diff.date === void 0 ? '0' : diff.date) + '天' + (diff.hour === void 0 ? '0' : diff.hour) + '小时' + (diff.minute === void 0 ? '0' : diff.minute) + '分';
+                //if(diff.date === void 0 && diff.hour === void 0 && diff.minute === void 0 && data.state==2 && data.complete != 100){
+                //    item.find(".transfer_btn").html('<button class="p2p_btn_s p2p_btn_disable">已经结束</button>');
+                //}
+                // item.find("#residualTime").text(residualTime);
+                
+                
+                //金额格式化
+                item.find("#claimsSum").text(formatCurrency(data.claimsSum));
+                item.find("#upsetPrice").text(formatCurrency(data.upsetPrice));
+            });
+        },
+        pageselectCallback:function(index, jq){
+        	$('body,html').animate({ scrollTop: 0 }, 200);
+            var pageNum = index+1;
+            transfer_list.init(transfer_list.url, "&pageNum=" + pageNum + queryformConditions);
+            return false;
+        }, 
+        toClick:function(transferId,projectId){
+        	//检查是否登录
+        	if(!user.islogin()){
+	            Utils.gotoPage("index.html#page=login");
+	        }else{
+	           location.href="#page=transferAuction?transferId="+transferId+"&projectId="+projectId+"&userId="+user.data.id;
+	        }
+        }
+    };
+    $(function(){
+        //初始化第一页五条数据
+        pagination.init(transfer_list.url, "&pageNum=1&pageSize=5");
+    });
+</script>

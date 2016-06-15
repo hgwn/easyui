@@ -1,0 +1,329 @@
+<div class="p2p_wrapper">
+    <!-- 项目列表 S-->
+    <ul id="productsLoanList_box" class="productsLoanList_box clearfix">
+        <li id="productsLoanList_list" class="productsLoanList_list clearfix" style="display: none;">
+            <div class="productsLoanList_l">
+                <a href="#"><img id="imgId" src=""></a>
+            </div>
+            <div class="productsLoanList_m">
+                <h3>$name</h3>
+                <p class="font_999">适合人群：$recommend</p>
+                <ul class="clearfix">
+                    <li style="width: 50%;">
+                        <span class="font_red">$amountMin - $amountMax</span>元
+                        <p>借款额度</p>
+                    </li>
+                    <li style="width: 30%;">
+                        <span>$rateMin% -$rateMax%</span>
+                        <p>借款利率</p>
+                    </li>
+                    <li style="width: 20%;">
+                        <span id="repayWay" style="font-size: 14px; line-height: 28px;">$repayWay</span>
+                        <p>还款方式</p>
+                    </li>
+                </ul>
+            </div>
+            <div class="productsLoanList_r">
+                <div class="getTenderProjects_btn"><p href="#" id="onclickOne" class="p2p_btn_m">立即申请</p></div>
+                <p class="ta-center"><a id="onclickTwo">查看该产品的详细说明</a></p>
+            </div>
+        </li>
+    </ul>
+    <div class="ta-center" style="margin: 30px  auto 40px;"><p class="p2p_btn_b" onclick="applyCredit_form_dialog.toClick();" >额度申请</p></div>
+    <!-- 项目列表 E-->
+</div>
+
+
+<!--dialog S-->
+<div id="productsLoanList_dialog" class="h-dialog" style="display: none; width: 960px; height: 400px;">
+    <div class="h-dialog_title">
+        借款条件进度
+        <a id="hide1" class="h-dialog_close" title="关闭">关闭</a>
+    </div>
+    <div class="h-dialog_show">
+        <div class="accout_credit_db">
+            <p style="padding-bottom: 15px; margin-top: -11px;font-size: 15px;">说明：<span class="font_green" style="font-weight:bold;font-size:20px">绿色</span> 表示已完成，<span class="font_red" style="font-weight:bold;font-size:20px">红色</span> 表示未完成且需要完成才能申请，<span class="font_gray" style="font-weight:bold;font-size:20px">灰色</span> 表示未完成可申请但完成才能通过借款审核</p>
+            <table class="table-list" cellpadding="0" cellspacing="0" border="0">
+                <thead>
+                <tr>
+                    <th width="20">&nbsp;</th>
+                    <th width="100">资料名称</th>
+                    <th width="100">是否完成</th>
+                    <th width="100">状态</th>
+                    <th width="100">操作</th>
+                </tr>
+                </thead>
+                <tbody id="condition_temp">
+	                
+                </tbody>
+                <tr id="condition_list" hidden="true" style="font-weight:bold;">
+	                <td><span>*</span></td>
+	                <td><span>$condName</span></td>
+	                <td><span>$isMeetName</span></td>
+	                <td><span>$status</span></td>
+	                <td><a href="#" class="font_blue">前往</a></td>
+                </tr>
+            </table>
+            <!-- 分页 S-->
+            <div id="productsLoanList_dialogBox_page" class="pagination"><!-- 这里显示分页 --></div>
+            <!-- 分页 E-->
+        </div>
+    </div>
+</div>
+<!--dialog E-->
+
+<!--applyCredit_form_dialog S-->
+<div id="applyCredit_form_dialog" class="h-dialog" style="display: none; width: 420px; height: 320px;">
+    <div class="h-dialog_title">
+        额度申请
+        <a id="hide2" class="h-dialog_close" title="关闭">关闭</a>
+    </div>
+    <div class="h-dialog_show">
+        <div class="accout_credit_db">
+            <form id="applyCredit_form" class="productApply_form">
+                <table class="table-list" cellpadding="0" cellspacing="0" border="0">
+                    <tbody>
+                        <div class="productApply_row">
+                            <label class="name">申请额度：</label>
+                            <input id="applyInMax" name="applyInMax" type="text" class="productApply_text" style="width: 180px;" maxlength="20" onkeyup="this.value=this.value.replace(/\D/g,'')"/>元
+                        </div>
+                        <span class="regist_tip"  name="e-applyInMax"></span>
+                        <span id="applyInMax_div"></span>
+                        <div class="productApply_row">
+                            <label class="name">已有额度：</label>
+                            <span>$limitAmount(最大可借款金额)</span></br>
+                            <label class="name"></label>
+                            <span>$limitAmountCanDo(当前可用)</span>
+                        </div>
+                        <div class="productApply_row" style="text-align: center;">
+                            <button id="p2p_btn_m2" class="p2p_btn_m" >立即申请</button>
+                        </div>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+<!--applyCredit_form_dialog E-->
+
+<script type="text/javascript">
+
+    //定义弹窗dialog 对象
+    var productsLoanList_dialogBox= {
+    	url:"/dlbiz/p2p/loanCondition/all",
+ 		params:{page:1,pageSize:5,isNeed:1},
+ 		init:function(url,params){
+ 			productsLoanList_dialogBox.params.userId = user.data.id;
+ 			$("#condition_temp").empty();
+	        DeelonService.get(productsLoanList_dialogBox.url,productsLoanList_dialogBox.params,function(data){
+	        	productsLoanList_dialogBox.render(data);
+	        });
+	        $("#hide1").click(function(){
+                productsLoanList_dialogBox.hide();
+            });
+	    },
+        render:function(data){
+	    	var conditionList = new Array(); 
+	    	//完成情况集合
+	    	for(var i=0; i<data.result.content.length; i++){
+	        	var condition = data.result.content[i];
+	        	var judgeResultList = condition.judgeResultList;
+	           	for(var j=0; j<judgeResultList.length; j++){
+	           		var conditionData = {};
+	           		var judgeResult = condition.judgeResultList[j];
+		        	if(judgeResult.condName==null){
+		        		conditionData.condName = condition.name;
+		        	}else{
+		        		conditionData.condName = condition.name + "-" + judgeResult.condName;
+		        	}
+		        	conditionData.isMeetName = judgeResult.isMeet==true?"是":"否";
+		        	conditionData.isMeet = judgeResult.isMeet;
+		        	conditionData.status = judgeResult.status;
+		        	conditionData.infoUrl = condition.infoUrl;
+		        	conditionData.type = condition.type;
+		        	conditionList.push(conditionData);
+	           	}
+	        }
+	        Utils.bindList("#condition_temp", "#condition_list", conditionList,null,function(item,data){
+            	var type = data.type;
+            	var isMeet = data.isMeet;
+            	if(type==1){//前置条件
+            		item.addClass("font_red"); 
+            	}else if(type==2){//后置条件
+            		item.addClass("font_gray"); 
+            	}
+            	if(!isMeet){
+            		item.find(".font_blue").attr('href','/dlbiz/p2p'+data.infoUrl);
+            	}else{
+            		item.find(".font_blue").html('完成');
+            		item.addClass("font_green"); 
+            	}
+	        });	
+	        productsLoanList_dialogBox.show();
+        },
+        show:function(){
+            showDialog("#productsLoanList_dialog", { "bgcolor": "black", "delay": 200 });
+        },
+        hide:function(){
+            hideDialog("#productsLoanList_dialog");
+        },
+        pageselectCallback:function(index,jq){
+        	productsLoanList_dialogBox.params.page = index +1;
+        	productsLoanList_dialogBox.init(productsLoanList_dialogBox.url,productsLoanList_dialogBox.params);
+	        return false;
+	    }
+    };
+    
+    var applyCredit_form_dialog= {
+        init:function(){
+            $("#hide2").click(function(){
+            	applyCredit_form_dialog.hide();
+            });
+        },
+        render:function(){
+        	if(!user.islogin()){
+                Utils.gotoPage("index.html#page=login");
+                window.location.reload();
+            }else{
+            	var userId = user.data.id;
+	        	DeelonService.get("/dlbiz/p2p/user/"+userId+"?isApply=1", null, function(data){
+	        		if(data.code == 0){
+	        			applyCredit_form_dialog.show();
+	        			var limitAmount = data.result.limitAmount;
+	        			data.result.limitAmount = addThousandSign(data.result.limitAmount);
+                        data.result.limitAmountCanDo = addThousandSign(data.result.limitAmountCanDo);
+	        			Utils.bindData($("#applyCredit_form"),data.result);
+	                    $("#p2p_btn_m2").click(function(){
+	                        $("#applyCredit_form").validate({
+	                            submitHandler: function(form){   //表单提交句柄,为一回调函数，带一个参数：form
+	                                var params = {};
+	                                var url = "/dlbiz/p2p/user/"+userId+"/credit";
+	                                Utils.bindProps("#applyCredit_form",params,false);
+	                                var applyInMax = params.applyInMax;
+                                    if(parseFloat(applyInMax) <= parseFloat(limitAmount)){
+                                        $("#applyInMax_div").html("<font color='red' id='red_applyInMax'>申请额度必须高于已有额度！</font>");
+                                        $("#red_applyInMax").fadeOut(5000);
+                                        $("#applyInMax").focus();
+                                        return false;
+                                    }
+	                                DeelonService.post("/dlbiz/p2p/user/"+userId+"/credit", params, function(data){
+	                                	if(data.code==0){
+                                            jAlert.success("额度申请成功");
+                                        }else{
+                                            jAlert.error("额度申请失败");
+                                        }
+	                                    applyCredit_form_dialog.hide();
+	                                });
+	                            },
+	                            rules : {
+	                                applyInMax : {
+	                                    required : true
+	                                }
+	                            },
+	                            messages : {
+	                                applyInMax : {
+	                                    required : "额度值必填！"
+	                                }
+	                            }
+	                        });
+	                    });
+	        		}else{
+	        			jAlert.error(data.msg);
+	        		}
+	        		
+	            });
+            }
+        },
+        show:function(){
+            showDialog("#applyCredit_form_dialog", { "bgcolor": "black", "delay": 200 });
+        },
+        hide:function(){
+            hideDialog("#applyCredit_form_dialog");
+        },
+        toClick:function(productsLoanId){
+        	applyCredit_form_dialog.render();
+        }
+   
+    };
+
+    var productsLoan_list ={
+        init:function(){
+            DeelonService.get("/dlbiz/p2p/products", null, function(data){
+                Utils.bindList($("#productsLoanList_box"),$("#productsLoanList_list"),data.result.content,null,function(item,data){
+                	//金额格式化
+                    item.find(".font_red").text(formatCurrency(data.amountMin) + "~" + formatCurrency(data.amountMax));
+                    var repayWay = Number(data.repayWay);
+                    item.find("#onclickOne").attr('onclick','productsLoan_list.toClickOne(' + data.productsLoanId + ',' + data.repayWay + ');');
+                    item.find("#onclickTwo").attr('onclick','productsLoan_list.toClickTwo(' + data.productsLoanId + ');');
+                    if(data.photoFileId){
+                    	item.find("#imgId").attr('src','/dlbiz/p2p/resources/previewFile/' + data.photoFileId);
+                    }else{
+                    	item.find("#imgId").attr('src','images/temp/jk-2.jpg'); 
+                    }
+                    if(repayWay == 1){
+                    	item.find("#repayWay").text("一次性还本付息");
+                    }else if (repayWay == 2){
+                    	item.find("#repayWay").text("按月付息，到期还本");
+                    }else if (repayWay == 3){
+                    	item.find("#repayWay").text("等额本息，每月还款");
+                    }else if (repayWay == 4){
+                    	item.find("#repayWay").text("等额本金，每月还款");
+                    }
+                });
+            });
+        },
+        render:function(){},
+        toClickOne:function(productsLoanId, repayWay){
+        	if(!user.islogin()){
+                jAlert.info("请先登录",null,null,function(){
+                    Utils.gotoPage("index.html#page=login?urlReturn="+window.location.href);
+                    window.location.reload();
+                })
+            }else{
+            	//add by yhj  借款条件校验满足是否满足 不满足则显示列表
+            	var params = {userId:user.data.id,productId:productsLoanId};
+	        	DeelonService.get("/dlbiz/p2p/project/checkCanApplyLoan", params, function(data){
+	        		if(data.code==-1){
+	        			jAlert.error(data.msg);
+	        			return;
+	        		}
+	        		if(!data.result){
+	        			productsLoanList_dialogBox.params.productId = productsLoanId;
+	        			productsLoanList_dialogBox_page.init(productsLoanList_dialogBox.url,productsLoanList_dialogBox.params);
+	        			return;
+	        		}
+	        		location.href="#page=productApply?productsLoanId="+productsLoanId+"&repayWay="+repayWay;
+	            });
+            }
+        },
+        toClickTwo:function(productsLoanId){
+        	location.href="#page=productDetail?productsLoanId="+productsLoanId;
+        }
+    };
+
+    
+    //定义分页对象
+    var productsLoanList_dialogBox_page = {
+        init:function(url,params){
+            DeelonService.get(url,params,function(data){
+                $("#productsLoanList_dialogBox_page").pagination(data.result.totalElements, {
+                    prev_text: "前一页",
+                    next_text: "后一页",
+                    num_edge_entries: 2,   //两侧显示的首尾的条目数
+                    num_display_entries: 5 ,   //连续分页主体部分显示的分页条目数
+                    callback: productsLoanList_dialogBox.pageselectCallback,
+                    items_per_page:5     //每页显示的条目数
+                });
+            })
+        }
+    };
+    
+    
+    $(function(){
+        productsLoan_list.init();
+        //弹窗初始化
+//        productsLoanList_dialogBox.init();
+        applyCredit_form_dialog.init();
+        setErrorLable();
+    });
+</script>

@@ -1,0 +1,104 @@
+<!-- accout_sideBar S-->
+<div class="accout_sideBar">
+    <div class="accout_sideBar_head"><img src="images/temp/login_weixin.jpg" alt="头像"/><p id="userName">用户名</p></div>
+    <div class="accout_sideBar_IC">
+        <a id="bindPhoneLink" href="javascript:;" title=""><img src="images/account/ac1.png" alt="手机验证"/></a>
+        <a href="#page=verified?bread=实名认证" title="实名认证"><img src="images/account/ac2.png" alt="实名认证"/></a>
+        <!-- <a href="#" title="银行卡"><img src="images/account/ac3.png" alt="银行卡"/></a> -->
+        <div class="accout_sideBar_xs">
+            安全<span class="bar">
+                 <span id="bar-inner" class="bar-inner" title="" style="width:0%"></span>
+            </span><i id="score"></i>
+        </div>
+    </div>
+    <div class="accout_sideBar_nav" id="sidebarNav">
+        <ul class="dropdown"><li class="main m_home">个人首页</li></ul>
+
+        <ul class="dropdown" id="sidenavTxl" style="display: none;">
+            <li class="main">$groupname<span class="new-icon"></span></li>
+            <li class="dropdown_list"></li>
+        </ul>
+
+    </div>
+</div>
+<!-- accout_sideBar E-->
+
+<script type="text/javascript">
+    var sidebar = {
+        url:"data/sidebar.json?_"+new Date().getTime(),
+        init:function(){
+            sidebar.safe();
+            if(user.data.phone!=null){
+                $("#bindPhoneLink").attr({"title":"手机修改","href":"#page=resetmobile?bread=手机修改"});
+            }else{
+                $("#bindPhoneLink").attr({"title":"绑定手机","href":"#page=mobile?bread=绑定手机"});
+            }
+            var temp2 ='<a @href="$url" style="display:block;">$name</a>';
+            $.getJSON("data/sidebar.json", function(data) {
+                Utils.bindList("#sidebarNav",$("#sidenavTxl"), data.result, null, function(item, data) {
+                    // debugger;
+                    Utils.bindList($(item).find("li").eq(1), $(temp2), data.list)
+                });
+                sidebar.render();
+            });
+        },
+        render:function(){
+            var ur = location.hash;
+            sessionStorage.setItem("ur",ur);
+            var a =  sessionStorage.getItem("ur").replace('#page=', '');
+            if(a =="accout?bread=我的账户"){
+                $(".m_home").addClass("active");
+            }
+            $("ul.dropdown > li.main").click(function(){
+                //debugger;
+                $(this).next("li.dropdown_list").slideToggle("1500");
+                $(this).find(".new-icon").toggleClass("down-icon");
+                $("ul.dropdown > li.main").removeClass("active");
+                $(this).addClass("active");
+                if($(this).next("li.dropdown_list").is(":visible")){
+                    $(this).parent().siblings().find("li.dropdown_list").slideUp("1500");
+                }
+            });
+            $("ul.dropdown > li.main").siblings().hide();
+            $("ul.dropdown li.dropdown_list> a").click(function(){
+                $(this).parent().find("a").show();
+                $("ul.dropdown li.dropdown_list> a").removeClass("on");
+                $(this).addClass("on");
+                $("ul.dropdown > li").removeClass("active");
+                $(this).parent().parent().find("li.main").addClass("active");
+            });
+            $(".m_home").click(function(){
+                //location.reload();
+                //Router.routeTo("index");
+                window.location.href = window.location.href.split("#")[0]+"#page=accout?bread=我的账户";
+                $("ul.dropdown > li.main").siblings().hide();
+            });
+        },
+        safe:function(){//安全分数
+            var safeurl = "/dlsys/portal/sdk/user/safePercentum";
+            $.ajax({
+                type: "get",
+                url: safeurl,
+                dataType: "json",
+                success: function(data) {
+                    $("#bar-inner").attr("title",data+"分").css("width",data+"%");
+                    if(data==60){
+                        $("#score").text("低");
+                    }else if(data==80){
+                        $("#score").text("中");
+                    }else if(data==100){
+                        $("#score").text("高");
+                    }
+                },
+                error:function(xhr, status, err){
+                    return false;
+                }
+            });
+
+        }
+    };
+    $(document).ready(function () {
+        sidebar.init();
+        $("#userName").text(user.data.name);
+    });
+</script>

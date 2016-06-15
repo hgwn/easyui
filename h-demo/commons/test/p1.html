@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div>
+            <a href="#demo">click me</a>
+        </div>
+        <div id="dBox">
+
+        </div>
+        <script src="/commons/lib/jquery-2.2.2.min.js"></script>
+        <script src="/commons/lib/jquery.cookie.js"></script>
+        <script src="/commons/lib/jquery.form.js"></script>
+
+        <script src="/commons/utils.js"></script>
+
+        <script src="/commons/router.js"></script>
+        <script src="./mappings.js"></script>
+
+        <script>
+
+            $(function() {
+                Router.init(mappings);
+
+                //Router.routeTo("index"); 
+
+                if (!location.hash) {
+                    location.replace(location.href + '#page=index');
+                }else{
+                    
+                    Router.routeTo("index"); 
+                }
+
+            });
+        </script>
+
+    </body>
+
+
+</html>

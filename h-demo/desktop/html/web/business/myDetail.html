@@ -1,0 +1,271 @@
+
+<!-- accout_main S-->
+<div class="accout_main">
+
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;">借款信息</div>
+
+       <div id="myDetail_info">
+           <table class="table-detail" cellpadding="0" cellspacing="0" border="0">
+               <tbody>
+               <tr>
+                   <th width="100">借款标题</th>
+                   <td  colspan="3">$name</td>
+               </tr>
+               <tr>
+                   <th width="100">申请金额(元)</th>
+                   <td width="200" class="font_red" id="loan"></td>
+                   <th width="100">实际金额(元)</th>
+                   <td width="200" class="font_red" id="loanReal"></td>
+               </tr>
+               <tr>
+                   <th>申请时间</th>
+                   <td>$applicationTime</td>
+                   <th>预计利息(元)</th>
+                   <td class="font_red" id="sumInterest"></td>
+               </tr>
+               <tr>
+                   <th>已还本金(元)</th>
+                   <td class="font_red" id="sumHavedPayPrincipal"></td>
+                   <th>已还利息(元)</th>
+                   <td class="font_red" id="sumHavedPayInterest"></td>
+               </tr>
+               <tr>
+                   <th>借款状态</th>
+                   <td>$stateName</td>
+                   <th>年利率(%)</th>
+                   <td>$rate</td>
+               </tr>
+               <tr>
+                   <th>还款方式</th>
+                   <td>$repayWayName</td>
+                   <th>借款期限</th>
+                   <td>$deadline$deadlineType</td>
+               </tr>
+               <tr>
+                   <th width="100">借款说明</th>
+                   <td  colspan="3">$remark</td>
+               </tr>
+               <tr>
+                   <th width="100">流标说明</th>
+                   <td  colspan="3">$breakRemark</td>
+               </tr>
+               </tbody>
+           </table>
+       </div>
+
+        <!--S-->
+        <div class="pt20">
+            <div class="flow-mlr-auto" id="flow-b" style="width: 96%;">
+                <div class="flow-div" id="flow1">
+                    <div class="flow-c-m-y">提交借款申请</div>
+                    <div class="font_blue">已提交</div>
+                    <div class="flow-num-box">
+                        <img alt="" src="images/account/mde_01.jpg">
+                    </div>
+                    <div class="flow-date-box" id="applicationTime"></div>
+                </div>
+
+                <div class="flow-div">
+                    <div class="flow-c-m-y">借款审核</div>
+                    <div id="checkStatePlatformName">待审核</div>
+                    <div class="flow-num-box"><img alt="" id="checkStatePlatform" src="images/account/mde_04.jpg"></div>
+                    <div class="flow-date-box" id="checkTimePlatform"></div>
+                </div>
+
+                <div class="flow-div">
+                     <div class="flow-c-m-y">投资方投标</div>
+                    <div id="checkStateBidName">待开标</div>
+                    <div class="flow-num-box"><img alt="" id="checkStateBid" src="images/account/mde_04.jpg"></div>
+                    <div class="flow-date-box" id="checkTimeBid"></div>
+                </div>
+
+                <div class="flow-div">
+                    <div class="flow-c-m-y">平台放款</div>
+                    <div id="checkStateLoanName">待放款</div>
+                    <div class="flow-num-box"><img alt="" id="checkStateLoan" src="images/account/mde_04.jpg"></div>
+                    <div class="flow-date-box" id="checkTimeLoan"></div>
+                </div>
+
+                <div class="flow-div">
+                    <div class="flow-c-m-y">申请人还款</div>
+                    <div id="checkStateRepayName">待还款</div>
+                    <div class="flow-num-box"><img alt="" id="checkStateRepay" src="images/account/mde_04.jpg"></div>
+                </div>
+
+                <div class="flow-div">
+                    <div class="flow-c-m-y">项目流程</div>
+                    <div id="checkStateFlowName">进行</div>
+                    <div class="flow-num-box"><img alt="" id="checkStateFlow" src="images/account/mde_05.jpg"></div>
+                </div>
+            </div>
+        </div>
+        <!--E-->
+        
+        
+        <!--平台信息 S-->
+        <div class="myDetail_plat" id="myDetail_plat_info">
+            <ul class="clearfix">
+                <li class="myDetail_plat_li">
+                    <span style="display: inline-block; width: 45%;"><b>平台审核：</b>$auditPlatformName</span>
+                    <span><b>平台佣金：</b>$feeRate</span>%
+                </li>
+                <li class="myDetail_plat_li">
+                    <b>平台意见：</b>$checkRemarksPlatform
+                </li>
+            </ul>
+        </div>
+        <!--平台信息 E-->
+
+        <div class="accout_main_title" style="padding-top: 15px;">借款所需条件及完成情况</div>
+        <table class="table-list" cellpadding="0" cellspacing="0" border="0">
+            <thead>
+            <tr>
+                <th width="100">资料名称</th>
+                <th width="100">是否完成</th>
+                <th width="100">状态</th>
+                <th width="100">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>个人实名认证</td>
+                <td>是</td>
+                <td>已绑定</td>
+                <td>完成</td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+
+    var p2p_businessMyDetail_box = {
+        url:"/dlbiz/p2p/project/projectDetail",
+        params:{},
+        init:function(url,paraps){
+            var projectId = Utils.getUrlParam("projectId");
+            p2p_businessMyDetail_box.params.projectId = projectId;
+            DeelonService.get(p2p_businessMyDetail_box.url,p2p_businessMyDetail_box.params,function(data){
+                p2p_businessMyDetail_box.render(data);
+            });
+        },
+        render:function(data){
+            var obj ={};
+            for(var k in data.result.project){
+                obj[k] = data.result.project[k];
+            }
+            var  state = ["新申请","招标中","满标","还款中","已还清","流标"];
+            if(obj.state){
+                obj.stateName = state[Number(obj.state)-1];
+            }else{
+                obj.stateName = obj.state;
+            }
+            var  repayWayName = ["一次性还本付息","先息后本，按月还款","等额本息,按月还款","等额本金，按月还款"];
+            if(obj.repayWay){
+                obj.repayWayName = repayWayName[Number(obj.repayWay)-1];
+            }else{
+                obj.repayWayName = obj.repayWay;
+            }
+            if(obj.auditPlatform==0){
+                obj.auditPlatformName="不通过";
+            }else if(obj.auditPlatform==1){
+                obj.auditPlatformName="通过";
+            }else{
+                obj.auditPlatformName="待审核";
+            }
+            
+            if(obj.deadlineType == 'DAY'){
+            	obj.deadlineType = '天';
+            }else if(obj.deadlineType == 'MONTH'){
+            	obj.deadlineType = '个月';
+            }else if(obj.deadlineType == 'YEAR'){
+            	obj.deadlineType = '年';
+            }
+            
+            Utils.bindData($("#myDetail_info"), obj);
+            Utils.bindData($("#myDetail_plat_info"), obj);
+            
+            
+            $("#loan").html(addThousandSign(obj.loan));
+            $("#loanReal").html(addThousandSign(obj.loanReal));
+            $("#sumInterest").html(addThousandSign(obj.sumInterest));
+            $("#sumHavedPayPrincipal").html(addThousandSign(obj.sumHavedPayPrincipal));
+            $("#sumHavedPayInterest").html(addThousandSign(obj.sumHavedPayInterest));
+            
+            
+            //借款项目状态 Begin
+            $("#applicationTime").html(obj.applicationTime);
+            //平台审核状态
+            if(obj.state >=2 && obj.auditPlatform == 1){
+            	$("#checkStatePlatform").attr("src","images/account/mde_01.jpg");
+            	$("#checkStatePlatformName").html("审核通过");
+            	$("#checkStatePlatformName").addClass("font_blue");
+            }else if(obj.state >=2 && obj.auditPlatform == 0){
+            	$("#checkStatePlatform").attr("src","images/account/mde_03.jpg");
+            	$("#checkStatePlatformName").html("审核不通过");
+            	$("#checkStatePlatformName").addClass("font_red");
+            }
+            //平台审核时间
+            $("#checkTimePlatform").html(obj.checkTimePlatform);
+            
+            //投资方投标
+            if(obj.auditPlatform == 1){
+	            if(obj.state == 6){
+	            	$("#checkStateBidName").html("流标");
+	            	$("#checkStateBid").attr("src","images/account/mde_03.jpg");
+	            	$("#checkTimeBid").html(obj.flowStandardDealTime);
+	            	$("#checkStateBidName").addClass("font_red");
+	            }else if(obj.state == 2){
+	            	if(obj.isOpen==0){
+	            		$("#checkStateBidName").html("预热中");
+	            	}else if(obj.isOpen==1){
+	            		$("#checkStateBidName").html("招标中");
+	            	}
+	            	$("#checkStateBid").attr("src","images/account/mde_01.jpg");
+	            	$("#checkTimeBid").html(obj.openDate);
+	            	$("#checkStateBidName").addClass("font_blue");
+	            }else if(obj.state > 2){
+	            	$("#checkStateBidName").html("满标");
+	            	$("#checkStateBid").attr("src","images/account/mde_01.jpg");
+	            	$("#checkTimeBid").html(obj.fullScaleDealTime);
+	            	$("#checkStateBidName").addClass("font_blue");
+	            }
+            }
+            
+           
+            //平台放款
+            if(obj.state >= 4 && obj.state !=6){
+            	$("#checkStateLoanName").html("已放款");
+            	$("#checkStateLoan").attr("src","images/account/mde_01.jpg");
+            	$("#checkTimeLoan").html(obj.havedPayTime);
+            	$("#checkStateLoanName").addClass("font_blue");
+            }
+            
+            //申请人还款
+            if(obj.state == 4 && obj.state !=6){
+            	$("#checkStateRepayName").html("还款中");
+            	$("#checkStateRepay").attr("src","images/account/mde_01.jpg");
+            	$("#checkStateRepayName").addClass("font_blue");
+            }else if(obj.state > 4 && obj.state !=6){
+            	$("#checkStateRepayName").html("已还清");
+            	$("#checkStateRepay").attr("src","images/account/mde_01.jpg");
+            	$("#checkStateRepayName").addClass("font_blue");
+            }
+            
+            //项目流程
+            if(obj.state == 5){
+            	$("#checkStateFlowName").html("完成");
+            	$("#checkStateFlow").attr("src","images/account/mde_01.jpg");
+            	$("#checkStateFlowName").addClass("font_blue");
+            }
+            //End
+        }
+    };
+
+    $(function(){
+        p2p_businessMyDetail_box.init();
+    });
+</script>

@@ -1,0 +1,170 @@
+<!--资金池转账-->
+    <div class="p2p_wrapper">
+        <div class="poolBox">
+             <div class="transferInfoBox">
+                 <div class="poolTaipei"><span class="poolnote">平台方：</span><span id="itemValue"></span></div>
+                 <div class="poolLine"><span class="poolnote">业务类型：</span><span id="Businesstypes"></span></div>
+                 <div class="poolLine"><span class="poolnote">出款人：</span><span id="payee"></span></div>
+                 <div class="poolLine"><span class="poolnote">出款金额：</span><span><i id="amount"></i>元</span></div>
+                 <div class="poolLine"><span class="poolnote">说明：</span><span id="transferremark"></span></div>
+             </div>
+            <div class="payPasswordBox">
+                <div>账号交易密码：<input type="password" id="password" form="transferForm" name="password" class="poolinput" placeholder="输入交易密码">
+                    <a class="forget" href="#page=paying?bread=支付密码">忘记交易密码？</a>
+                    <span class="tipinfo">（提示：交易密码输错5次后账户将被锁定！）</span>
+                </div>
+                <div>
+                    <a href="javascript:;" class="poolBtn" title="确定">确定</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <form name="form" method="post" id="transferForm" action="" style="display: none;" >
+        <input type="hidden" id="urlReturn" name="urlReturn" value="">
+        <input type="hidden" id="bizOrderId" name="bizOrderId" value="">
+        <input type="hidden" id="notifyUrl" name="notifyUrl" value="">
+        <input type="hidden" id="accountId" name="accountId">
+        <input type="hidden" id="extraType" name="extraType">
+        <input type="hidden" id="remark" name="remark" value="">
+        <input type="hidden" id="expandOne" name="expandOne">
+        <input type="hidden" id="expandTwo" name="expandTwo">
+        <input type="hidden" id="expandThree" name="expandThree">
+        <input type="hidden" id="appKey" name="appKey">
+        <input type="hidden" id="repayFlag" name="repayFlag">
+        <div id="item"></div>
+
+        <input type="hidden" id="transferBizType" name="transferBizType">
+        <input type="hidden" id="tenderId" name="tenderId">
+        <input type="hidden" id="tenderName" name="tenderName">
+        <input type="hidden" id="tenderSumLimit" name="tenderSumLimit">
+        <input type="hidden" id="tenderAmount" name="tenderAmount">
+        <input type="hidden" id="tenderDescription" name="tenderDescription">
+        <input type="hidden" id="tenderBorrowerUserId" name="tenderBorrowerUserId">
+        <input type="hidden" id="tenderTotalAmountLimit" name="tenderTotalAmountLimit">
+        <input type="hidden" id="creditorUserId" name="creditorUserId">
+        <input type="hidden" id="originalTransactionNo" name="originalTransactionNo">
+    </form>
+<!-- accout_main E-->
+<script type="text/javascript">
+    p2p_user.islogin();
+    user.load();
+    var rechargeFun={
+        init:function(){
+            this.render();
+        },
+        render:function(){
+            var transfer=(getHash("transfer")==undefined ? '':getHash("transfer"));
+            var transferjson = unescape(transfer);
+            var json = JSON.parse(transfer);
+            $("#Businesstypes").html(json.extraType==undefined ? '':json.extraType);
+            if (user.islogin()){
+                var userurl='/dlsys/portal/sdk/user/info/'+user.data.id+'/personal';
+                $.get(userurl, function(res) {
+                    if(res.certificationStatus==1){
+                        $("#payee").html(res.realName);
+                    }
+                });
+            }
+            var transferDetails=json.transferDetails;
+            var amountTemp = 0;
+            for(var i = 0 ; i < transferDetails.length ; i++){
+                amountTemp += (transferDetails[i].amount * 1);
+            }
+            $("#amount").html(addThousandSign(parseFloat(amountTemp)));
+            $("#transferremark").html(json.remark==undefined ? '':json.remark);
+            var url="/dlapi/cms/sysDic?id=&fullPath=/系统目录/数据字典/公共参数配置/参数/PLATFORM_COMPANY";
+            $.get(url, function(res) {
+                $("#itemValue").html(res.itemValue);
+            });
+        },
+
+        sumbit:function(){
+            var transfer=(getHash("transfer")==undefined ? '':getHash("transfer"));
+            var transferjson = unescape(transfer);
+            var json = JSON.parse(transfer);
+            var userId=(json.userId==undefined ? '':json.userId);
+            var urlReturn=(getHash("urlReturn")==undefined ? '':getHash("urlReturn"));
+
+            $("#urlReturn").val(urlReturn==undefined ? DeelonService.site+'/desktop/html/p2p/index.html#page=accout?bread=我的账户':urlReturn);
+
+            $("#notifyUrl").val(getHash("notifyUrl")==undefined ? '':getHash("notifyUrl"));
+            $("#bizOrderId").val(json.bizOrderId==undefined ? '':json.bizOrderId);
+
+            $("#repayFlag").val(json.repayFlag==undefined ? '':json.repayFlag);
+            $("#appKey").val(json.appKey==undefined ? '':json.appKey);
+            $("#accountId").val(user.data.account.id);
+            $("#remark").val(json.remark==undefined ? '':json.remark);
+            $("#extraType").val(json.extraType==undefined ? '':json.extraType);
+            $("#expandOne").val(json.expandOne==undefined ? '':json.expandOne);
+            $("#expandTwo").val(json.expandTwo==undefined ? '':json.expandTwo);
+            $("#expandThree").val(json.expandThree==undefined ? '':json.expandThree);
+
+            $("#transferBizType").val(json.transferBizType==undefined ? '':json.transferBizType);
+            $("#tenderId").val(json.tenderId==undefined ? '':json.tenderId);
+            $("#tenderName").val(json.tenderName==undefined ? '':json.tenderName);
+            $("#tenderSumLimit").val(json.tenderSumLimit==undefined ? '':json.tenderSumLimit);
+            $("#tenderAmount").val(json.tenderAmount==undefined ? '':json.tenderAmount);
+            $("#tenderDescription").val(json.tenderDescription==undefined ? '':json.tenderDescription);
+            $("#tenderBorrowerUserId").val(json.tenderBorrowerUserId==undefined ? '':json.tenderBorrowerUserId);
+            $("#tenderTotalAmountLimit").val(json.tenderTotalAmountLimit==undefined ? '':json.tenderTotalAmountLimit);
+            $("#creditorUserId").val(json.creditorUserId==undefined ? '':json.creditorUserId);
+            $("#originalTransactionNo").val(json.originalTransactionNo==undefined ? '':json.originalTransactionNo);
+
+            var transferDetails=json.transferDetails;
+            var amountTemp = 0;
+            for(var i = 0 ; i < transferDetails.length ; i++){
+                amountTemp += (transferDetails[i].amount * 1);
+                transferDetails[i].no = i;
+            }
+            var tpl= '<p>' +
+                    '<input type="hidden" id="payeeAccountId" name="transferDetails[$no].payeeAccountId" value="$payeeAccountId">' +
+                    '<input type="hidden" id="payeeAccountOwnerId" name="transferDetails[$no].payeeAccountOwnerId" value="$payeeAccountOwnerId"> ' +
+                    '<input type="hidden" id="amount" name="transferDetails[$no].amount" value="$amount">' +
+                    '</p>';
+            Utils.bindList("#item", $(tpl), transferDetails);
+
+            var options = {
+                target: '',
+                beforeSubmit:showStart,
+                success:showSuccess,
+                dataType:  'json'
+            };
+
+            $('#transferForm').submit(function(){
+                $(this).ajaxSubmit(options);
+                return false;
+            });
+            function showStart(){
+                return true;
+            }
+            function showSuccess(res){
+                if(res.urlReturn==''||res.urlReturn==null){
+                    window.location.href=DeelonService.site+'/desktop/html/p2p/index.html#page=accout?bread=我的账户';
+                }else{
+                    window.location.href=res.urlReturn;
+                }
+            }
+            $("#transferForm").attr("action","/tstransaction/pc/pretransfer/yeepay");
+
+            if(userId == user.data.id){
+                $("#transferForm").submit();
+            } else {
+                jAlert.warn('用户身份不匹配');
+                return false;
+            }
+        }
+    };
+
+    rechargeFun.init();
+
+    $(".poolBtn").on("click",function(){
+        var y_paypwd=Fcheck.c_paypwd($("#password").val());
+        if(y_paypwd){
+            rechargeFun.sumbit();
+        }
+    });
+
+
+</script>

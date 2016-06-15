@@ -1,0 +1,47 @@
+<div class="p2p_topbar_n clearfix">
+    <ul class="p2p_topbar_l clearfix">
+        <li>服务电话：<span>400-219-2828</span></li>
+    </ul>
+    <ul class="p2p_topbar_r clearfix" id="p2p_topbar_txl">
+       
+    </ul>
+</div>
+
+<script type="text/javascript">
+    var p2p_topBox = {
+        init: function() {
+            this.render();
+        },
+        render: function() {
+            if (user.islogin()) {
+                $("#p2p_topbar_txl").load("index/topLogin.html",function(){
+                    $("#p2p_userName").text(user.data.name);
+                    p2p_topBox.getReadNum();
+                    $("#p2p_logOut").click(function() {
+                        var params = {"token": user.data.token};
+                        var url = '/dlsys/portal/sdk/user/logout';
+                        p2p_user.logout(url, params);
+                        p2p_topBox.render();
+                    });
+                });
+
+            } else {
+                $("#p2p_topbar_txl").load("index/topRegist.html");
+            }
+        },
+        getReadNum:function(){
+            var url = '/dlsys/portal/sdk/msg/unread/' + user.data.id + '?token=' + encodeURIComponent(user.data.token);
+            $.get(url, function(res) {
+                if (res.result != 0) {
+                    $("#topmsg").show().find("span").html(res.result);
+                } else {
+                    $("#topmsg").hide();
+                }
+            });
+        }
+    };
+
+    $(function() {
+        p2p_topBox.init();
+    });
+</script>

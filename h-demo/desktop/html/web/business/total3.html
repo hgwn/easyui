@@ -1,0 +1,42 @@
+<div id="total1_tmp3">
+    <div class="accout_main_zj">
+        <img src="images/account/accout_zj.png" alt="资金"/>
+        <span class="accout_main_num">$paidTotalName</span>元
+        <div class="accout_main_img"></div>
+        <div class="accout_main_bm">已还总额</div>
+    </div>
+    <ul class="accout_main_ul clearfix" style="clear: both;">
+        <li><span>已还本金：</span><label>$paidPrincipalName</label> 元</li>
+        <li><span>已还利息：</span><label>$paidInterestName</label>元</li>
+        <li><span>已交逾期费用：</span><label>$paidLateName</label>元</li>
+        <li><span>已交提前还款违约金：</span><label>$prepayName</label>元</li>
+    </ul>
+
+
+</div>
+
+
+<script type="text/javascript">
+
+    var p2p_businessTotal_yh = {
+        url:"/dlbiz/p2p/project/loanStatistic/loanData",
+        params:{userId:user.data.id},
+        init:function(url,params){
+            DeelonService.get(p2p_businessTotal_yh.url,p2p_businessTotal_yh.params,function(data){
+                p2p_businessTotal_yh.render(data);
+            })
+        },
+        render:function(data){
+        	data.result.paidTotalName = formatCurrency(data.result.paidTotal);
+        	data.result.paidPrincipalName = formatCurrency(data.result.paidPrincipal);
+        	data.result.paidInterestName = formatCurrency(data.result.paidInterest);
+        	data.result.paidLateName = formatCurrency(data.result.paidLate);
+        	data.result.prepayName = formatCurrency(data.result.prepay);
+            Utils.bindData($("#total1_tmp3"), data.result);
+        }
+    };
+
+    $(function(){
+        p2p_businessTotal_yh.init();
+    })
+</script>

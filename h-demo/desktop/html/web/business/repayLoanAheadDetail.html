@@ -1,0 +1,131 @@
+<!--还款管理明细-->
+<!-- accout_main S-->
+<form id="hiddenForm" method="post" target="_blank">
+	<input type="hidden" name="projectId" id="projectId">
+	<input type="hidden" name="userId" id="userId">
+	<input type="hidden" name="type" id="type" value="1">
+</form>
+<div class="accout_main">
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;" id="temp_repayment_name">还款明细</div>
+        <div class="accout_repDetail clearfix" id="repayLoanAheadDetailDiv">
+            <div style="padding: 15px;">
+                <p  class="accout_repDetail_tip" id="projectName"></p>
+                <dl class="accout_repDetail_dl">
+                    <dt><span class="fs-m">剩余应还本息：</span></dt>
+                    <dd> <span><strong class="font_red" id="total"></strong></span> </dd>
+                </dl>
+                <dl class="accout_repDetail_dl">
+                    <dt><span class="fs-m">剩余应还本金：</span></dt>
+                    <dd id="principal"></dd>
+                </dl>
+                <dl class="accout_repDetail_dl">
+                    <dt><span class="fs-m">提前还款违约金：</span></dt>
+                    <dd><span id="finedAmount"></span> </dd>
+                </dl>
+                <dl class="accout_repDetail_dl">
+                    <dt><span class="fs-m">提前还款违约金百分比：</span></dt>
+                    <dd><span id="prepayRate"></span>%</dd>
+                </dl>
+                <dl class="accout_repDetail_dl">
+                    <dt><span class="fs-m">平台占违约金百分比：</span></dt>
+                    <dd><span id="platformPrepayRate"></span>%</dd>
+                </dl>
+                <dl class="accout_repDetail_dl">
+	                <dt><span class="fs-m">平台应收违约金额：</span></dt>
+	                <dd><span id="platformFee"></span> </dd>
+                </dl>
+                <dl class="accout_repDetail_dl">
+                    <dt><button type="button" class="zc_btn" onclick="repayLoanAheadDetail_list.submit();">确定还款</button></dt>
+                </dl>
+            </div>
+        </div>
+        <table class="table-list" cellpadding="0" cellspacing="0" border="0">
+            <thead>
+            <tr>
+                <th width="20"></th>
+                <th width="100">收款人</th>
+                <th width="100">应付金额</th>
+                <th width="120">付款原因</th>
+                <th width="100">还款状态</th>
+            </tr>
+            </thead>
+            <tbody id="repayLoanAheadDetail_temp">
+            </tbody>
+            <tr id="repayLoanAheadDetail_list" style="display:none;">
+                <td><input type="checkbox" checked="checked" disabled="disabled"></td>
+                <td>$recieverName</td>
+                <td id="repayAmount"></td>
+                <td>$payReason</td>
+                <td id="repayState">待还</td>
+            </tr>
+        </table>
+        <!-- 分页 S-->
+        <div id="repayLoanAheadDetail_list_page" class="pagination"><!-- 这里显示分页 --></div>
+        <!-- 分页 E-->
+    </div>
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+//定义列表对象
+	var repayLoanAheadDetail_list = {
+	    url:"/dlbiz/p2p/projectRepayment/repayLoanAheadPage",
+	    params:{projectId:Utils.getUrlParam("projectId")},
+	    init:function(url,params){
+	    	$("#repayLoanAheadDetail_temp").empty();
+	        DeelonService.get(repayLoanAheadDetail_list.url,repayLoanAheadDetail_list.params,function(data){
+	        	repayLoanAheadDetail_list.render(data);
+	        })
+	    },
+	    render:function(data){
+	    	
+	    	$("#projectName").html(data.result.projectName);
+	    	$("#total").html(addThousandSign(data.result.total));
+	    	$("#principal").html(addThousandSign(data.result.principal));
+	    	$("#finedAmount").html(addThousandSign(data.result.finedAmount));
+	    	$("#platformFee").html(addThousandSign(data.result.platformFee));
+	    	$("#prepayRate").html(addThousandSign(data.result.prepayRate));
+	    	$("#platformPrepayRate").html(addThousandSign(data.result.platformPrepayRate));
+	    	
+	        Utils.bindList("#repayLoanAheadDetail_temp", "#repayLoanAheadDetail_list", data.result.list,null,function(item,data){
+	        	if(data.isGet==1){
+	        		item.find("#repayState").html("已还");
+	        	}
+	        	item.find("#repayAmount").html(addThousandSign(data.repayAmount));
+	        });
+	    },
+	    pageselectCallback:function(index,jq){
+	    	repayLoanAheadDetail_list.params.page = index +1;
+	    	repayLoanAheadDetail_list.init(repayLoanAheadDetail_list.url,repayLoanAheadDetail_list.params);
+	        return false;
+	    },submit:function(){
+	    	jAlert.info('已经跳到还款支付页面，如果请求不合法，会给你提示相关信息。<br>支付完成后，请点击确认按钮。',null,null,function(){
+	    		location.href="#page=repay?bread=还款管理";
+    		});
+	        $('#projectId').val(Utils.getUrlParam("projectId"));
+            $('#userId').val(user.data.id);
+            $('#hiddenForm').attr("action",'/dlbiz/p2p/projectRepayment/repayLoanAhead').submit();
+	    }
+	};
+	
+  //定义分页对象
+  var repayLoanAheadDetail_list_page = {
+      init:function(url,params){
+          DeelonService.get(url,params,function(data){
+              $("#repayLoanAheadDetail_list_page").pagination(data.result.totalElements, {
+                  prev_text: "前一页",
+                  next_text: "后一页",
+                  num_edge_entries: 2,   //两侧显示的首尾分页的条目数
+                  num_display_entries: 5 ,   //连续分页主体部分显示的分页条目数
+                  callback: repayLoanAheadDetail_list.pageselectCallback,
+                  items_per_page:5     //每页显示的条目数
+              });
+          })
+      }
+  };
+	//初始化
+	$(function(){
+		//分页初始化
+		repayLoanAheadDetail_list_page.init(repayLoanAheadDetail_list.url,repayLoanAheadDetail_list.params);
+	});
+</script>

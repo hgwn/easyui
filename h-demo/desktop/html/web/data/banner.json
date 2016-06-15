@@ -1,0 +1,11 @@
+{
+  "code":0,
+  "msg":"",
+  "result":[
+    {"name":"banner1","src":"images/ban01.jpg","url":"#"},
+    {"name":"banner2","src":"images/ban02.jpg","url":"#"},
+    {"name":"banner3","src":"images/ban03.jpg","url":"#"}]
+}
+
+
+

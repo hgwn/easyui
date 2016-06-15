@@ -1,0 +1,15 @@
+{
+  "code":0,
+  "msg":"",
+  "result":[
+    {"name":"首页","url":"index.html#page=main"},
+    {"name":"我要理财","url":"index.html#page=getTenderProjects"},
+    {"name":"我要借款","url":"index.html#page=productsLoanList"},
+    {"name":"债权转让","url":"index.html#page=transfer"},
+    {"name":"积分商城","url":"index.html#page=giftlist"},
+    {"name":"我的账户","url":"index.html#page=accout?bread=我的账户"},
+    {"name":"关于我们","url":"article.html#page=folders?bread=关于我们&path=/内容管理/关于我们/"}]
+}
+
+
+

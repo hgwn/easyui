@@ -1,0 +1,74 @@
+<!-- accout_main S-->
+<div class="accout_main">
+   <!-- <div class="accout_headBar">
+        <a href="#" class="visit">我的账户</a><span>&gt;</span>
+        <a href="#">个人中心</a>
+    </div>-->
+    <!-- accout_main_box S-->
+    <div class="accout_main_box">
+        <div class="accout_intime">
+            <a href="#page=notice?bread=我的通知"><span class="accout_message"><img src="images/account/accout_time.png">消息：<span></span></span></a>
+            <span><img src="images/account/accout_in.jpg">最后一次登录时间：<span id="lastLoginTime"></span> </span>
+        </div>
+    </div>
+    <!-- accout_main_box E-->
+
+    <div class="accout_main_content">
+        <div class="accout_main_title">我的资产</div>
+        <div class="accout_main_zj">
+            <img src="images/account/accout_zj.png" alt="资金"/>
+            <span class="accout_main_num"></span>元
+            <div class="accout_main_img"></div>
+            <div class="accout_main_bm">可用余额 <a class="accout_main_bm_tip"><img src="images/account/a_help.png"></a></div>
+            <div class="accout_msg_box">投资人可自由支配的金额</div>
+        </div>
+        <div class="fl mr30">
+            <p><a href="#page=recharge?bread=充值"><button type="button" class="zc_btn">充值</button></a></p>
+            <p><a href="#page=cash?bread=提现"><button type="button" class="tx_btn">提现</button></a></p>
+        </div>
+        <ul class="accout_main_ul clearfix">
+            <li><span>总资产：</span><label>0.00</label> 元</li>
+            <li><span>冻结余额：</span><label>0.00</label>元</li>
+            <li><span>理财资产：</span><label>0.00</label>元</li>
+            <li><span>借款负债：</span><label>0.00</label>元</li>
+        </ul>
+    </div>
+
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+    var index_main = {
+        init:function(){
+            $(".accout_main_bm_tip").hover(function(){
+                $(".accout_msg_box").show();
+            },function(){
+                $(".accout_msg_box").hide();
+            });
+            this.render();
+        },
+        render:function(){
+            $("#lastLoginTime").html(new Date(user.data.lastLoginTime).toLocaleString().replace(/:\d{1,2}$/,' ') );
+            var url='/dlsys/portal/sdk/msg/unread/'+user.data.id+'?token='+encodeURIComponent(user.data.token);
+            $.get(url, function(res) {
+                $(".accout_message span").html(res.result)
+            });
+            DeelonService.get("/dlsys/portal/wealth/assetJournal/incomeAndExpenses/"+user.data.account.id,function(data){
+                $(".accout_main_num").html(addThousandSign(parseFloat(data.result.account.amount)));
+                $(".accout_main_ul li:eq(0)").find('label').html(addThousandSign(parseFloat(data.result.account.amount+data.result.account.freezeAmount)));
+                $(".accout_main_ul li:eq(1)").find('label').html(addThousandSign(parseFloat(data.result.account.freezeAmount)));
+            });
+            DeelonService.get("/dlbiz/p2p/user/myInvestTotalAmount/"+user.data.id,function(data){
+                var result=(data.result.myInvestTotalAmount==null ? 0:data.result.myInvestTotalAmount);
+            	$(".accout_main_ul li:eq(2)").find('label').html(addThousandSign(parseFloat(result)));
+            });
+            DeelonService.get("/dlbiz/p2p/user/myLoanRealTotalAmount/"+user.data.id,function(data){
+                var result=(data.result.myLoanRealTotalAmount==null ? 0:data.result.myLoanRealTotalAmount);
+                $(".accout_main_ul li:eq(3)").find('label').html(addThousandSign(parseFloat(result)));
+            });
+        }
+    };
+
+    $(function(){
+        index_main.init();
+    });
+</script>

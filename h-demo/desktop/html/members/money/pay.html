@@ -1,0 +1,135 @@
+<!--转账-->
+<!-- accout_main S-->
+<div class="accout_main">
+    <form name="form" method="post" id="transferForm" action="" style="display: none;" >
+
+        <input type="hidden" id="urlReturn" name="urlReturn" value="">
+        <input type="hidden" id="bizOrderId" name="bizOrderId" value="">
+        <input type="hidden" id="notifyUrl" name="notifyUrl" value="">
+        <input type="hidden" id="accountId" name="accountId">
+        <input type="hidden" id="extraType" name="extraType">
+        <input type="hidden" id="remark" name="remark" value="">
+        <input type="hidden" id="expandOne" name="expandOne">
+        <input type="hidden" id="expandTwo" name="expandTwo">
+        <input type="hidden" id="expandThree" name="expandThree">
+        <input type="hidden" id="appKey" name="appKey">
+        <input type="hidden" id="repayFlag" name="repayFlag">
+        <div id="item"></div>
+
+        <input type="hidden" id="transferBizType" name="transferBizType">
+        <input type="hidden" id="tenderId" name="tenderId">
+        <input type="hidden" id="tenderName" name="tenderName">
+        <input type="hidden" id="tenderSumLimit" name="tenderSumLimit">
+        <input type="hidden" id="tenderAmount" name="tenderAmount">
+        <input type="hidden" id="tenderDescription" name="tenderDescription">
+        <input type="hidden" id="tenderBorrowerUserId" name="tenderBorrowerUserId">
+        <input type="hidden" id="tenderTotalAmountLimit" name="tenderTotalAmountLimit">
+        <input type="hidden" id="creditorUserId" name="creditorUserId">
+        <input type="hidden" id="originalTransactionNo" name="originalTransactionNo">
+    </form>
+    <form name="form" method="post" id="bindformsumbit" action="" style="display: none;">
+        <textarea id="req" rows="23" cols="120"  name="req"></textarea>
+        <input type="hidden" id="sign" name="sign" value="">
+    </form>
+
+</div>
+
+
+<!-- accout_main E-->
+<script type="text/javascript">
+    var rechargeFun={
+        init:function(){
+            $("#header_box").html('');
+            $("#accout_sidebarBox").html('');
+            $("#breadcrumb_box").html('');
+            $("#footer_box").html('');
+            this.render();
+//			var pageStatus=sessionStorage.pageStatus;//根据状态判断是否重新提交表单  0 提交  1不提交跳转returnURL
+//			if(pageStatus==0){
+//				sessionStorage.pageStatus = 1;
+//				this.render();
+//			}else{
+//				var returnURL=sessionStorage.returnURL;
+//				window.location.href=returnURL;
+//			}
+        },
+        render:function(){
+            var transfer=(getHash("transfer")==undefined ? '':getHash("transfer"));
+            var transferjson = unescape(transfer);
+            var json = JSON.parse(transfer);
+            var userId=(json.userId==undefined ? '':json.userId);
+            var urlReturn=(getHash("urlReturn")==undefined ? '':getHash("urlReturn"));
+
+            $("#urlReturn").val(urlReturn==undefined ? DeelonService.site+'/desktop/html/p2p/index.html#page=accout?bread=我的账户':urlReturn);
+
+            $("#notifyUrl").val(getHash("notifyUrl")==undefined ? '':getHash("notifyUrl"));
+            $("#bizOrderId").val(json.bizOrderId==undefined ? '':json.bizOrderId);
+
+            $("#repayFlag").val(json.repayFlag==undefined ? '':json.repayFlag);
+            $("#appKey").val(json.appKey==undefined ? '':json.appKey);
+            $("#accountId").val(user.data.account.id);
+            $("#remark").val(json.remark==undefined ? '':json.remark);
+            $("#extraType").val(json.extraType==undefined ? '':json.extraType);
+            $("#expandOne").val(json.expandOne==undefined ? '':json.expandOne);
+            $("#expandTwo").val(json.expandTwo==undefined ? '':json.expandTwo);
+            $("#expandThree").val(json.expandThree==undefined ? '':json.expandThree);
+
+            $("#transferBizType").val(json.transferBizType==undefined ? '':json.transferBizType);
+            $("#tenderId").val(json.tenderId==undefined ? '':json.tenderId);
+            $("#tenderName").val(json.tenderName==undefined ? '':json.tenderName);
+            $("#tenderSumLimit").val(json.tenderSumLimit==undefined ? '':json.tenderSumLimit);
+            $("#tenderAmount").val(json.tenderAmount==undefined ? '':json.tenderAmount);
+            $("#tenderDescription").val(json.tenderDescription==undefined ? '':json.tenderDescription);
+            $("#tenderBorrowerUserId").val(json.tenderBorrowerUserId==undefined ? '':json.tenderBorrowerUserId);
+            $("#tenderTotalAmountLimit").val(json.tenderTotalAmountLimit==undefined ? '':json.tenderTotalAmountLimit);
+            $("#creditorUserId").val(json.creditorUserId==undefined ? '':json.creditorUserId);
+            $("#originalTransactionNo").val(json.originalTransactionNo==undefined ? '':json.originalTransactionNo);
+
+            var transferDetails=json.transferDetails;
+            var amountTemp = 0;
+            for(var i = 0 ; i < transferDetails.length ; i++){
+                amountTemp += (transferDetails[i].amount * 1);
+                transferDetails[i].no = i;
+            }
+            var tpl= '<p>' +
+                    '<input type="hidden" id="payeeAccountId" name="transferDetails[$no].payeeAccountId" value="$payeeAccountId">' +
+                    '<input type="hidden" id="payeeAccountOwnerId" name="transferDetails[$no].payeeAccountOwnerId" value="$payeeAccountOwnerId"> ' +
+                    '<input type="hidden" id="amount" name="transferDetails[$no].amount" value="$amount">' +
+                    '</p>';
+            Utils.bindList("#item", $(tpl), transferDetails);
+
+            var options = {
+                target: '',
+                beforeSubmit:showStart,
+                success:showSuccess,
+                dataType:  'json'
+            };
+
+            $('#transferForm').submit(function(){
+                $(this).ajaxSubmit(options);
+                return false;
+            });
+            function showStart(){
+                return true;
+            }
+            function showSuccess(res){
+                $("#bindformsumbit").attr("action",res.result.url);
+                $("#req").val(res.result.req);
+                $("#sign").val(res.result.sign);
+                $("#bindformsumbit").submit();
+            }
+
+            $("#transferForm").attr("action","/dlsys/portal/tstransaction/pc/pretransfer/"+ user.data.payChannel.code);
+
+            if(userId == user.data.id){
+                $("#transferForm").submit();
+            } else {
+                jAlert.warn('用户身份不匹配');
+                return false;
+            }
+        }
+    };
+    rechargeFun.init();
+
+
+</script>

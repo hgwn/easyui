@@ -1,0 +1,150 @@
+<!--还款管理明细-->
+<!-- accout_main S-->
+<form id="hiddenForm" method="post" target="_blank">
+	<input type="hidden" name="detailIds" id="detailIds">
+	<input type="hidden" name="userId" id="userId">
+	<input type="hidden" name="type" id="type" value="1">
+</form>
+<div class="accout_main">
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;" id="temp_repayment_name">还款明细</div>
+        <div class="accout_repDetail clearfix" id="repaymentDetailDiv">
+            <div style="padding: 15px;">
+                <p  class="accout_repDetail_tip" id="projectName"></p>
+                <dl class="accout_repDetail_dl">
+                    <dt><span class="fs-m">还款金额：</span></dt>
+                    <dd> <span><strong class="font_red" id="payLess"></strong></span> </dd>
+                </dl>
+                <dl class="accout_repDetail_dl">
+                    <dt><span class="fs-m">投资者数量：</span></dt>
+                    <dd> <span id="detailSize"></span></dd>
+                </dl>
+                <dl class="accout_repDetail_dl">
+                    <dt><span class="fs-m">当期已还笔数：</span></dt>
+                    <dd><span id="hasPay"></span></dd>
+                </dl>
+                <dl class="accout_repDetail_dl">
+                    <dt><span class="fs-m">今期待还笔数：</span></dt>
+                    <dd><span class="font_red" id="unPay"></span></dd>
+                </dl>
+                <dl class="accout_repDetail_dl">
+                    <dt><span class="fs-m">已选择笔数：</span></dt>
+                    <dd> <span><strong id="checkSize"></strong></span> </dd>
+                </dl>
+                <dl class="accout_repDetail_dl">
+                    <dt><button type="button" class="zc_btn" onclick="repaymentDetail_list.submit();">确定还款</button></dt>
+                </dl>
+            </div>
+        </div>
+        <table class="table-list" cellpadding="0" cellspacing="0" border="0">
+            <thead>
+            <tr>
+                <th width="20"></th>
+                <th width="100">投资方</th>
+                <th width="100">应还金额</th>
+                <th width="120">还款时间</th>
+                <th width="100">还款状态</th>
+            </tr>
+            </thead>
+            <tbody id="repaymentDetail_temp">
+            </tbody>
+            <tr id="repaymentDetail_list" style="display:none;">
+                <td><input type="checkbox" checked="checked" disabled="disabled"></td>
+                <td>$investorName</td>
+                <td id="repayAmout"></td>
+                <td>$repayTime</td>
+                <td id="repayState"></td>
+            </tr>
+        </table>
+        <!-- 分页 S-->
+        <div id="repaymentDetail_list_page" class="pagination"><!-- 这里显示分页 --></div>
+        <!-- 分页 E-->
+    </div>
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+//定义列表对象
+	var repaymentDetail_list = {
+	    url:"/dlbiz/p2p/projectRepayment/repaymentDetailPage",
+	    params:{repaymentId:Utils.getUrlParam("repaymentId")},
+	    init:function(url,params){
+	    	$("#repaymentDetail_temp").empty();
+	        DeelonService.get(repaymentDetail_list.url,repaymentDetail_list.params,function(data){
+	        	repaymentDetail_list.render(data);
+	        })
+	    },
+	    render:function(data){
+
+	    	$("#projectName").html(data.result.projectName);
+	    	$("#payLess").html(addThousandSign(data.result.repayment.payLess));
+	    	$("#detailSize").html(data.result.repaymentDetails.length);
+	    	$("#checkSize").html(data.result.repaymentDetails.length);
+	    	$("#unPay").html(data.result.unPay);
+	    	$("#hasPay").html(data.result.hasPay);
+	    	
+	        Utils.bindList("#repaymentDetail_temp", "#repaymentDetail_list", data.result.repaymentDetails,null,function(item,data){
+	        	if(data.isRepay==1){
+	        		item.find("#repayState").html("已还款");
+	        	}else{
+	        		item.find("#repayState").html("未还款");
+	        	}
+	        	item.find("#repayAmout").html(addThousandSign(data.repayAmout));
+	        });
+	        
+	        if(data.result.repayment.payLess>0){
+		        var arr = data.result.repaymentDetails.map(function (item) {
+	                return item.repaymentDetailId;
+	            });
+		        $('#detailIds').val(arr.join(','));
+	            $('#userId').val(user.data.id);
+	        }else{
+	        	$(".zc_btn").remove();
+	        }
+	    },
+	    pageselectCallback:function(index,jq){
+	    	repaymentDetail_list.params.page = index +1;
+	    	repaymentDetail_list.init(repaymentDetail_list.url,repaymentDetail_list.params);
+	        return false;
+	    },submit:function(){
+	    	jAlert.info('已经跳到还款支付页面，如果请求不合法，会给你提示相关信息。<br>支付完成后，请点击确认按钮。',null,null,function(){
+	    		repaymentDetail_list.pageselectCallback(0);
+    		});
+            DeelonService.axse("/dlsys/portal/wealth/assetJournal/incomeAndExpenses/"+user.data.account.id,"get",null,function(data){
+                var payLess = parseFloat($("#payLess").text());
+                var accout_main_num = parseFloat(data.result.account.amount)
+                if(payLess > accout_main_num){
+                    jConfirm("余额不足！若前往充值页面，请选择【确定】按钮！","提示",function(r){
+                        if(r){
+                            location.hash="#page=recharge?bread=充值";
+                        }
+                    });
+                }else{
+                    $('#hiddenForm').attr("action",'/dlbiz/p2p/projectRepayment/repayLoan').submit();
+                }
+
+            });
+
+	    }
+	};
+	
+  //定义分页对象
+  var repaymentDetail_list_page = {
+      init:function(url,params){
+          DeelonService.get(url,params,function(data){
+              $("#repaymentDetail_list_page").pagination(data.result.totalElements, {
+                  prev_text: "前一页",
+                  next_text: "后一页",
+                  num_edge_entries: 2,   //两侧显示的首尾分页的条目数
+                  num_display_entries: 5 ,   //连续分页主体部分显示的分页条目数
+                  callback: repaymentDetail_list.pageselectCallback,
+                  items_per_page:5     //每页显示的条目数
+              });
+          })
+      }
+  };
+	//初始化
+	$(function(){
+		//分页初始化
+		repaymentDetail_list_page.init(repaymentDetail_list.url,repaymentDetail_list.params);
+	});
+</script>

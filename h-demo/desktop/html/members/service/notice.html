@@ -1,0 +1,84 @@
+<!--我的通知-->
+<div class="accout_main">
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;">我的通知</div>
+        <div class="accout_notice_main">
+            <table class="table-list" cellpadding="0" cellspacing="0" border="0" style="margin-top: 15px;">
+                <thead>
+                    <tr>
+                        <th width="50">&nbsp;</th>
+                        <th width="100">来源</th>
+                        <th width="300">内容</th>
+                        <th width="100">时间</th>
+                    </tr>
+                </thead>
+                <tbody id="UserMgsList">
+                </tbody>
+            </table>
+            <!-- 分页 S-->
+            <div id="Pagination" class="pagination"><!-- 这里显示分页 --></div>
+            <!-- 分页 E-->
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var  pageNum= 1,pageSize=15,totalPages='',ascSortingFlag= 'desc',status='';
+    var msgurl = '/dlsys/portal/sdk/msg/list/1/'+user.data.id+'/'+ascSortingFlag+'/?status='+status+'&pageSize='+pageSize+'&token='+encodeURIComponent(user.data.token);
+
+    var tpl=' <tr>' +
+            '<td><span class="accout_notice_img_$status"></span></td>' +
+            '<td>$fromName</td>' +
+            '<td><a href="javascript:;" onclick="msglist.actions($id);">$content</a></td>' +
+            '<td>$sendTime</td>' +
+            '</tr>';
+
+    var nolist='<tr><td colspan="4">暂无数据</td></tr>';
+
+    var msglist={
+        init:function(msgurl,params){
+            DeelonService.get(msgurl,params,function(data){
+                if(data.totalElements==0){
+                    $("#UserMgsList").html(nolist);
+                    $("#Pagination").empty();
+                    return false;
+                }else{
+                    $("#Pagination").pagination(data.totalElements, {
+                        prev_text: "前一页",
+                        next_text: "后一页",
+                        num_edge_entries: 2,
+                        num_display_entries: 4,
+                        callback: msglist.pageselectCallback,
+                        items_per_page:pageSize
+                    });
+                }
+
+            });
+        },
+        render:function(msgurl,params){
+            $("#UserMgsList").empty();
+            DeelonService.get(msgurl,params,function(res){
+                if(res.content.length=="0"){
+                    $("#UserMgsList").html(nolist);
+                }else{
+                    Utils.bindList("#UserMgsList",$(tpl),res.content);
+                }
+            });
+        },
+        actions:function(id){
+            msglist.read(id);
+            location.hash='#page=noticedetail?bread=通知内容&msgid='+id;
+        },
+        read:function(id){
+            var url='/dlsys/portal/sdk/msg/read/'+id+'?token='+encodeURIComponent(user.data.token);
+            $.get(url, function(res) {
+                p2p_topBox.getReadNum();//重新获得顶部通知数量
+            });
+        },
+        pageselectCallback:function(page_index, jq){
+            var page=page_index+1;
+            msglist.render(msgurl,"pageNum="+page);
+        }
+    };
+
+    msglist.init(msgurl,"pageNum=1");
+</script>

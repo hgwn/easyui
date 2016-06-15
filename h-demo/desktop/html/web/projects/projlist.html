@@ -1,0 +1,59 @@
+<ul id="project_invest_box" class="project_invest_box clearfix">
+        <li id="project_invest_list" class="project_invest_list clearfix" style="display: none;">
+          <div class="project_invest_header"><span class="project_invest_title">助学贷款</span>—<span onclick="project_invest_box.toClick('$projectId');" style="cursor: pointer;" class="project_invest_name">$name</span></div>
+          <div class="project_invest_num">
+            <ul class="clearfix">
+              <li>年化收益<span class="project_invest_rate">$rate</span><span class="font_red">%</span></li>
+              <li>借款金额<span class="project_invest_money">$loan</span><span class="font_555">元</span></li>
+              <li><span id="project_invest_time_span">剩余时间</span><span class="project_invest_time">$closeDate</span></li>
+              <li><p class="project_rm_bar"><span class="prograss-bar"><span class="prograss-bar-inner"></span></span>$complete%</p></li>
+            </ul>
+          </div>
+          <div class="project_invest_btn" style="top: 50%; margin-top: -17px;"><p class="p2p_btn_s" onclick="project_invest_box.toClick('$projectId');">立即投资</p></div>
+          <p class="project_icon_new">新品</p>
+        </li>
+</ul>
+<script type="text/javascript">
+	var project_invest_box = {
+        init:function(){
+             DeelonService.get("/dlbiz/p2p/projects?state=2&recommend=0",function(data){
+                Utils.bindList($("#project_invest_box"),$("#project_invest_list"),data.result.content,null,function(item,data){
+                	item.find(".project_invest_money").html(addThousandSign(data.loan));
+                	var closeDate = data.closeDate;
+                	var complete = Number(data.complete);
+					item.find(".prograss-bar-inner").css("width",complete+"%");
+                	if(complete == 100){
+                		item.find(".project_invest_btn").html('<p class="p2p_btn_s p2p_btn_disable">已经结束</p>');
+                		item.find(".project_invest_btn").append('<p class="project_rm_finish2">已投满</p>');
+                	}
+                	if(complete >= 80 && complete!=100){
+                		item.find(".project_invest_btn").append('<p class="project_icon_standard">已达标</p>');
+                	}
+                	
+                	var now = new Date();
+                	if(data.isOpen == 1){
+						var endDate = new Date(Utils.toCommonDateStr(data.closeDate.replace(/-/g, '\/'))),diff = dateDiff(endDate, now);
+	                    var residualTime = (diff.date === void 0 ? '0' : diff.date) + '天' + (diff.hour === void 0 ? '0' : diff.hour) + '小时' + (diff.minute === void 0 ? '0' : diff.minute) + '分';
+	                    if(diff.date === void 0 && diff.hour === void 0 && diff.minute === void 0 && data.state==2 && complete != 100){
+	                    	item.find(".project_invest_btn").html('<p class="p2p_btn_s p2p_btn_disable">已经结束</p>');
+	                    }
+                	}else{
+						var endDate = new Date(Utils.toCommonDateStr(data.closeDate.replace(/-/g, '\/'))),diff = dateDiff(endDate, now);
+	                    var residualTime = (diff.date === void 0 ? '0' : diff.date) + '天' + (diff.hour === void 0 ? '0' : diff.hour) + '小时' + (diff.minute === void 0 ? '0' : diff.minute) + '分';
+                		item.find(".p2p_btn_s").html("立即预约");
+                		item.find("#project_invest_time_span").html("剩余开标时间");
+                	}
+                    if(complete != 0 || (diff.date === void 0 && diff.hour === void 0 && diff.minute === void 0)){
+                		item.find(".project_icon_new").remove();
+                	}
+                    item.find(".project_invest_time").html(residualTime);
+                });
+            });
+        },
+        render:function(){},
+        toClick:function(projectId){
+        	location.href="#page=showProjectDetail?projectId="+projectId;
+        }
+    };
+	project_invest_box.init();
+</script>

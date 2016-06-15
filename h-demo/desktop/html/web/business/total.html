@@ -1,0 +1,40 @@
+<!-- accout_main S-->
+<div class="accout_main">
+    <!--<div class="accout_headBar">
+        <a href="#" class="visit">借款管理</a><span>&gt;</span>
+        <a href="#">借款统计</a>
+    </div>-->
+
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;">借款统计</div>
+
+        <div class="member_tab">
+            <ul class="member_tab_menu clearfix">
+                <li class="active">需要借款</li>
+                <li>待还借款</li>
+                <li>已还借款</li>
+            </ul>
+            <div class="member_tab_content">
+                <div class="member_tab_list">
+                    <div id="total_load_box"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+    $(function(){
+        PorletLoader.loadPorlet("total_load_box", [{ link: "business/total1.html"}]);
+        $(".member_tab_menu  li").click(function(){
+            $(this).addClass("active").siblings().removeClass("active");
+            var index=$(this).index()+1;
+            //$(".member_tab_content > div").eq(index).show().siblings().hide();
+            PorletLoader.loadPorlet("total_load_box", [{ link: "business/total"+index+".html"}]);
+        });
+    });
+</script>

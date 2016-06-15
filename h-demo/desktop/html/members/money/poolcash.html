@@ -1,0 +1,190 @@
+<!--提现-->
+
+<!-- accout_main S-->
+<div class="accout_main">
+
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding: 15px 0;">提现</div>
+
+        <div class="accout_cashe">
+            <div id="cash_info" class="cash_info" style="display:none;">
+               <span class="bg"></span>您尚未绑定银行卡，将无法提现，点击 <a href="javascript:void(0);" class="font_blue">前往绑定</a>!
+            </div>
+            <p class="cashe_pl"><label>账户余额：</label><span id="amount" class="cashe_m2"></span>元</p>
+            <div class="accout_cash_money accout_cash_poolmoney">
+                <div  class="accout_cash_form">
+                    <p class="cash_p1"><input type="text" id="auction" class="accout_cash_input" maxlength="9" onKeyPress="if (event.keyCode!=46 && event.keyCode!=45 &&
+(event.keyCode<48 || event.keyCode>57)) event.returnValue=false" placeholder="请输入金额，最少提现3元"/></p>
+                    <p class="cash_p2">
+                        <select class="accout_cash_select" id="cardList">
+                            <option name="" value="">请选择提现银行卡</option>
+                        </select>
+                    </p>
+                    <p class="cash_p3">
+                        <select class="accout_cash_select" id="poolcashWay">
+                            <option value="">请选择提现方式</option>
+                            <option value="0">正常提现</option>
+                            <option value="1">加急提现</option>
+                        </select>
+                    </p>
+                    <p class="cash_p4">
+                        <input type="password" id="paypassword" class="accout_cash_input" placeholder="请输入交易密码"/>
+                    </p>
+                    <p class="cash_pbn"><button id="cashBtn" class="accout_cash_btn">提现</button></p>
+                </div>
+            </div>
+            <div class="accout_cash_tip">
+                <div class="accout_cashe_msg">
+                    <h4>温馨提示：</h4>
+                    <p> 1．提现前需绑定银行卡，否则无法提现。</p>
+                    <p> 2．部分银行尚不支持提现到信用卡，如果支付平台提示不支持，请更换提现银行卡。</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--dialog S-->
+<div id="dialog" class="h-dialog" style="display: none;">
+    <div class="h-dialog_title">系统提示<a id="hide" class="h-dialog_close" title="关闭">关闭</a>
+    </div>
+    <div class="h-dialog_show">
+        <div class="accout_recharge_db">
+            <img style="margin-top: 20px;" src="images/account/icon-warn.png" alt=""/>
+            <p id="warnMsg" style="text-align: center; padding:20px  50px;"></p>
+        </div>
+    </div>
+    <div class="h-dialog_bottom" style="right:50%; margin-right:-38px; bottom:20px;">
+        <button id="h-dialog_btn1" class="h-dialog_btn" style="display:none;">立即绑卡</button>
+        <button id="h-dialog_btn2" class="h-dialog_btn" style="display:none;">立即认证</button>
+    </div>
+</div>
+<!--dialog E-->
+<!-- accout_main E-->
+<script type="text/javascript">
+
+    var str=window.location.href,result='',returnrul='';
+    locationurl = str.split("returnUrl=");
+    result=locationurl[1];
+    if(result==''||result==undefined){
+        returnrul =encodeURIComponent(DeelonService.site+'/desktop/html/p2p/index.html#page=pagesuccess?type=cash')
+    }else{
+        returnrul=encodeURIComponent(result);
+    }
+
+    var cashFun={
+        init:function(){
+            this.render();
+        },
+        render:function(){
+            $.getJSON("/dlsys/portal/wealth/assetJournal/incomeAndExpenses/"+user.data.account.id,function(data){
+                $("#amount").html(addThousandSign(parseFloat(data.result.account.amount)));
+            });
+
+            var url = '/dlsys/portal/sdk/user/' + user.data.id + "/bankcards?token=" + encodeURIComponent(user.data.token);
+            $.getJSON(url,function(data){
+                if(data!=''){
+                    var len=data[0].cardNo.length;
+                    var tpl='<option @name="$customerName" @value="$cardNo"></option>';
+                    Utils.bindList("#cardList",$(tpl),data,'',function(item,data){
+                        var cardlen=data.cardNo.length;
+                        var cardNo = data.cardNo.substring(0, 6) + "** **** ***" + data.cardNo.substring(cardlen-4,cardlen);
+                        $(item).html(data.name+"："+cardNo);
+                    });
+                }else{
+                    $("#cash_info").show();
+                    $("#cashBtn").attr({"disabled":"disabled"}).css({"background":"#bbb","border":"1px solid #bbb"});
+                }
+            });
+        },
+        cash:function(){
+            var cashurl='/dlsys/portal/sdk/user/info/'+user.data.id+'/personal';
+            $.get(cashurl, function(res) {
+                if(res.certificationStatus==1){
+                    var cashurl="/dlsys/portal/tstransaction/mobile/withdraw/yeepay/"+user.data.account.id;
+                    if($("#cash_info").is(":visible")){
+                        showDialog("#dialog", { "bgcolor": "black", "delay": 50 },function(){
+                            $("#warnMsg").html('您还没有绑定银行卡。');
+                            $("#h-dialog_btn1").show();
+                            $("#h-dialog_btn2").hide();
+                        });
+                    }else{
+                        var amount=$("#auction").val(),paypwd=$("#paypassword").val();
+                        var idName=$("#cardList").find("option:selected").attr("name"), bankcardNumber=$("#cardList").find("option:selected").attr("value");
+                        var urgentFlag=$("#poolcashWay").val();
+                        var y_mony=Fcheck.t_poolmony(amount);
+                        if(y_mony){
+                            var y_bank='';
+                            if(bankcardNumber==''){
+                                jAlert.warn('请输提现银行卡');
+                                y_bank=false;
+                            }else{
+                                y_bank=true;
+                            }
+                        }
+                        if(y_mony&&y_bank){
+                            var y_tway='';
+                            if(urgentFlag==''){
+                                jAlert.warn('请输提现方式');
+                                y_tway=false;
+                            }else{
+                                y_tway=true;
+                            }
+                        }
+                        if(y_mony&&y_bank&&y_tway){
+                            var y_paypwd=Fcheck.c_paypwd(paypwd);
+                        }
+                        if(y_mony&&y_bank&&y_tway&&y_paypwd){
+                            DeelonService.ajax(cashurl,'post',{accountId:user.data.account.id,password:paypwd,amount:amount,bankcardNumber:bankcardNumber,idName:idName,feeType:"PLATFORM",urgentFlag:urgentFlag},function(data){
+                                if(data.code==0){
+                                    jAlert.success("提现申请成功，等待系统审核。预计1~2个工作日内到账，<br>敬请留意您的入账信息。！",null,null,function(){
+                                        location.hash="#page=basic?bread=安全中心";
+                                    });
+                                }else{
+                                    jAlert.warn(data);
+                                }
+                            },function(xhr, status, err){
+                                jAlert.warn(xhr.responseText);
+                            });
+
+                        }
+                    }
+                }else if(res.certificationStatus==2){
+                    jAlert.warn('实名认证审核中，不能执行该操作');
+                }else{
+                    showDialog("#dialog", { "bgcolor": "black", "delay": 50 },function(){
+                        $("#warnMsg").html('您还没有实名认证。');
+                        $("#h-dialog_btn1").hide();
+                        $("#h-dialog_btn2").show();
+                    });
+                }
+            });
+        },
+        hide:function(){
+            hideDialog("#dialog");
+            $("#warnMsg").html('');
+            $("#h-dialog_btn").html('');
+        }
+    };
+    cashFun.init();
+
+    $("#cashBtn").on("click",function(){
+        cashFun.cash();
+    });
+
+    $("#hide,#h-dialog_btn1").click(function(){
+        cashFun.hide();
+    });
+
+    $("#h-dialog_btn1").on("click",function(){
+        $("#maskDiv").remove();
+        location.hash="#page=accout?bread=我的账户";
+    });
+
+    $("#h-dialog_btn2").on("click",function(){
+        $("#maskDiv").remove();
+        location.hash="#page=verified?bread=实名认证";
+    });
+
+
+</script>

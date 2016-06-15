@@ -1,0 +1,29 @@
+﻿
+<div id="members_accoutBox">
+
+<!--p2p_wrapper S-->
+<div class="p2p_wrapper">
+  <div class="accout_box">
+    <!-- accout_content S-->
+    <div class="accout_content clearfix">
+      <div id="accout_sidebarBox"></div>
+      <div id="content_box">
+        <div id="breadcrumb_box" class="accout_headBar"></div>
+        <div id="accout_contentBox"></div>
+      </div>
+    </div>
+    <!-- accout_content E-->
+  </div>
+</div>
+<!--p2p_wrapper E-->
+
+</div>
+
+<script type="text/javascript" >
+  $(function() {
+    p2p_user.islogin();
+    PorletLoader.loadPorlet("accout_sidebarBox", [{ link: "../members/common/sidebar.html"}]);
+    PorletLoader.loadPorlet("accout_contentBox", [{link: "../members/home/home_main.html"}]);
+    $("#breadcrumb_box").breadcrumb();
+  })
+</script>

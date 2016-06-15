@@ -1,0 +1,91 @@
+<!--理财统计-->
+<!-- accout_main S-->
+<div class="accout_main">
+   <!-- <div class="accout_headBar">
+        <a href="#" class="visit">理财管理</a><span>&gt;</span>
+        <a href="#">理财统计</a>
+    </div>-->
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;">理财统计</div>
+        <div class="member_tab">
+            <ul class="member_tab_menu clearfix">
+                <li class="active">理财统计</li>
+                <li>收益统计</li>
+                <li>投资项目</li>
+            </ul>
+            <div id="myInvestData1" class="member_tab_content">
+                <div class="member_tab_list">
+                    <div class="accout_main_zj">
+                        <img src="images/account/accout_zj.png" alt="资金"/>
+                        <span class="accout_main_num">$myAmount</span>元
+                        <div class="accout_main_img"></div>
+                        <div class="accout_main_bm">理财总额<img src="images/account/icon-help.png" title="已收本金+待收本金"></div>
+                    </div>
+                    <ul class="accout_main_ul clearfix" style="clear: both;">
+                        <li><span>已收本金<img src="images/account/icon-help.png" title="已收本金">：</span><label>$getPrincipalSum</label>元</li>
+                        <li><span>待收本金<img src="images/account/icon-help.png" title="待收本金">：</span><label>$beGetPrincipalSum</label>元</li>
+                    </ul>
+                </div>
+                <div id="myInvestData2" class="member_tab_list">
+                    <div class="accout_main_zj">
+                        <img src="images/account/accout_zj.png" alt="资金"/>
+                        <span class="accout_main_num">$getSunByRateSumAndPrePay</span>元
+                        <div class="accout_main_img"></div>
+                        <div class="accout_main_bm">收益总额</div>
+                    </div>
+                    <ul class="accout_main_ul clearfix" style="clear: both;">
+                        <li><span>已收回利息<img src="images/account/icon-help.png" title="已收回利息">：</span><label>$getRateSum</label> 元</li>
+                        <li><span>待收回利息<img src="images/account/icon-help.png" title="待收回利息">：</span><label>$beGetRateSum</label>元</li>
+                        <li><span>已收提前还款违约金<img src="images/account/icon-help.png" title="已收提前还款违约金">：</span><label>$getPrepay</label>元</li>
+                        <li><span>已收逾期还款罚金<img src="images/account/icon-help.png" title="已收逾期还款罚金">：</span><label>$getLate</label>元</li>
+                    </ul>
+                </div>
+                <div id="myInvestData3" class="member_tab_list">
+                    <div class="accout_main_zj" style="width: 300px;">
+                        <img  style="margin: 20px;" src="images/account/inco-statistics.png" alt="资金"/>
+                        <span class="accout_main_num">$investProjectAmount</span>
+                        <div class="accout_main_img"></div>
+                        <div class="accout_main_bm">投资项目总数</div>
+                    </div>
+                    <ul class="accout_main_ul clearfix" style="clear: both;">
+                        <li><span>筹集中<img src="images/account/icon-help.png" title="筹集中">：</span><label>$raisingProjectCount</label> </li>
+                        <li><span>收款中<img src="images/account/icon-help.png" title="收款中">：</span><label>$repayingProjectCount</label></li>
+                        <li><span>已售完<img src="images/account/icon-help.png" title="已售完">：</span><label>$payOffProjectCount</label></li>
+                        <li><span>已流标<img src="images/account/icon-help.png" title="已流标">：</span><label>$failedProjectCount</label></li>
+                        <li><span>提前还款<img src="images/account/icon-help.png" title="提前还款">：</span><label>$prePayProjectCount</label></li>
+                        <li><span>发生逾期<img src="images/account/icon-help.png" title="发生逾期">：</span><label>$lateProjectCount</label></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+    var p2p_myInvestData_List = {
+    	url:"/dlbiz/p2p/invest/investStatistic/investData/" + user.data.id,
+        params:"",
+        init:function(url,params){
+            DeelonService.get(p2p_myInvestData_List.url,p2p_myInvestData_List.params,function(data){
+            	var myAmount = data.result.getPrincipalSum + data.result.beGetPrincipalSum;
+            	var getSunByRateSumAndPrePay = data.result.getRateSum + data.result.getLate + data.result.getPrepay;
+            	data.result.getPrincipalSum = formatCurrency(data.result.getPrincipalSum);
+            	data.result.beGetPrincipalSum = formatCurrency(data.result.beGetPrincipalSum);
+            	data.result.getRateSum = formatCurrency(data.result.getRateSum);
+            	data.result.beGetRateSum = formatCurrency(data.result.beGetRateSum);
+            	data.result.getPrepay = formatCurrency(data.result.getPrepay);
+            	data.result.getLate = formatCurrency(data.result.getLate);
+            	data.result.myAmount = formatCurrency(myAmount);
+            	data.result.getSunByRateSumAndPrePay = formatCurrency(getSunByRateSumAndPrePay);
+            	Utils.bindData($("#myInvestData1"), data.result);
+            	Utils.bindData($("#myInvestData2"), data.result);
+            	Utils.bindData($("#myInvestData3"), data.result);
+            })
+        }
+    };
+
+    $(function(){
+       myTab();
+       p2p_myInvestData_List.init();
+    });
+</script>

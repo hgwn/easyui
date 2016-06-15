@@ -1,0 +1,245 @@
+<!--start phone-->
+<div id="phone" class="tab-pane fade in active">
+    <div class="step-wrap">
+        <div id="phoneStep1" class="step">
+            <div class="step-container clearfix">
+                <div class="stepInfo">
+                    <ul>
+                        <li></li>
+                        <li></li>
+                    </ul>
+                    <div class="stepIco stepIco1 current" >
+                        1
+                        <div class="stepText">
+                            填写绑定手机号码
+                        </div>
+                    </div>
+                    <div class="stepIco stepIco2">
+                        2
+                        <div class="stepText">
+                            设置新密码
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <form id="findPassWordByPhoneStep1_form" class="default-form form-horizontal" novalidate="novalidate">
+
+                <p class="regist_r"><label class="name"><em class="required">*</em>手机：</label>
+                    <input id="mobile" type="text" class="reg_text" name="mobile" placeholder="请输入你的手机号码"/>
+                    <span class="regist_tip" name="e-mobile"></span>
+                </p>
+
+                <p  class="regist_r"><label class="name"><em class="required">*</em>验证码：</label>
+                    <input type="text" name="checkNum" id="checkNum" class="reg_text" style="width: 200px;" placeholder="请输入验证码"/>
+                    <img  src="/dlsys/portal/sdk/common/validcode" class="p_yzm"  id="validcode" title="看不清，点击换一张"/>
+                    <span class="regist_tip"  name="e-checkNum"></span>
+                </p>
+
+                <p  class="regist_r">
+                    <label class="name"><em class="required">*</em>短信验证码：</label>
+                    <input type="text" class="reg_text" id="msgCode"  name="msgCode"  placeholder="请输入验证码" style="width: 200px;"/>
+                    <button type="button" class="p_yzBtn" id="getcode">获取验证码</button>
+                    <button type="button" class="p_yzBtn" id="againcode" style="display:none;">60秒后重发</button>
+                    <span class="regist_tip"  name="e-msgCode"></span>
+                </p>
+
+                <p class="regist_r pl"><button class="p_login" type="button" id="findByPhoneStep1">下一步</button></p>
+
+            </form>
+        </div>
+        <div id="phoneStep2" class="step" style="display: none;">
+            <div class="step-container clearfix">
+                <div class="stepInfo">
+                    <ul>
+                        <li></li>
+                        <li></li>
+                    </ul>
+                    <div class="stepIco stepIco1">
+                        1
+                        <div class="stepText">
+                            填写绑定手机号码
+                        </div>
+                    </div>
+                    <div class="stepIco stepIco2  current" id="check">
+                        2
+                        <div class="stepText" id="checkText">
+                            设置新密码
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <form id="findPassWordByPhone_step2" class="default-form form-horizontal" novalidate="novalidate">
+                <input type="hidden" id="mobileStr" name="mobile"/>
+                <input type="hidden" id="codeStr"   name="code"/>
+                <p class="regist_r"><label class="name"><em class="required">*</em>新密码：</label>
+                    <input id="newPassword" type="password" class="reg_text" name="newPassword" placeholder="6-20个字符，建议字母、数字和符号两种以上组合"/>
+                    <span class="regist_tip" name="e-newPassword"></span>
+                </p>
+
+                <p class="regist_r"><label class="name"><em class="required">*</em>确认密码：</label>
+                    <input id="comfirmNewPassword" type="password" class="reg_text" name="comfirmNewPassword" placeholder="6-20个字符，建议字母、数字和符号两种以上组合"/>
+                    <span class="regist_tip" name="e-comfirmNewPassword"></span>
+                </p>
+
+                <p class="regist_r pl"><button class="p_login" type="button" id="findByPhoneStep2">确定</button></p>
+            </form>
+        </div>
+        <div id="phone-success" class="step"  style="display: none;">
+            <img src="images/tip_wx2.png">
+            <h4>恭喜你，找回密码成功! </h4>
+            <button type="button" onclick="Utils.gotoPage('index.html#page=login');" class="p_login" style="width:300px;margin:auto;">
+                马上登陆
+            </button>
+        </div>
+    </div>
+</div>
+<!--end phone-->
+
+<script type="text/javascript">
+    var findPassWordByPhone_step1Form = {
+
+        init : function() {
+            $("#findByPhoneStep1").bind("click", function() {
+                if ($("#findPassWordByPhoneStep1_form").valid()) {
+                    var url = '/dlsys/portal/sdk/user/matches/' + $("#mobile").val();
+                    $.get(url, function(data) {
+                        if (data) {
+                            $("#mobileStr").val($("#mobile").val());
+                            $("#codeStr").val($("#msgCode").val());
+                            findPassWordByPhone_step2Form.init();
+                        }else{
+                            jAlert.warn('手机号码未绑定');
+                        }
+                    });
+                }
+            });
+        },
+        getvalidcode:function(){
+            $("#validcode").attr('src','/dlsys/portal/sdk/common/validcode?rand='+Math.random());
+        },
+        RegSentMsg:function(phone){
+            var getcode=$("#getcode"),againcode=$("#againcode");
+            var appUserId = (user.id ==undefined ? "":user.id);
+            var url = '/dlsys/portal/sdk/user/sendSMS/' + phone+"?Appkey=&appUserId="+ appUserId;
+
+            DeelonService.ajax(url,'get',null,function(data){},function(xhr, status, err){
+                getcode.hide();
+                againcode.show();
+                var tflg = 60;
+                var int = setInterval(function() {
+                    $(againcode).html(tflg + '秒后重发');
+                    if (tflg == 0) {
+                        tflg = 60;
+                        getcode.show();
+                        againcode.hide();
+                        $(againcode).html(tflg + '秒后重发');
+                        clearInterval(int);
+                    }
+                    tflg--;
+                }, 1000);
+            });
+        },
+    };
+
+    var findPassWordByPhone_step2Form = {
+
+        init : function() {
+            $("#phoneStep1").hide();
+            $("#phoneStep2").show();
+            $("#findByPhoneStep2").bind("click", function() {
+                if ($("#findPassWordByPhone_step2").valid()) {
+                    var url = '/dlsys/portal/sdk/user/account/' + $("#mobileStr").val() + '/' + $("#codeStr").val() + '/' + $("#newPassword").val();
+                    DeelonService.ajax(url,'post',{},function(data){},function(xhr, status, err){
+                        if (xhr.status != 400 && xhr.status !=500){
+                            $("#phoneStep2").hide();
+                            $("#phone-success").show();
+                        }
+                    });
+                }
+            });
+        }
+    };
+
+
+
+    $(function(){
+        setErrorLable();
+        $("#validcode").click(function(){
+            findPassWordByPhone_step1Form.getvalidcode();
+        });
+        $("#getcode").click(function(){
+            var phone=$.trim($('#mobile').val());
+            if(!phone){
+                jAlert.warn('请输入手机号码');
+                return;
+            }else if(!/^(13[0-9]|14[0-9]|15[0-9]|17[0-9]|18[0-9])\d{8}$/i.test(phone)){
+                jAlert.warn('手机号码格式不合法');
+                return;
+            }
+            var url = '/dlsys/portal/sdk/user/matches/' + $("#mobile").val();
+            $.get(url, function(data) {
+                if(data){
+                    findPassWordByPhone_step1Form.RegSentMsg(phone);
+                }else{
+                    jAlert.warn('手机号码未绑定');
+                }
+            });
+
+        });
+        $("#findPassWordByPhoneStep1_form").validate({
+            rules : {
+                mobile : {
+                    required : true,
+                    minlength : 11,
+                    maxlength : 11,
+                    digits : true
+                },
+                checkNum : {
+                    required : true
+                },
+                msgCode : {
+                    required : true,
+                }
+            },
+            messages : {//提示报错
+                mobile : {
+                    required : "手机必填",
+                    minlength : "号码长度为11",
+                    maxlength : "号码长度为11",
+                    digits : "必须是数字"
+                },
+                checkNum : {
+                    required : "验证码不能为空"
+                },
+                msgCode : {
+                    required : "手机验证码不能为空"
+                }
+            }
+        });
+
+        $("#findPassWordByPhone_step2").validate({
+
+            rules : {
+                newPassword : {
+                    required : true
+                },
+                comfirmNewPassword : {
+                    required : true,
+                    equalTo : "#newPassword"
+                }
+            },
+            messages : {
+                newPassword : {
+                    required : "密码不能为空"
+                },
+                comfirmNewPassword : {
+                    required : "确认密码不能为空",
+                    equalTo : "两次输入密码必须一致"
+                }
+            }
+        });
+
+
+        findPassWordByPhone_step1Form.init();
+    });
+</script>

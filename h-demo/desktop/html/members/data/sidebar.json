@@ -1,0 +1,69 @@
+{
+  "code":0,
+  "msg":"",
+  "result":[{
+    "id":11,
+    "groupname":"我的账户",
+    "list":[
+      {"name":"我的礼品","url":"accout.html#page=gift"},
+      {"name":"我的积分记录","url":"accout.html#page=pointlist"},
+      {"name":"我的提成记录","url":"accout.html#page=percentage"},
+      {"name":"我的邀请用户","url":"accout.html#page=invite"}]
+  },{
+    "id":11,
+    "groupname":"借款管理",
+    "list":[
+      {"name":"我的借款","url":"accout.html#page=my"},
+      {"name":"还款管理","url":"accout.html#page=repay"},
+      {"name":"借款申请查询","url":"accout.html#page=applysearch"},
+      {"name":"统计借款","url":"accout.html#page=total"},
+      {"name":"借款条件进度","url":"accout.html#page=progress"},
+      {"name":"额度申请记录","url":"accout.html#page=apply"}]
+  }
+
+  ,{
+      "id":12,
+      "groupname":"理财管理",
+      "list":[
+        {"name":"我的投标","url":"accout.html#page=bid"},
+        {"name":"关注的借款","url":"accout.html#page=follow"},
+        {"name":"预约的借款","url":"accout.html#page=order"},
+        {"name":"理财统计","url":"accout.html#page=statistics"},
+        {"name":"自动投标","url":"accout.html#page=autobid"}]
+    },{
+      "id":13,
+      "groupname":"债权转让",
+      "list":[
+        {"name":"债权转让","url":"accout.html#page=credit"},
+        {"name":"债权竞标","url":"accout.html#page=creditbid"},
+        {"name":"关注债权","url":"accout.html#page=creditfollow"}]
+    },{
+      "id":14,
+      "groupname":"资金管理 ",
+      "list":[
+        {"name":"充值","url":"accout.html#page=recharge"},
+        {"name":"提现","url":"accout.html#page=cash"},
+        {"name":"资金记录","url":"accout.html#page=frecord"}]
+    },
+    {
+      "id":15,
+      "groupname":"基本设置 ",
+      "list":[
+        {"name":"编辑个人资料","url":"accout.html#page=person"},
+        {"name":"上传认证资料","url":"accout.html#page=upload"},
+        {"name":"上传个人资料","url":"accout.html#page=uploadperson"},
+        {"name":"安全中心","url":"accout.html#page=basic"}]
+    },
+    {
+      "id":16,
+      "groupname":"服务通知 ",
+      "list":[
+        {"name":"我的通知","url":"accout.html#page=notice"},
+        {"name":"我的留言","url":"accout.html#page=message"},
+        {"name":"我的投诉","url":"accout.html#page=complain"}]
+    }
+  ]
+}
+
+
+

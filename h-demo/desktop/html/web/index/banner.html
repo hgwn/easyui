@@ -1,0 +1,58 @@
+<!-- Slider main container -->
+<div class="swiper-container">
+    <!-- Additional required wrapper -->
+    <div class="swiper-wrapper" id="p2p_banner_temp">
+        <!-- Slides -->
+    </div>
+    <!-- If we need pagination -->
+    <div class="swiper-pagination"></div>
+    <!-- If we need navigation buttons -->
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+
+</div>
+
+<script type="text/javascript">
+
+    var p2p_bannerBox = {
+        
+        init: function(url, params) {
+            var temp = ' <div class="swiper-slide"><a href="#"><img @src="/dlapi/cms/image/download?id=$id&fullPath="></a></div>';
+
+            DeelonService.CMSService.list({fullPath: "/内容管理/网站管理/P2P/banner/"}, function(data) {
+
+                Utils.bindList($("#p2p_banner_temp"), $(temp), data);
+                p2p_bannerBox.render();
+
+            });
+
+
+        },
+        render: function() {
+            var mySwiper = new Swiper('.swiper-container', {
+                // Optional parameters
+                direction: 'horizontal',
+                loop: true,
+                autoHeight: true,
+                autoplay: 2000,
+                effect: 'fade',
+                // If we need pagination
+                pagination: '.swiper-pagination',
+                paginationClickable: true,
+                // Navigation arrows
+                nextButton: '.swiper-button-next',
+                prevButton: '.swiper-button-prev',
+                // And if we need scrollbar
+                //scrollbar: '.swiper-scrollbar',
+            })
+
+        }
+
+
+    };
+
+    $(function() {
+
+        p2p_bannerBox.init();
+    });
+</script>

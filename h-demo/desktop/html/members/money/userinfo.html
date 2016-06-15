@@ -1,0 +1,226 @@
+<!--支付账户绑定-->
+<div class="accout_main">
+    <div class="accout_main_content" style="position:relative;">
+        <div style="padding-top: 15px;" class="accout_main_title">支付账户</div>
+        <div class="accout_basic_box">
+            <form>
+                <ul class="accout_person_ul">
+                    <li>
+                        <span class="accout_person_n">真实姓名：</span>
+                        <input id="realName" type="text" class="accout_person_text">
+                    </li>
+                    <li>
+                        <span class="accout_person_n">手机号码：</span>
+                        <input id="appUserPhone" type="text" class="accout_person_text">
+                    </li>
+                    <li>
+                        <span class="accout_person_n">身份证号：</span>
+                        <input id="cardNum" type="text" class="accout_person_text">
+                    </li>
+                    <li id="bankNum" style="position:relative;width:385px; display:none;">
+                        <span class="accout_person_n">银行卡号：</span>
+                        <input id="bankcradnum" type="text" class="accout_person_text" style="width:180px;" disabled>
+                        <a id="linkbindcard" href="javascript:;" style="position:absolute;right:0; top:0; text-align: center;width:80px; background: #f46157; padding:5px 0;color:#fff;border-radius:2px; display:none;  ">立即绑定</a>
+                        <a id="rescardnum" href="javascript:;" style="position:absolute;right:0; top:0;text-align: center; width:50px;background: #f46157; padding:5px 0;color:#fff;border-radius:2px; display:none; ">解绑</a>
+                        <a id="unbindCarding"  href="javascript:;" style="position:absolute;right:0; top:0;text-align: center; width:80px; padding:5px 0; display:none;">正在解绑中</a>
+                    </li>
+                    <li id="yeepaytsphoneNum"  style="position:relative;width:385px; display:none;">
+                        <span class="accout_person_n">交易手机：</span>
+                        <button class="zc_btn" id="yeepaytsphoneSet" type="button">修改</button>
+                    </li>
+                    <li id="yeepaytspassword" style="position:relative;width:385px; display:none;">
+                        <span class="accout_person_n">交易密码：</span>
+                        <button class="zc_btn" id="resetyeepayts" type="button">修改</button>
+                    </li>
+                    <li class="accout_person_btn">
+                        <button class="zc_btn" id="submitInfo" type="button" style="display: none;">确定</button>
+                    </li>
+                </ul>
+            </form>
+        </div>
+        <div class="accout_recharge" style="position:absolute; left:80px; top:5px;">
+            <div class="accout_recharge_tip">
+                <div class="accout_recharge_msg">
+                    <h4>温馨提示：</h4>
+                    <p>  1．为了你的资金安全,投资前请注册易宝支付账户作为你资金托管账户</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<form name="form" method="post" id="bindformsumbit" target="_blank" action="" style="display: none;">
+    <textarea rows="23" cols="120"  name="req">$req</textarea>
+    <input type="hidden" id="sign" name="sign" value="$sign">
+</form>
+<form name="form" method="post" id="bindcard" target="_blank" action="" style="display: none;">
+    <textarea rows="23" cols="120"  name="req">$req</textarea>
+    <input type="hidden" id="cardsign" name="sign" value="$sign">
+</form>
+
+<form name="form" method="post" id="bindPassword" target="_blank" action="" style="display: none;">
+    <textarea rows="23" cols="120"  name="req">$req</textarea>
+    <input type="hidden"  name="sign" value="$sign">
+</form>
+<form name="form" method="post" id="bindPhoneNum" target="_blank" action="" style="display: none;">
+    <textarea rows="23" cols="120"  name="req">$req</textarea>
+    <input type="hidden"  name="sign" value="$sign">
+</form>
+<script type="text/javascript">
+    var userName='',useridCard='', userPhone = user.data.phone.substring(0, 3) + "****" + user.data.phone.substring(8, 11);
+    var bindinfo={
+        init:function(){
+            this.render();
+        },
+        render:function(){
+            $("#appUserPhone").val(user.data.phone);
+            var url="/dlsys/portal/tstransaction/"+user.data.account.id+"/"+user.data.payChannel.code;
+            $.get(url, function(res) {
+                if (res.accountId == null || res.accountId == "") {
+                    $('.accout_person_ul input').removeAttr("disabled");
+                    $("#submitInfo").show();
+                }else{
+                    $("#bankNum,#yeepaytsphoneNum,#yeepaytspassword").show();
+                    if(res.bindCard==false){//立即绑卡
+                        $("#bankcradnum").val('未绑定');
+                        $("#rescardnum").hide();
+                        $("#unbindCarding").hide();
+                        $("#linkbindcard").show();
+                    }else if( res.unbindCardRequested==true){//正在解绑中
+                        $("#bankcradnum").val(res.bankCardNo);
+                        $("#unbindCarding").show();
+                        $("#rescardnum").hide();
+                        $("#linkbindcard").hide();
+                    }else if( res.bindCard==true){//解卡
+                        $("#bankcradnum").val(res.bankCardNo);
+                        $("#unbindCarding").hide();
+                        $("#rescardnum").show();
+                        $("#linkbindcard").hide();
+                    }
+                    bindinfo.getuserinfo();
+                }
+            });
+        },
+        getuserinfo:function(){
+            var url='/dlsys/portal/sdk/user/info/'+user.data.id+'/personal';
+            $.get(url, function(res) {
+                $('.accout_person_ul input').attr("disabled","disabled");
+                $("#submitInfo").hide();
+                $("#realName").val(res.realName);
+                $("#appUserPhone").val(userPhone);
+                var cardlen=res.idCard.length;
+                $("#cardNum").val(res.idCard.substring(0, 5) + " **** **** " + res.idCard.substring(cardlen-4, cardlen));
+
+                $("#linkbindcard").on('click',function(){
+                    bindinfo.SetbankCard();
+                });
+                $("#rescardnum").on('click',function(){
+                    bindinfo.UnSetbankCard();
+                });
+            });
+        },
+        formsubit:function(n,p,c){
+            var url="/dlsys/portal/tstransaction/pc/register/yeepayts/?token=" + encodeURIComponent(user.data.token);
+            var returnUrl=DeelonService.site+'/desktop/html/p2p/index.html#page=pagesuccess?type=yeepayts';
+            DeelonService.ajax(url,'post',{userId:user.data.id,accountId:user.data.account.id,name:n,phone:p,idCard:c,returnUrl:returnUrl},function(data){
+                $("#bindformsumbit").attr("action",data.result.url);
+                Utils.bindData($("#bindformsumbit"),data.result);
+                $("#bindformsumbit").submit();
+                jAlert.info('已经跳到易宝开户页面，如果请求不合法，会给你提示相关信息。<br>开户完成后，请点击确认按钮。',null,null,function(){
+                    location.hash="#page=accout?bread=我的账户";
+                    //window.location.reload();
+                });
+            },function(xhr, status, err){});
+
+        },
+        SetbankCard:function(){
+            var urlReturn=encodeURIComponent(DeelonService.site+'/desktop/html/p2p/index.html#page=pagesuccess?type=bindcard');
+            var url='/dlsys/portal/tstransaction/pc/bindcard/'+user.data.payChannel.code+'?accountId='+user.data.account.id+'&appKey=P2P&urlReturn='+urlReturn;
+            $.ajax({
+                headers:{
+                    "appKey":"P2P",
+                    "content-type":"application/json"
+                },
+                type: "post",
+                url: url,
+                data: {},
+                async:false,
+                dataType: "json",
+                success: function(data) {
+                    $("#bindcard").attr("action",data.result.url);
+                    Utils.bindData($("#bindcard"),data.result);
+                    $("#bindcard").submit();
+                    jAlert.info('已经跳到易宝绑卡页面，如果请求不合法，会给你提示相关信息。<br>绑卡完成后，请点击确认按钮。',null,null,function(){
+                        location.hash="#page=accout?bread=我的账户";
+                    });
+                }
+            })
+        },
+        UnSetbankCard:function(){
+            var url='/dlsys/portal/tstransaction/pc/unbind/'+user.data.payChannel.code+'?accountId='+user.data.account.id+'&appKey=P2P';
+            $.ajax({
+                headers:{
+                    "appKey":"P2P",
+                    "content-type":"application/json"
+                },
+                type: "post",
+                url: url,
+                data: {},
+                async:false,
+                dataType: "json",
+                success: function(data) {
+                    if(data.code==0){
+                        $("#unbindCarding").show();
+                        $("#rescardnum").hide();
+                        $("#linkbindcard").hide();
+                        jAlert.warn('预约解绑成功');
+                    }else{
+                        jAlert.warn(data.msg);
+                    }
+                }
+            })
+        },
+        SetPassWord:function(){
+            //alert(1);
+        }
+    };
+    bindinfo.init();
+    $("#submitInfo").on("click",function(){
+        var z_name=$("#realName").val(),z_phone = $("#appUserPhone").val(),z_cardNum=$("#cardNum").val();
+        var y_name=Fcheck.c_realname(z_name);
+        if(y_name){var y_phone=Fcheck.c_phone(z_phone);}
+        if(y_name&&y_phone){var y_cardNum=Fcheck.c_icard(z_cardNum)}
+        if(y_name&&y_phone&&y_cardNum){
+            bindinfo.formsubit(z_name,z_phone,z_cardNum);
+        }
+    });
+    $("#resetyeepayts").on('click',function(){  //交易密码修改
+        var urlReturn=encodeURIComponent(DeelonService.site+'/desktop/html/p2p/index.html#page=pagesuccess?type=yeepaytspasswrod');
+        var url="/dlsys/portal/tstransaction/pc/password/"+user.data.payChannel.code+"?accountId="+user.data.account.id+"&urlReturn="+urlReturn+"&appKey=p2p";
+        DeelonService.ajax(url,'post',{},function(res){
+            if(res.code==0){
+                $("#bindPassword").attr("action",res.result.url);
+                Utils.bindData($("#bindPassword"),res.result);
+                $("#bindPassword").submit();
+                jAlert.info('已经跳到易宝重置密码页面，如果请求不合法，会给你提示相关信息。<br>重置密码完成后，请点击确认按钮。',null,null,function(){
+                    location.hash="#page=accout?bread=我的账户";
+                });
+            }
+        },function(xhr, status, err){});
+    });
+
+    $("#yeepaytsphoneSet").on('click',function(){  //交易手机修改
+        var urlReturn=encodeURIComponent(DeelonService.site+'/desktop/html/p2p/index.html#page=pagesuccess?type=yeepaytsphone');
+        var resetsurl="/dlsys/portal/tstransaction/pc/mobile/"+user.data.payChannel.code+"?accountId="+user.data.account.id+"&urlReturn="+urlReturn+"&appKey=p2p";
+        DeelonService.ajax(resetsurl,'post',{},function(res){
+            if(res.code==0){
+                $("#bindPhoneNum").attr("action",res.result.url);
+                Utils.bindData($("#bindPhoneNum"),res.result);
+                $("#bindPhoneNum").submit();
+                jAlert.info('已经跳到易宝重置手机页面，如果请求不合法，会给你提示相关信息。<br>重置手机完成后，请点击确认按钮。',null,null,function(){
+                    location.hash="#page=accout?bread=我的账户";
+                });
+            }
+        },function(xhr, status, err){});
+    });
+</script>

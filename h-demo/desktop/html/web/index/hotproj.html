@@ -1,0 +1,78 @@
+<ul class="clearfix" id="p2p_hotproj_temp">
+    <li id="project_rm_list" class="project_rm_list"  style="display: none;">
+        <div class="project_rm_tittle bg_color_red"><a href="javascript:void(0);">$name</a></div>
+        <div class="project_rm_rate"><span>$rate</span><em>%</em><br>年化收益</div>
+        <div class="project_rm_Num clearfix">
+            <div class="fl"><span class="loan">$loan</span>元<br>借款金额</div>
+            <div class="fr"><span>$deadline</span><span class="deadlineType">$deadlineType</span><br>借款期限</div>
+        </div>
+        <p class="project_rm_bar"><span class="prograss-bar"><span class="prograss-bar-inner"></span></span>$complete%</p>
+        <p class="project_rm_btn" onclick="p2p_hotprojBox.toClick('$projectId');">立即投资</p>
+    </li>
+</ul>
+
+<script type="text/javascript">
+    var p2p_hotprojBox = {
+        action:{
+            clickBtn:function(elem){
+
+            }
+        },
+        init:function(){
+            DeelonService.get("/dlbiz/p2p/projects?stateArr=2,3&recommend=1",function(data){
+            	var num = 1;
+                Utils.bindList($("#p2p_hotproj_temp"),$("#project_rm_list"),data.result.content,null,function(item,data){
+                	if(num <= 4 ){
+                		if(num == 1){
+                			item.find(".project_rm_tittle").addClass("bg_color_red");
+                		}else if(num == 2){
+                			item.find(".project_rm_tittle").addClass("bg_color_blue");
+                		}else if(num == 3){
+                			item.find(".project_rm_tittle").addClass("bg_color_yellow");
+                		}else if(num == 4){
+                			item.attr("style","display: list-item;margin-right: 0px;");
+                			item.find(".project_rm_tittle").addClass("bg_color_green");
+                		}
+                		
+                		if(data.deadlineType == 'DAY'){
+                			item.find(".deadlineType").html("天");
+                		}else if(data.deadlineType == 'MONTH'){
+                			item.find(".deadlineType").html("个月");
+                		}else if(data.deadlineType == 'YEAR'){
+                			item.find(".deadlineType").html("年");
+                		}
+                		
+	                	item.find(".loan").html(addThousandSign(data.loan));
+
+	                	var closeDate = data.closeDate;
+	                	var complete = Number(data.complete);
+						item.find(".prograss-bar-inner").css("width",complete+"%");
+	                	if(complete == 100){
+	                		item.find(".project_rm_btn").html('<p class="project_rm_btn_over">已经结束</p>');
+	                		item.find(".project_rm_btn").append('<p class="project_rm_finish">已投满</p>');
+	                	}
+	                	
+	                	var now = new Date();
+	                	if(data.isOpen == 1){
+		                	var endDate = new Date(Utils.toCommonDateStr(data.closeDate.replace(/-/g, '\/'))),diff = dateDiff(endDate, now);
+		                    var residualTime = (diff.date === void 0 ? '0' : diff.date) + '天' + (diff.hour === void 0 ? '0' : diff.hour) + '小时' + (diff.minute === void 0 ? '0' : diff.minute) + '分';
+		                    if(diff.date === void 0 && diff.hour === void 0 && diff.minute === void 0 && data.state==2 && complete != 100){
+		                    	item.find(".project_rm_btn").html('<p class="project_rm_btn_over">已经结束</p>');
+		                    }
+	                	}else{
+							var endDate = new Date(Utils.toCommonDateStr(data.closeDate.replace(/-/g, '\/'))),diff = dateDiff(endDate, now);
+		                    var residualTime = (diff.date === void 0 ? '0' : diff.date) + '天' + (diff.hour === void 0 ? '0' : diff.hour) + '小时' + (diff.minute === void 0 ? '0' : diff.minute) + '分';
+		                    item.find(".project_rm_btn").html("立即预约");
+	                	}
+	                    num += 1;
+                	}
+                });
+            });
+        },
+        toClick:function(projectId){
+        	location.href="#page=showProjectDetail?projectId="+projectId;
+        },
+        render:function(){}
+    };
+    p2p_hotprojBox.init();
+</script>

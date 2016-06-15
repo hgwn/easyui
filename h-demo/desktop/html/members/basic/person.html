@@ -1,0 +1,586 @@
+<!--编辑个人资料-->
+<!-- accout_main S-->
+<div class="accout_main">
+    <div class="accout_main_content" style="position: relative;">
+        <div class="accout_main_title" style="padding-top: 15px;">编辑个人资料</div>
+
+        <div class="member_tab">
+            <ul class="member_tab_menu  clearfix">
+                <li class="active">我的基本信息</li>
+                <li>我的家庭情况</li>
+                <li>我的单位情况</li>
+                <li>我的联系方式</li>
+            </ul>
+            <div class="member_tab_content">
+                <div class="member_tab_list">
+                    <form id="BaseInfo" name="BaseInfo">
+                        <ul class="accout_person_ul">
+                            <li><span class="accout_person_n">真实姓名：</span>
+                                <input id="realName" name="realName" type="text" class="accout_person_text"/><span class="text_tip"></span></li>
+                            <li><span class="accout_person_n">性别：</span><label class="accout_person_label">
+                                <input type="radio" name="gender" value="1" checked="checked"/>男</label><label class="accout_person_label">
+                                <input type="radio" name="gender" value="2"/>女</label></li>
+                            <li><span class="accout_person_n">学校：</span>
+                                <input id="schoole" name="schoole" type="text" class="accout_person_text"/><span class="text_tip"></span></li>
+                            <li><span class="accout_person_n">手机号码：</span>
+                                <input id="mobile" name="mobile" type="text" class="accout_person_text"/><span class="text_tip"></span></li>
+                            <li><span class="accout_person_n">QQ号码：</span>
+                                <input id="qqNo" name="qqNo" type="text" class="accout_person_text"/><span class="text_tip"></span></li>
+                            <li><span class="accout_person_n">教育程度：</span>
+                                <select name="edu" id="edu" class="accout_person_text">
+                                    <option value="">请选择</option>
+                                    <option value="研究生及以上">研究生及以上</option>
+                                    <option value="本科">本科</option>
+                                    <option value="大专">大专</option>
+                                    <option value="专科">专科</option>
+                                    <option value="高中">高中</option>
+                                    <option value="中专">中专</option>
+                                    <option value="初中及以下">初中及以下</option>
+                                </select>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n">身份证号：</span>
+                                <input id="idNo" name="idNo" type="text" class="accout_person_text"/><span class="text_tip"></span></li>
+                            <li class="accout_person_btn">
+                                <button  id="sumbitBaseInfo" type="button" class="zc_btn">保存</button>
+                                <button type="button" class="accout_person_next" onclick="toTab(1)">下一步</button>
+                            </li>
+                        </ul>
+                    </form>
+                </div>
+
+                <div class="member_tab_list">
+                    <!-- 家庭情况 S-->
+                    <form id="FamilyInfo" name="FamilyInfo">
+                        <ul class="accout_person_ul">
+                            <li><span class="accout_person_n">婚姻状态：</span>
+                                <select id="marriage" name="marriage" class="accout_person_text">
+                                    <option value="">请选择</option>
+                                    <option value="">已婚</option>
+                                    <option value="">未婚</option>
+                                </select>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n">住宅状况：</span>
+                                <select name="fHouse" id="fHouse" class="accout_person_text">
+                                    <option value="">请选择</option>
+                                    <option value="自置无按揭">自置无按揭</option>
+                                    <option value="自置有按揭">自置有按揭</option>
+                                    <option value="商住两用">商住两用</option>
+                                    <option value="租用">租用</option>
+                                    <option value="与父母共住">与父母共住</option>
+                                    <option value="集体宿舍">集体宿舍</option>
+                                    <option value="其他">其他</option>
+                                </select>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n">住宅地区：</span>
+                                <select id="FProvincesId" name="FProvincesId" class="accout_person_area">
+                                    <option value="">请选择</option>
+                                </select>
+                                <select id="FCityId" name="FCityId" class="accout_person_area">
+                                    <option value="">请选择</option>
+                                </select>
+                                <select id="FAreaId" name="FAreaId" class="accout_person_area">
+                                    <option value="">请选择</option>
+                                </select>
+                                <span class="text_tip"></span>
+                            </li>
+
+                            <li><span class="accout_person_n">住宅地址：</span>
+                                <input id="FAddress" name="FAddress" type="text" class="accout_person_text"/>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n">住宅电话：</span>
+                                <input id="phone" name="phone" type="text" class="accout_person_text"/><span class="font_999">如：020-12345678</span>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n">入住年数：</span>
+                                <select name="liveYears" id="liveYears" class="accout_person_text">
+                                    <option value="">请选择</option>
+                                    <option value="1">半年以内</option>
+                                    <option value="2">1年以内</option>
+                                    <option value="3">2年以内</option>
+                                    <option value="4">3年以内</option>
+                                    <option value="5">3年以上</option>
+                                </select>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n">是否购车：</span>
+                                <label class="accout_person_label"><input type="radio" name="isBuyCar" value="1" checked="checked"/>是</label>
+                                <label class="accout_person_label"><input type="radio" name="isBuyCar" value="0" />否</label></li>
+
+                            <li><span class="accout_person_n">是否有车贷：</span>
+                                <label class="accout_person_label"><input type="radio" name="fisCarLoan" value="1" checked="checked"/>是</label>
+                                <label class="accout_person_label"><input type="radio" name="fisCarLoan" value="0" />否</label></li>
+
+                            <li><span class="accout_person_n">是否有房贷：</span>
+                                <label class="accout_person_label"><input type="radio" name="fisHouseLoan" value="1" checked="checked"/>是</label>
+                                <label class="accout_person_label"><input type="radio" name="fisHouseLoan" value="0" />否</label></li>
+
+                            <li class="accout_person_btn">
+                                <button id="sumbitFamilyInfo" type="button" class="zc_btn">保存</button>
+                                <button type="button" class="accout_person_next" onclick="toTab(0)">上一步</button>
+                                <button type="button" class="accout_person_next" onclick="toTab(2)">下一步</button>
+                            </li>
+                        </ul>
+                    </form>
+                    <!-- 家庭情况 E-->
+                </div>
+
+                <div class="member_tab_list">
+                    <!-- 单位情况 S-->
+                    <form id="UnitInfo" name="UnitInfo">
+                        <ul class="accout_person_ul">
+                            <li><span class="accout_person_n">就业状态：</span>
+                                <select name="jobsStatus" id="jobsStatus" class="accout_person_text">
+                                    <option value="">请选择</option>
+                                    <option value="1">工薪族</option>
+                                    <option value="2">私营业主</option>
+                                    <option value="3">网店卖家</option>
+                                    <option value="4">学生</option>
+                                    <option value="5">其他</option>
+                                </select>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n">收入发放情况：</span><label class="accout_person_label">
+                                <input type="radio" name="incomePayWay" checked="checked"/>银行卡发放</label><label class="accout_person_label">
+                                <input type="radio" name="incomePayWay"/>现金发放</label>
+                            </li>
+
+                            <li><span class="accout_person_n">职位：</span>
+                                <input type="text" id="CPost" name="CPost" class="accout_person_text"/>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n">单位性质：</span>
+                                <select name="nature" id="nature" class="accout_person_text">
+                                    <option value="">请选择</option>
+                                    <option value="1">机关事业单位</option>
+                                    <option value="2">社会团体</option>
+                                    <option value="3">国有企业</option>
+                                    <option value="4">三资企业</option>
+                                    <option value="5">上市公司</option>
+                                    <option value="6">民营</option>
+                                    <option value="7">私营</option>
+                                    <option value="8">个体</option>
+                                    <option value="9">其他</option>
+                                </select>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n">工作年限：</span>
+                                <select name="workYears" id="workYears" class="accout_person_text">
+                                    <option value="">请选择</option>
+                                    <option value="1">半年以内</option>
+                                    <option value="2">1年以内</option>
+                                    <option value="3">2年以内</option>
+                                    <option value="4">3年以内</option>
+                                    <option value="5">3年以上</option>
+                                </select>
+                                <span class="text_tip"></span>
+                            </li>
+
+                            <li><span class="accout_person_n">单位名称：</span>
+                                <input type="text" id="companyName" name="companyName" class="accout_person_text"/>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n">任职部门：</span>
+                                <input type="text" id="deptName" name="deptName" class="accout_person_text"/>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n">单位地址：</span>
+                                <input type="text" id="companyAddress" name="companyAddress" class="accout_person_text"/>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n">单位电话：</span>
+                                <input type="text" id="companyPhone" name="companyPhone" class="accout_person_text"/><span class="font_999">如：020-12345678</span>
+                                <span class="text_tip"></span>
+                            </li>
+
+                            <li><span class="accout_person_n">收入范围：</span>
+                                <select name="CIncomeScope" id="CIncomeScope" class="accout_person_text">
+                                    <option value="">请选择</option>
+                                    <option value="0">2000元以内</option>
+                                    <option value="1">2001-5000元</option>
+                                    <option value="2">5001-8000元</option>
+                                    <option value="3">8001-15000元</option>
+                                    <option value="4">15001元以上</option>
+                                </select>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n">公司规模：</span>
+                                <select name="cSize" id="cSize" class="accout_person_text">
+                                    <option value="">请选择</option>
+                                    <option value="1">小于50人</option>
+                                    <option value="2">50人至200人</option>
+                                    <option value="3">200人至1000人</option>
+                                    <option value="4">1千人至1万人</option>
+                                    <option value="5">大于一万人</option>
+                                </select>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n">公司行业：</span>
+                                <select name="CIndustry" id="CIndustry" class="accout_person_text">
+                                    <option value="">请选择</option>
+                                    <option value="1">机构组织</option>
+                                    <option value="2">农林牧渔</option>
+                                    <option value="3">医药卫生</option>
+                                    <option value="4">建筑建材</option>
+                                    <option value="5">冶金矿产</option>
+                                    <option value="6">石油化工</option>
+                                    <option value="7">水利水电</option>
+                                    <option value="8">交通运输</option>
+                                    <option value="9">信息产业</option>
+                                    <option value="10">机械机电</option>
+                                    <option value="11">轻工食品</option>
+                                    <option value="12">服装纺织</option>
+                                    <option value="13">专业服务</option>
+                                    <option value="14">安全防护</option>
+                                    <option value="15">环保绿化</option>
+                                    <option value="16">旅游休闲</option>
+                                    <option value="17">办公文教</option>
+                                    <option value="18">电子电工</option>
+                                    <option value="19">玩具礼品</option>
+                                    <option value="20">家居用品</option>
+                                    <option value="21">物资专材</option>
+                                    <option value="22">包装用品</option>
+                                    <option value="23">体育用品</option>
+                                    <option value="24">办公家具</option>
+                                    <option value="OTHER">其它行业</option>
+                                </select>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n">单位区域：</span>
+                                <input type="text" id="CAreaid" name="CAreaid" class="accout_person_text"/>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li class="accout_person_btn">
+                                <button id="sumbitUnitInfo" type="button" class="zc_btn">保存</button>
+                                <button type="button" class="accout_person_next" onclick="toTab(1)">上一步</button>
+                                <button type="button" class="accout_person_next" onclick="toTab(3)">下一步</button>
+                            </li>
+                        </ul>
+                    </form>
+                    <!-- 单位情况 E-->
+                </div>
+
+                <div class="member_tab_list">
+                    <!-- 联系方式 S-->
+                    <form id="UserInfo" name="UserInfo">
+                        <ul class="accout_person_ul">
+                            <li><span class="accout_person_n" style="width: 130px;">直接联系人姓名：</span>
+                                <input type="text" id="cName" name="cName" class="accout_person_text"/>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n" style="width: 130px;">直接联系人关系：</span>
+                                <select name="cRelation" id="cRelation" class="accout_person_text">
+                                    <option value="">请选择</option>
+                                    <option value="1">配偶</option>
+                                    <option value="2">父母</option>
+                                    <option value="3">兄弟姐妹</option>
+                                    <option value="4">其他亲戚</option>
+                                    <option value="5">朋友</option>
+                                    <option value="6">同事</option>
+                                </select>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n" style="width: 130px;">直接联系人手机：</span>
+                                <input id="cMobile" name="cMobile" type="text" class="accout_person_text"/>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n" style="width: 130px;">其他联系人姓名：</span>
+                                <input id="cOtherName" name="cOtherName" type="text" class="accout_person_text"/>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n" style="width: 130px;">其他联系人关系：</span>
+                                <select name="cOtherRelation" id="cOtherRelation" class="accout_person_text">
+                                    <option value="">请选择</option>
+                                    <option value="1">配偶</option>
+                                    <option value="2">父母</option>
+                                    <option value="3">兄弟姐妹</option>
+                                    <option value="4">其他亲戚</option>
+                                    <option value="5">朋友</option>
+                                    <option value="6">同事</option>
+                                </select>
+                                <span class="text_tip"></span>
+                            </li>
+                            <li><span class="accout_person_n" style="width: 130px;">其他联系人手机：</span>
+                                <input id="cOtherMobile" name="cOtherMobile" type="text" class="accout_person_text"/>
+                                <span class="text_tip"></span>
+                            </li>
+
+                            <li class="accout_person_btn">
+                                <button  id="sumbitUserInfo" type="button" class="zc_btn">保存</button>
+                                <button type="button" class="accout_person_next" onclick="toTab(2)">上一步</button>
+                            </li>
+                        </ul>
+                    </form>
+                    <!-- 联系方式 E-->
+                </div>
+            </div>
+        </div>
+        <!-- 提示S-->
+        <div class="accout_cash_tip" style="left:593px;top: 120px;">
+            <div class="accout_cashe_msg">
+                <h4>温馨提示：</h4>
+                <p>亲爱的用户，为节约您的宝贵时间，请认真准确填以下信息，否则评估会不准确，对您借款会有影响。</p>
+            </div>
+        </div>
+        <!-- 提示E-->
+    </div>
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+    $(function(){
+        myTab();
+
+        var msg = "";
+        var reg = /[^\u4e00-\u9fa5]/;
+        var num = /^[1]+[3,4,5,6,7,8,9]+\d{9}$/;
+        var num2 = /^[0-9]*$/;
+        var mobile=/(^(\d{3,4}-)?\d{7,8})$|(13[0-9]{9})/;
+        var emal = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+        var gamezh = /[^\w]/;
+        var qq = /^\d{5,10}$/;
+        var correct = '<i class="correct"></i>';
+        $("input.accout_person_text").blur(function() {
+            var _this = $(this);
+            if (_this.is("#realName")) {
+                if (_this.val() == "") {
+                    msg = "必填";
+                    _this.siblings('.text_tip').html('<i class="error">' + msg + '</i>');
+                } else if (reg.test(_this.val())) {
+                    msg = "真实姓名格式不正确";
+                    _this.siblings('.text_tip').html('<i class="error">' + msg + '</i>');
+                } else {
+                    _this.siblings('.text_tip').html(correct);
+                }
+            };
+            if (_this.is("#schoole")||_this.is("#FAddress")||_this.is("#CPost")||_this.is("#companyName")||_this.is("#deptName")||_this.is("#companyAddress")||_this.is("#CAreaid")||_this.is("#cName")||_this.is("#cOtherName") ) {
+                if (_this.val() == "") {
+                    msg = "必填";
+                    _this.siblings('.text_tip').html('<i class="error">' + msg + '</i>');
+                } else {
+                    _this.siblings('.text_tip').html(correct);
+                }
+            };
+            if (_this.is("#mobile")||_this.is("#cMobile")||_this.is("#cOtherMobile")) {
+                if (_this.val() == "") {
+                    msg = "必填";
+                    _this.siblings('.text_tip').html('<span class="error">' + msg + '</span>');
+                } else if (!num.test(_this.val())) {
+                    msg = "手机号码格式不正确";
+                    _this.siblings('.text_tip').html('<span class="error">' + msg + '</span>');
+                } else {
+                    _this.siblings('.text_tip').html(correct);
+                }
+            };
+            if (_this.is("#qqNo")) {
+                if (_this.val() == "") {
+                    msg = "必填";
+                    _this.siblings('.text_tip').html('<span class="error">' + msg + '</span>');
+                } else if (!qq.test(_this.val())) {
+                    msg = "QQ号码格式不正确";
+                    _this.siblings('.text_tip').html('<span class="error">' + msg + '</span>');
+                } else {
+                    _this.siblings('.text_tip').html(correct);
+                }
+            };
+            if (_this.is("#idNo") ) {
+                var icard = _this.val();
+                if(icard.length == 0){
+                    msg = "必填";
+                    _this.siblings('.text_tip').html('<span class="error">' + msg + '</span>');
+                }
+                else if (icard.length == 15) {
+                    if (isValidityBrithBy15IdCard(icard) == true) {
+                        _this.siblings('.text_tip').html(correct);
+                    } else {
+                        msg = "身份证号码输入错误";
+                        _this.siblings('.text_tip').html('<span class="error">' + msg + '</span>');
+                    }
+                } else if (icard.length == 18) {
+                    var a_idCard = icard.split("");
+                    if (isValidityBrithBy18IdCard(icard) && isTrueValidateCodeBy18IdCard(a_idCard)) {
+                        _this.siblings('.text_tip').html(correct);
+                    } else {
+                        msg = "身份证号码输入错误";
+                        _this.siblings('.text_tip').html('<span class="error">' + msg + '</span>');
+                    }
+                } else {
+                    msg = "身份证号码输入错误";
+                    _this.siblings('.text_tip').html('<span class="error">' + msg + '</span>');
+                }
+            };
+            if (_this.is("#phone")||_this.is("#companyPhone")) {
+                if (_this.val() == "") {
+                    msg = "必填";
+                    _this.siblings('.text_tip').html('<span class="error">' + msg + '</span>');
+                } else if (!mobile.test(_this.val())) {
+                    msg = "电话号码格式不正确";
+                    _this.siblings('.text_tip').html('<span class="error">' + msg + '</span>');
+                } else {
+                    _this.siblings('.text_tip').html(correct);
+                }
+            };
+        }).keyup(function() {
+            $(this).triggerHandler("blur");
+        });
+
+        function isTrueValidateCodeBy18IdCard(a_idCard) {
+            var sum = 0;
+            var ValideCode = [1, 0, 10, 9, 8, 7, 6, 5, 4, 3, 2];
+            var Wi = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2, 1];
+            if (a_idCard[17].toLowerCase() == 'x') {
+                a_idCard[17] = 10;
+            }
+            for (var i = 0; i < 17; i++) {
+                sum += Wi[i] * a_idCard[i];
+            }
+            valCodePosition = sum % 11;
+            if (a_idCard[17] == ValideCode[valCodePosition]) {
+                return true;
+            }
+            return false;
+        };
+        function isValidityBrithBy18IdCard(idCard18) {
+            var year = idCard18.substring(6, 10);
+            var month = idCard18.substring(10, 12);
+            var day = idCard18.substring(12, 14);
+            var temp_date = new Date(year, parseFloat(month) - 1, parseFloat(day));
+            if (temp_date.getFullYear() != parseFloat(year) || temp_date.getMonth() != parseFloat(month) - 1 || temp_date.getDate() != parseFloat(day)) {
+                return false;
+            }
+            return true;
+        };
+        function isValidityBrithBy15IdCard(idCard15) {
+            var year = idCard15.substring(6, 8);
+            var month = idCard15.substring(8, 10);
+            var day = idCard15.substring(10, 12);
+            var temp_date = new Date(year, parseFloat(month) - 1, parseFloat(day));
+            if (temp_date.getYear() != parseFloat(year) || temp_date.getMonth() != parseFloat(month) - 1 || temp_date.getDate() != parseFloat(day)) {
+                return false;
+            }
+            return true;
+        };
+        function timer(intDiff) {
+            window.setInterval(function() {
+                        var day = 0,
+                                hour = 0,
+                                minute = 0,
+                                second = 0;
+                        if (intDiff > 0) {
+                            day = Math.floor(intDiff / (60 * 60 * 24));
+                            hour = Math.floor(intDiff / (60 * 60)) - (day * 24);
+                            minute = Math.floor(intDiff / 60) - (day * 24 * 60) - (hour * 60);
+                            second = Math.floor(intDiff) - (day * 24 * 60 * 60) - (hour * 60 * 60) - (minute * 60);
+                        }
+                        if (minute <= 9) minute = '0' + minute;
+                        if (second <= 9) second = '0' + second;
+                        msg = hour + '时' + minute + '分' + second;
+                        $('#cltime').html(msg);
+                        intDiff--;
+                    },
+                    1000);
+        };
+
+
+        function selectValue(obj){
+            var _this=$(obj);
+            var Value=_this.val();
+            if(Value==''){
+                msg = "必选";
+                _this.siblings('.text_tip').html('<i class="error">' + msg + '</i>');
+                return false;
+            }else{
+                _this.siblings('.text_tip').html(correct);
+            }
+        }
+
+
+        var person={
+            init:function(){
+                if(user.data.phone!=null){
+                    $("#mobile").attr("disabled","disabled").val(user.data.phone);
+                }
+                this.render();
+            },
+            render:function(){
+                this.province();
+            },
+            province:function(){
+                $.getJSON("/dlapi/cms/areas/listProvince?parent_id=2&parent_path=",function(data){
+                    var tpl='<option value="">$resName</option> <li id="provincelisttpl" class="table-view-cell" @name="$id" style="display:none;">$resName</li>';
+                    Utils.bindList("#provincelistbox",$(tpl),data);
+                });
+            },
+            city:function(){
+                $("#citylistbox").html('');
+                var provinceid=$("#province").attr("name");
+                $.getJSON(path.baseCms+"/areas/list/"+provinceid,function(data){
+                    var tpl='<li id="citylisttpl" class="table-view-cell" @name="$id"  style="display:none;">$resName</li>';
+                    Utils.bindList("#citylistbox",$(tpl),data);
+                });
+            }
+        };
+        person.init();
+
+
+
+        $("#sumbitBaseInfo").on("click",function(){
+            $("#BaseInfo").find("input").trigger("blur");
+            selectValue("#edu");
+            var errorNum = $("#BaseInfo").find("i.error").length;
+            console.log(errorNum);
+            if (errorNum == 0) {
+                var data = $("#BaseInfo").serialize();
+                console.log(data);
+            }
+        });
+        $("#sumbitFamilyInfo").on("click",function(){
+            $("#FamilyInfo").find("input").trigger("blur");
+            selectValue("#marriage");
+            selectValue("#fHouse");
+            selectValue("#FAreaId");
+            selectValue("#liveYears");
+            var errorNum = $("#FamilyInfo").find("i.error").length;
+            if (errorNum > 0) {
+                return false;
+            }else{
+                var data = $("#FamilyInfo").serialize();
+                console.log(data);
+            }
+
+        });
+        $("#sumbitUnitInfo").on("click",function(){
+            $("#UnitInfo").find("input").trigger("blur");
+            selectValue("#jobsStatus");
+            selectValue("#nature");
+            selectValue("#workYears");
+            selectValue("#CIncomeScope");
+            selectValue("#cSize");
+            selectValue("#CIndustry");
+            var errorNum = $("#UnitInfo").find("i.error").length;
+            if (errorNum > 0) {
+                return false;
+            }else{
+                var data = $("#UnitInfo").serialize();
+                console.log(data);
+            }
+        });
+        $("#sumbitUserInfo").on("click",function(){
+            $("#UserInfo").find("input").trigger("blur");
+            selectValue("#cRelation");
+            selectValue("#cOtherRelation");
+            var errorNum = $("#UserInfo").find("i.error").length;
+            if (errorNum > 0) {
+                return false;
+            }else{
+                var data = $("#UserInfo").serialize();
+                console.log(data);
+            }
+
+        })
+
+
+    });
+</script>

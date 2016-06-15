@@ -1,0 +1,56 @@
+<!--重置邮箱-->
+<div class="accout_main">
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;">邮箱修改</div>
+        <div class="accout_basic_box">
+            <form>
+                <ul class="accout_person_ul">
+                    <li><span class="accout_person_n">邮箱号码：</span>
+                        <input id="email" type="text"  class="accout_person_text" value="" /></li>
+                    <li><span class="accout_person_n">邮箱验证：</span>
+                        <input id="emailcode" type="text" style="width: 172px;" class="accout_person_text"/>
+                        <button type="button" class="yz_btn" id="getcode">获取验证码</button>
+                        <button type="button" class="yz_btn" id="againcode" style="display:none;">60秒后重发</button>
+                    </li>
+                    <li><span class="accout_person_n">验证码：</span>
+                        <input id="checkNum" type="text" style="width: 172px;" class="accout_person_text"/>
+                        <img id="codesrc" class="yz_btn" src="" alt="验证码"></li>
+                    <li class="accout_person_btn" style="margin-left: 105px;">
+                        <button id="submit" type="button" class="zc_btn">确定</button>
+                    </li>
+                </ul>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    factory.getCode("#codesrc");
+    $("#codesrc").on('click',function(){
+        factory.getCode(this);
+    });
+    $('#getcode').on('click',function(){
+        var $email=$.trim(user.data.email);
+        factory.getEmailCode($email);
+    });
+    var userEmail = user.data.email.substring(0, 1) + "****" + user.data.email.substring(3, user.data.email.length);
+    $("#email").val(userEmail);
+
+    $("#submit").on("click",function(){
+        var y_emailcode=Fcheck.c_emailcode($("#emailcode").val());
+        if(y_emailcode){
+            var y_code=Fcheck.c_code($("#checkNum").val());
+        }
+        if(y_emailcode&&y_code){
+            var url = '/dlsys/portal/sdk/user/validation/' + user.data.email + '/' + $("#emailcode").val() + "?checkNum=" + $("#checkNum").val();
+            DeelonService.ajax(url,'get',{},function(data){
+                var res=JSON.stringify(data);
+                if(res==="true"){
+                    location.hash="#page=newemail?bread=绑定新邮箱";
+                }else{
+                    jAlert.warn('邮箱验证码错误');
+                }
+            },function(xhr, status, err){});
+        }
+
+    });
+</script>

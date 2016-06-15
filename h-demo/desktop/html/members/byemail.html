@@ -1,0 +1,242 @@
+<!--start email-->
+<div id="email" class="tab-pane fade">
+    <div class="step-wrap">
+        <div id="emailStep1" class="step">
+            <div class="step-container clearfix">
+                <div class="stepInfo">
+                    <ul>
+                        <li></li>
+                        <li></li>
+                    </ul>
+                    <div class="stepIco stepIco1 current">
+                        1
+                        <div class="stepText">
+                            填写绑定邮箱
+                        </div>
+                    </div>
+                    <div class="stepIco stepIco2">
+                        2
+                        <div class="stepText">
+                            设置新密码
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <form id="findPassWordByEamil_step1" class="default-form form-horizontal" style="clear:both;" novalidate="novalidate">
+
+                <p class="regist_r"><label class="name"><em class="required">*</em>Email：</label>
+                    <input id="emailAddress" type="text" class="reg_text" name="emailAddress" placeholder="请输入你的邮箱"/>
+                    <span class="regist_tip" name="e-emailAddress"></span>
+                </p>
+
+                <p  class="regist_r"><label class="name"><em class="required">*</em>验证码：</label>
+                    <input type="text" name="checkNumber" id="checkNumber" class="reg_text" style="width: 200px;" placeholder="请输入验证码"/>
+                    <img  src="/dlsys/portal/sdk/common/validcode" class="p_yzm"  id="validcode_e" title="看不清，点击换一张"/>
+                    <span class="regist_tip"  name="e-checkNumber"></span>
+                </p>
+
+                <p  class="regist_r">
+                    <label class="name"><em class="required">*</em>邮箱验证码：</label>
+                    <input type="text" class="reg_text" id="emailCode"  name="emailCode"  placeholder="请输入验证码" style="width: 200px;"/>
+                    <button type="button" class="p_yzBtn" id="getcode_e">获取验证码</button>
+                    <button type="button" class="p_yzBtn" id="againcode_e" style="display:none;">60秒后重发</button>
+                    <span id="getcode_msg" style="color: #ff5e53;"></span>
+                    <span class="regist_tip"  name="e-emailCode"></span>
+                </p>
+
+                <p class="regist_r pl"><button class="p_login" type="button" id="findByEmailStep1">下一步</button></p>
+
+            </form>
+        </div>
+        <div id="emailStep2" class="step" style="display: none;">
+            <div class="step-container clearfix">
+                <div class="stepInfo">
+                    <ul>
+                        <li></li>
+                        <li></li>
+                    </ul>
+                    <div class="stepIco stepIco1">
+                        1
+                        <div class="stepText">
+                            填写绑定邮箱
+                        </div>
+                    </div>
+                    <div class="stepIco stepIco2  current">
+                        2
+                        <div class="stepText">
+                            设置新密码
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <form id="findPassWordByEamil_step2" class="default-form form-horizontal" novalidate="novalidate">
+                <input type="hidden" id="emailStr"  name="email"/>
+                <input type="hidden" id="emailCodeStr"   name="code"/>
+
+                <p class="regist_r"><label class="name"><em class="required">*</em>新密码：</label>
+                    <input id="newPwd" type="password" class="reg_text" name="newPwd" placeholder="6-20个字符，建议字母、数字和符号两种以上组合"/>
+                    <span class="regist_tip" name="e-newPwd"></span>
+                </p>
+
+                <p class="regist_r"><label class="name"><em class="required">*</em>确认密码：</label>
+                    <input id="comfirmNewPwd" type="password" class="reg_text" name="comfirmNewPwd" placeholder="6-20个字符，建议字母、数字和符号两种以上组合"/>
+                    <span class="regist_tip" name="e-comfirmNewPwd"></span>
+                </p>
+
+                <p class="regist_r pl"><button class="p_login" type="button" id="findByEmailStep2">确定</button></p>
+
+            </form>
+        </div>
+        <div id="phone-success" class="step" style="display:none;">
+            <img src="images/tip_wx2.png">
+            <h4>恭喜你，找回密码成功! </h4>
+            <button type="button" onclick="Utils.gotoPage('index.html#page=login');" class="p_login" style="width:300px;margin:auto;">
+                马上登陆
+            </button>
+        </div>
+    </div>
+</div>
+<!--end email-->
+
+<script type="text/javascript">
+    var findPassWordByEamil_step1Form = {
+        init : function() {
+
+            $("#findByEmailStep1").bind("click", function() {
+                if ($("#findPassWordByEamil_step1").valid()) {
+                    var url = '/dlsys/portal/sdk/user/matches/' + $("#emailAddress").val();
+                    $.get(url, function(data) {
+                        if (data) {
+                            $("#emailStr").val($("#emailAddress").val());
+                            $("#emailCodeStr").val($("#emailCode").val());
+                            findPassWordByEamil_step2Form.init();
+                        }else{
+                            jAlert.warn('邮箱号码未绑定');
+                        }
+                    });
+                }
+            });
+
+        },
+        getvalidcode:function(){
+            $("#validcode_e").attr('src','/dlsys/portal/sdk/common/validcode?rand='+Math.random());
+        },
+        RegSentMsg:function(email){
+            var getcode=$("#getcode_e"),againcode=$("#againcode_e");
+            var appUserId = (user.data.id ==undefined ? "":user.data.id);
+            var url = '/dlsys/portal/sdk/user/sendEmail/' + email+"?Appkey=&appUserId="+ appUserId;
+            DeelonService.ajax(url,'get',null,function(data){},function(xhr, status, err){
+                getcode.hide();
+                againcode.show();
+                var tflg = 60;
+                var int = setInterval(function() {
+                    $(againcode).html(tflg + '秒后重发');
+                    if (tflg == 0) {
+                        tflg = 60;
+                        getcode.show();
+                        againcode.hide();
+                        $(againcode).html(tflg + '秒后重发');
+                        clearInterval(int);
+                    }
+                    tflg--;
+                }, 1000);
+            });
+        }
+    };
+    var findPassWordByEamil_step2Form = {
+
+        init : function() {
+
+            $("#emailStep1").hide();
+            $("#emailStep2").show();
+            $("#findByEmailStep2").bind("click", function() {
+
+                if ($("#findPassWordByEamil_step2").valid()) {
+                    var url = '/dlsys/portal/sdk/user/account/' + $("#emailStr").val() + '/' + $("#emailCodeStr").val() + '/' + $("#newPwd").val();
+                    DeelonService.ajax(url,'post',{},function(data){},function(xhr, status, err){
+                        if (xhr.status != 400 && xhr.status !=500){
+                            $("#emailStep2").hide();
+                            $("#phone-success").show();
+                        }
+                    });
+                }
+            });
+        }
+    };
+
+    $(function(){
+        setErrorLable();
+        findPassWordByEamil_step1Form.init();
+        $("#getcode_e").click(function(){
+            var email=$.trim($('#emailAddress').val());
+            if(!email){
+                jAlert.warn('请输入邮箱号码');
+                return;
+            }else if(!/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/i.test(email)){
+                jAlert.warn('邮箱号码格式不正确');
+                return;
+            }
+            var url = '/dlsys/portal/sdk/user/matches/' + $("#emailAddress").val();
+            $.get(url, function(data) {
+                if (data) {
+                    findPassWordByEamil_step1Form.RegSentMsg(email);
+                }else{
+                    jAlert.warn('邮箱号码未绑定');
+                }
+            });
+
+        });
+        $("#validcode_e").click(function(){
+            findPassWordByEamil_step1Form.getvalidcode();
+        });
+        $("#findPassWordByEamil_step1").validate({
+            rules : {
+                emailAddress : {
+                    required : true,
+                    email : true
+                },
+                checkNumber : {
+                    required : true
+                },
+                emailCode : {
+                    required : true,
+                }
+            },
+            messages : {//提示报错
+                emailAddress : {
+                    required : "邮箱必填",
+                    email : "请填写正确的邮箱"
+
+                },
+                checkNumber : {
+                    required : "验证码不能为空"
+                },
+                emailCode : {
+                    required : "邮箱验证码不能为空"
+                }
+            }
+        });
+        $("#findPassWordByEamil_step2").validate({
+
+            rules : {
+                newPwd : {
+                    required : true
+                },
+                comfirmNewPwd : {
+                    required : true,
+                    equalTo : "#newPwd"
+                }
+            },
+            messages : {
+                newPwd : {
+                    required : "密码不能为空"
+                },
+                comfirmNewPwd : {
+                    required : "确认密码不能为空",
+                    equalTo : "两次输入密码必须一致"
+                }
+            }
+        });
+
+    });
+</script>

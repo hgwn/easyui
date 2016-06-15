@@ -1,0 +1,142 @@
+<!--借款申请查询-->
+
+<!-- accout_main S-->
+<div class="accout_main">
+   <!-- <div class="accout_headBar">
+        <a href="#" class="visit">借款管理</a><span>&gt;</span>
+        <a href="#">借款申请查询</a>
+    </div>-->
+
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding: 15px 0;">借款申请查询</div>
+
+        <div>
+            <form>
+              <div style="margin-bottom:15px;">
+                  从 <input type="text"  class="p2p_accout_text" id="datepicker_s">
+                  到 <input type="text"  class="p2p_accout_text" id="datepicker_e">
+                  <button type="button" class="zc_btn" onclick="p2p_applysearch_search.search();">查询</button>
+              </div>
+            </form>
+            <table class="table-list" cellpadding="0" cellspacing="0" border="0">
+                <thead>
+                <tr>
+                    <th width="100">借款标题</th>
+                    <th width="100">借款金额</th>
+                    <th width="100">年利率</th>
+                    <th width="100">期限</th>
+                    <th width="100">申请时间</th>
+                    <th width="100">状态</th>
+                </tr>
+                </thead>
+                <tbody id="applysearch_temp">
+
+
+                </tbody>
+                <tr id="applysearch_tmpl" style="display: none;">
+                    <td>$name</td>
+                    <td class="font_red">$loanName</td>
+                    <td>$rate%</td>
+                    <td>$deadline$deadlineTypeName</td>
+                    <td>$applicationTime</td>
+                    <td>$stateName</td>
+                </tr>
+            </table>
+            <!-- 分页 S-->
+            <div id="p2p_applysearch_page" class="pagination"><!-- 这里显示分页 --></div>
+            <!-- 分页 E-->
+        </div>
+
+    </div>
+
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+    var pickerS = new Pikaday(
+            {
+                field: document.getElementById('datepicker_s'),
+                firstDay: 1,
+                minDate: new Date('2010-01-01'),
+                maxDate: new Date('2020-12-31'),
+                yearRange: [2000,2020],
+            });
+    var pickerE = new Pikaday(
+            {
+                field: document.getElementById('datepicker_e'),
+                firstDay: 1,
+                minDate: new Date('2010-01-01'),
+                maxDate: new Date('2020-12-31'),
+                yearRange: [2000,2020]
+            });
+    var p2p_applysearch_search = {
+        search:function(){
+    		var startTime = $("#datepicker_s").val();
+    		var endTime = $("#datepicker_e").val();
+    		if((startTime==null || startTime=="") && (endTime==null || endTime=="")){
+    			jAlert.info("请先筛选申请日期！");
+    			return;
+            }
+    		var date = new Date(startTime)
+            var date2 = new Date(endTime);
+            if(date.getTime() > date2.getTime()){
+            	jAlert.info('结束日期不能小于开始日期！');
+            	return;
+            }
+            p2p_applysearch_list.params.startTime = startTime;
+            p2p_applysearch_list.params.endTime = endTime;
+            p2p_applysearch_page.init(p2p_applysearch_list.url,p2p_applysearch_list.params);
+        }
+    };
+    //定义分页对象
+    var p2p_applysearch_page = {
+        init:function(url,params){
+            DeelonService.get(url,params,function(data){
+                $("#p2p_applysearch_page").pagination(data.result.totalElements, {
+                    prev_text: "前一页",
+                    next_text: "后一页",
+                    num_edge_entries: 2,   //两侧显示的首尾分页的条目数
+                    num_display_entries: 5 ,   //连续分页主体部分显示的分页条目数
+                    callback: p2p_applysearch_list.pageselectCallback,
+                    items_per_page:5     //每页显示的条目数
+                });
+            })
+        }
+    };
+    //定义列表对象
+    var p2p_applysearch_list = {
+        url:"/dlbiz/p2p/projects",
+        params:{userId:user.data.id,pageNum:1,pageSize:5},
+        init:function(url,params){
+            DeelonService.get(p2p_applysearch_list.url,p2p_applysearch_list.params,function(data){
+                p2p_applysearch_list.render(data);
+            })
+        },
+        render:function(data){
+            $("#applysearch_temp").empty();
+            //var temp = ["新申请","平台初审通过","担保审核通过","招标中","满标","还款中","已还完","流标"];
+            var temp = ["新申请","招标中","满标","还款中","已还完","流标"];
+            $("#totalElements").text(data.result.totalElements);
+            for(var i=0; i<data.result.content.length; i++){
+                data.result.content[i].stateName = temp[parseInt(data.result.content[i].state)-1];
+                if(data.result.content[i].deadlineType == "DAY"){
+                	data.result.content[i].deadlineTypeName = "天";
+                }else if(data.result.content[i].deadlineType == "MONTH"){
+                    data.result.content[i].deadlineTypeName = "个月";
+                }else if(data.result.content[i].deadlineType == "YEAR"){
+                    data.result.content[i].deadlineTypeName = "年";
+                }
+                data.result.content[i].loanName = formatCurrency(data.result.content[i].loan);
+            }
+            Utils.bindList("#applysearch_temp", "#applysearch_tmpl", data.result.content);
+        },
+        pageselectCallback:function(index,jq){
+            p2p_applysearch_list.params.pageNum = index +1;
+            p2p_applysearch_list.init(p2p_applysearch_list.url,p2p_applysearch_list.params);
+            return false;
+        }
+    };
+    $(function(){
+        //分页初始化
+        p2p_applysearch_page.init(p2p_applysearch_list.url,p2p_applysearch_list.params);
+    });
+</script>

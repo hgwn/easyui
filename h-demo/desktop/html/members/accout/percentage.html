@@ -1,0 +1,66 @@
+<!--我的提成记录-->
+<!-- accout_main S-->
+<div class="accout_main">
+   <!-- <div class="accout_headBar">
+        <a href="#" class="visit">我的账户</a><span>&gt;</span>
+        <a href="#">我的提成记录</a>
+    </div>-->
+
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;">我的提成记录</div>
+
+        <div style="padding-top: 20px;">
+            <table class="table-list" cellpadding="0" cellspacing="0" border="0">
+                <tbody><tr>
+                    <th width="100">提成来源用户</th>
+                    <th width="100">提成类型</th>
+                    <th width="100">提成总额(元)</th>
+                    <th width="100">提成时间</th>
+                    <th width="100">审核状态</th>
+                </tr>
+                <tr>
+                    <td>李东升</td>
+                    <td>投资</td>
+                    <td>10.00</td>
+                    <td>2016-03-30 17:53</td>
+                    <td>未审核</td>
+                </tr>
+                <tr>
+                    <td>李东升</td>
+                    <td>投资</td>
+                    <td>10.00</td>
+                    <td>2016-03-30 17:53</td>
+                    <td>审核通过</td>
+                </tr>
+
+                </tbody>
+            </table>
+            <!-- 分页 S-->
+            <div class="m_pager" style="margin: 10px auto;">
+                <div class="paging">
+                    <a href="javascript:void(0);" class="firstpage">首页</a>
+                    <a href="javascript:void(0);" class="next">&lt;</a>
+                    <a href="javascript:void(0);" class="active">1</a>
+                    <a href="javascript:void(0);">2</a>
+                    <a href="javascript:void(0);">3</a>
+                    <a href="javascript:void(0);">4</a>
+                    <a href="javascript:void(0);">5</a>
+                    <a href="javascript:void(0);" class="next">&gt;</a>
+                    <a href="javascript:void(0);" class="lastpage">尾页</a>
+                </div>
+            </div>
+            <!-- 分页 E-->
+        </div>
+    </div>
+
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+    $(function(){
+        $(".member_tab_menu  li").click(function(){
+            $(this).addClass("active").siblings().removeClass("active");
+            var index=$(this).index();
+            $(".member_tab_content > div").eq(index).show().siblings().hide();
+        });
+    });
+</script>

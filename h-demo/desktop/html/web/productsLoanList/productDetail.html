@@ -1,0 +1,176 @@
+<!--借款详情页-->
+
+<!--showProjectDetail_bg S-->
+<div class="showProjectDetail_bg"></div>
+<!--showProjectDetail_bg E-->
+
+<!--p2p_wrapper S-->
+<div id="productDetail_from" class="p2p_wrapper" style="display: none;">
+    <!-- 项目详情 S-->
+    <div class="productDetail_box clearfix">
+        <div class="productDetail_l">
+            <img id="productPhotoFileId" alt="" width="240px" height="170px"/>
+        </div>
+        <div class="productDetail_r">
+            <h3>$name</h3>
+            <ul class="clearfix">
+                <li>
+                    <span class="productDetail_money">$amountMin - $amountMax</span>元
+                    <p>借款额度</p>
+                </li>
+                <li>
+                    <span class="fontS20">$repayWay</span>
+                    <p>还款方式</p>
+                </li>
+            </ul>
+            <div class="productDetail_btn"><button id="buttonId" href="javascript:void(0);" type="button" class="p2p_btn_l" >我要申请借款</button></div>
+        </div>
+    </div>
+    <!-- 项目详情 E-->
+    <!-- 项目明细 S-->
+    <div class="showProjectDetail_main">
+        <div class="showProjectDetail_main_content">
+            <!-- 描述 S-->
+            <div name="ms"  class="showProjectDetail_main_ms">
+                <dl>
+                    <dt><img src="images/icon-common_03.jpg" alt=""/>产品描述</dt>
+                    <dd>
+                        <table class="table-detail" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                                <th width="150">年化收益</th>
+                                <td width="350">$rateMin%~$rateMax%</td>
+                                <th width="150">借款期限</th>
+                                <td width="350">$deadlineMin~$deadlineMax $deadlineType</td>
+                            </tr>
+                            <tr>
+                                <th width="150">投标时间</th>
+                                <td width="350">开标后$votingDaysMin~$votingDaysMax个工作日</td>
+                                <th width="150">审核时间</th>
+                                <td width="350">$auditDaysMin~$auditDaysMax天</td>
+                            </tr>
+                        </table>
+                    </dd>
+                </dl>
+            </div>
+            <!-- 描述 E-->
+
+            <!-- 申请条件 S-->
+            <div name="ms"  class="showProjectDetail_main_ms">
+                <dl>
+                    <dt><img src="images/icon-common_022.jpg" alt=""/>申请条件</dt>
+                    <dd>
+                        <ul id="loanAppGuideloader" class="productDetail_state_ul"></ul>
+                    </dd>
+                </dl>
+            </div>
+            <!-- 申请条件 E-->
+
+            <!-- 准备资料 S-->
+            <div name="ms"  class="showProjectDetail_main_ms">
+                <dl>
+                    <dt><img src="images/icon-common_023.jpg" alt=""/>准备资料</dt>
+                    <dd>
+                        <ul id="loanPrepareDataloader" class="productDetail_zm_ul clearfix"></ul>
+                    </dd>
+                </dl>
+            </div>
+            <!-- 准备资料 E-->
+        </div>
+    </div>
+    <!-- 项目明细 E-->
+</div>
+<!--p2p_wrapper E-->
+
+<script type="text/javascript">
+    var productDetail ={
+        init:function(){
+        	var productsLoanId = Utils.getUrlParam("productsLoanId");
+            DeelonService.get("/dlbiz/p2p/products/" + productsLoanId, null, function(data){
+            	//金额格式化
+            	data.result.amountMin = formatCurrency(data.result.amountMin);
+            	data.result.amountMax = formatCurrency(data.result.amountMax);
+            	if(data.result.photoFileId){
+	            	$("#productPhotoFileId").attr('src','/dlbiz/p2p/resources/previewFile/' + data.result.photoFileId);
+            	}else{
+            		$("#productPhotoFileId").attr('src','images/temp/jk-2.jpg');
+            	}
+            	$("#buttonId").attr('onclick','productDetail.toClick(' + productsLoanId + ',' + data.result.repayWay + ")");
+            	if(data.result.repayWay == 1){
+            		data.result.repayWay = "一次性还本付息";
+                }else if (data.result.repayWay == 2){
+                	data.result.repayWay = "按月付息，到期还本";
+                }else if (data.result.repayWay == 3){
+                	data.result.repayWay = "等额本息，每月还款";
+                }else if (data.result.repayWay == 4){
+                	data.result.repayWay = "等额本金，每月还款";
+                }
+            	if(data.result.deadlineType == "DAY"){
+                    data.result.deadlineType = "天";
+                }else if (data.result.deadlineType == "MONTH"){
+                    data.result.deadlineType = "月";
+                }else if (data.result.deadlineType == "YEAR"){
+                    data.result.deadlineType = "年";
+                }
+                Utils.bindData($("#productDetail_from"),data.result);
+                $("#productDetail_from").show();
+                productDetail.loanAppGuideloader(data);
+                productDetail.loanPrepareDataloader(data);
+            });
+        },
+        render:function(){
+        	
+        },
+        loanAppGuideloader:function(datas){ 
+            //加载申请指南数据
+            var productResult = '';
+            if(datas){
+            	productResult = datas.result.tproductsLoanAppGuide;
+            }
+            if(productResult != "" && productResult != null){
+	            DeelonService.get("/dlbiz/p2p/product/loanAppGuides?dataCode=apply", null, function(data){
+	            	var result = data.result;
+	            	for(var j=0;j<productResult.length;j++){
+		            	for(var i=0;i<result.length;i++){
+		            		if(productResult[j].dicId == result[i].id){
+		            			$("#loanAppGuideloader").append("<li>" + result[i].resName + "</li>");
+		            		}
+		                }
+	                }
+	            });
+            }else{
+            	$("#loanAppGuideloader").append("暂无条件");
+            }
+        }, 
+	    loanPrepareDataloader:function(datas){ 
+	        //加载准备资料数据
+	        var productsLoanPrepareDataResult = '';
+	        if(datas){
+	        	productsLoanPrepareDataResult =  datas.result.tproductsLoanPrepareData;
+	        }
+	        if(productsLoanPrepareDataResult != "" && productsLoanPrepareDataResult != null){
+		        DeelonService.get("/dlbiz/p2p/product/loanPrepareDatas?dataCode=material", null, function(data){
+	                var result = data.result;
+	                for(var j=0;j<productsLoanPrepareDataResult.length;j++){
+	                    for(var i=0;i<result.length;i++){
+	                        if(productsLoanPrepareDataResult[j].materialsId == result[i].id){
+	                            $("#loanPrepareDataloader").append("<li><img src='images/"+ result[i].alias + ".jpg'/><p>" + result[i].resName + "</p></li>");
+	                        }
+	                    }
+	                }
+	            });
+	        }else{
+	        	$("#loanPrepareDataloader").append("暂无资料");
+	        }
+	    },
+        toClick:function(productsLoanId, repayWay){
+        	if(!user.islogin()){
+                Utils.gotoPage("index.html#page=login");
+            }else{
+	        	window.location.href="#page=productApply?productsLoanId=" + productsLoanId + "&repayWay=" + repayWay+"&_"+new Date().getTime();
+            }
+        }
+    };
+    $(function(){
+	    productDetail.init();
+    });
+</script>

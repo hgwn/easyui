@@ -1,0 +1,102 @@
+<!--借款条件进度-->
+<!-- accout_main S-->
+<div class="accout_main">
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding: 15px 0;">借款条件进度</div>
+        <div>
+            <table class="table-list" cellpadding="0" cellspacing="0" border="0">
+                <tbody>
+                <tr>
+                    <th width="100">资料名称</th>
+                    <th width="100">是否完成</th>
+                    <th width="100">状态</th>
+                    <th width="100">操作</th>
+                </tr>
+                <tbody id="condition_temp">
+
+                </tbody>
+                <tr id="condition_list" style="display:none;">
+                    <td>$condName</td>
+                    <td>$isMeetName</td>
+                    <td>$status</td>
+                    <td><a href="#" class="font_blue">完成</a></td>
+                </tr>
+                </tbody>
+            </table>
+            <!-- 分页 S-->
+            <div id="condition_list_page" class="pagination"><!-- 这里显示分页 --></div>
+            <!-- 分页 E-->
+        </div>
+
+    </div>
+
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+//定义列表对象
+	var condition_list = {
+	    url:"/dlbiz/p2p/loanCondition/all",
+	    params:{userId:user.data.id,page:1,pageSize:5,isNeed:1},
+	    init:function(url,params){
+	    	$("#condition_temp").empty();
+	        DeelonService.get(condition_list.url,condition_list.params,function(data){
+	        	condition_list.render(data);
+	        })
+	    },
+	    render:function(data){
+	    	var conditionList = new Array(); 
+	    	//完成情况集合
+	    	for(var i=0; i<data.result.content.length; i++){
+	        	var condition = data.result.content[i];
+	        	var judgeResultList = condition.judgeResultList;
+	           	for(var j=0; j<judgeResultList.length; j++){
+	           		var conditionData = {};
+	           		var judgeResult = condition.judgeResultList[j];
+		        	if(judgeResult.condName==null){
+		        		conditionData.condName = condition.name;
+		        	}else{
+		        		conditionData.condName = condition.name + "-" + judgeResult.condName;
+		        	}
+		        	conditionData.isMeetName = judgeResult.isMeet==true?"是":"否";
+		        	conditionData.isMeet = judgeResult.isMeet;
+		        	conditionData.status = judgeResult.status;
+		        	conditionData.infoUrl = condition.infoUrl;
+		        	conditionList.push(conditionData);
+	           	}
+	        }
+	        Utils.bindList("#condition_temp", "#condition_list", conditionList,null,function(item,data){
+	        	var isMeet = data.isMeet;
+            	if(!isMeet){
+            		item.find(".font_blue").html('前往绑定');
+            		item.find(".font_blue").attr('href','/dlbiz/p2p'+data.infoUrl);
+            	}
+	        });
+	    },
+	    pageselectCallback:function(index,jq){
+	    	condition_list.params.page = index +1;
+	    	condition_list.init(condition_list.url,condition_list.params);
+	        return false;
+	    }
+	};
+	
+    //定义分页对象
+    var condition_list_page = {
+        init:function(url,params){
+            DeelonService.get(url,params,function(data){
+                $("#condition_list_page").pagination(data.result.totalElements, {
+                    prev_text: "前一页",
+                    next_text: "后一页",
+                    num_edge_entries: 2,   //两侧显示的首尾分页的条目数
+                    num_display_entries: 5 ,   //连续分页主体部分显示的分页条目数
+                    callback: condition_list.pageselectCallback,
+                    items_per_page:5     //每页显示的条目数
+                });
+            })
+        }
+    };
+	//初始化
+	$(function(){
+		//分页初始化
+		condition_list_page.init(condition_list.url,condition_list.params);
+	});
+</script>

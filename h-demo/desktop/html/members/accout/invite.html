@@ -1,0 +1,102 @@
+<!--我的邀请的用户-->
+
+<div class="accout_main">
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding: 15px 0;">我的邀请用户</div>
+
+        <div class="accout_invite clearfix">
+            <div class="accout_invite_fl">
+                <h3>我的邀请码：</h3>
+                <p class="accout_invite_bg"><input id="InviteCode" value=""><a class="font_blue" data-clipboard-target="#InviteCode" id="copybtn" aria-label="复制成功！">复制</a></p>
+                <span class="accout_invite_icon"><img src="images/account/invite1.png"></span>
+            </div>
+            <div class="accout_invite_tg">
+                <h3>我的二维码推广：</h3>
+                <!--<p><img src="images/account/invite-wx.png" alt="二维码"></p>-->
+                <div>
+                    <div class="bdsharebuttonbox"><a href="javascript:;" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+                    <script>
+                        var shareUrl = DeelonService.site+"/mobile/html/members/register.html?userSpreadCode="+user.data.inviteCode;
+                        window._bd_share_config={"common":{
+                            "bdSnsKey":{},
+                            "bdText":"帝隆P2P ONE",
+                            "bdMini":"2",
+                            "bdMiniList":["weixin"],
+                            "bdPic":"",
+                            "bdStyle":"0",
+                            "bdSize":"32",
+                            "bdUrl":shareUrl
+                        },
+                            "share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+                </div>
+                <span class="accout_invite_icon"><img src="images/account/vite_xw.jpg"></span>
+            </div>
+        </div>
+        <div>
+
+            <table class="table-list" cellpadding="0" cellspacing="0" border="0">
+                <thead>
+                <tr>
+                    <th width="30%">账号</th>
+                    <th width="70%">注册时间</th>
+                </tr>
+                </thead>
+                <tbody id="InviteList">
+                </tbody>
+            </table>
+            <!-- 分页 S-->
+            <div id="Pagination" class="pagination"><!-- 这里显示分页 --></div>
+            <!-- 分页 E-->
+        </div>
+    </div>
+</div>
+<script src="../members/js/clipboard.min.js"></script>
+<script type="text/javascript">
+    $("#InviteCode").val(user.data.inviteCode);
+    var clipboard = new Clipboard('#copybtn');
+    clipboard.on('success', function(e) {
+        var msg = e.trigger.getAttribute('aria-label');
+        e.clearSelection();
+        jAlert.success("复制成功！");
+    });
+    var  pageNum= 1,pageSize=15,totalPages='',ascSortingFlag= 'asc',status='';
+    var inviteurl = '/dlapi/uc/user/usersInviteList?queryParams={"id":"'+user.data.id+'"}&pageNum='+pageNum+'&pageSize='+pageSize;
+    var tpl='<tr> <td>$name</td> <td>$registerTime</td></tr>';
+    var nolist='<tr><td colspan="2">暂无数据</td></tr>';
+    var invitelist={
+        init:function(inviteurl,params){
+            DeelonService.get(inviteurl,params,function(data){
+                if(data.totalElements==0){
+                    $("#InviteList").html(nolist);
+                    $("#Pagination").empty();
+                    return false;
+                }else{
+                    $("#Pagination").pagination(data.totalElements, {
+                        prev_text: "前一页",
+                        next_text: "后一页",
+                        num_edge_entries: 2,
+                        num_display_entries: 4,
+                        callback: invitelist.pageselectCallback,
+                        items_per_page:pageSize
+                    });
+                }
+            });
+        },
+        render:function(inviteurl,params){
+            $("#InviteList").empty();
+            DeelonService.get(inviteurl,params,function(res){
+                if(res.content.length=="0"){
+                    $("#InviteList").html(nolist);
+                }else{
+                    Utils.bindList("#InviteList",$(tpl),res.content);
+                }
+            });
+        },
+        pageselectCallback:function(page_index, jq){
+            var page=page_index+1;
+            invitelist.render(inviteurl,"pageNum="+page);
+        }
+    };
+    invitelist.init(inviteurl,"pageNum=1");
+
+</script>

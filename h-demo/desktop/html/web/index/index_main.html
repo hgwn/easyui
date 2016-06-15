@@ -1,0 +1,59 @@
+<!--p2p_banner S-->
+<div class="p2p_banner" id="banner_box">
+
+</div>
+
+<!--p2p_banner E-->
+
+<!--p2p p2p_pname S-->
+<div class="p2p_pname" id="info_box">
+
+</div>
+<!--p2p p2p_pname E-->
+
+<!--p2p_wrapper S-->
+<div class="p2p_wrapper">
+    <!-- 特推项目 S-->
+    <h3 class="p2p_title">特推项目</h3>
+    <div class="project_rm" id="hotproj_box">
+
+    </div>
+    <!-- 特推项目 E-->
+
+    <!-- 投资项目 S-->
+    <h3 class="p2p_title">投资项目<a href="index.html#page=getTenderProjects" class="p2p_lookmore">更多</a></h3>
+    <div id="projlist_box">
+
+    </div>
+    <!-- 投资项目 E-->
+
+    <!-- 最新动态 S-->
+    <h3 class="p2p_title">最新动态</h3>
+    <div id="news_box">
+        
+        
+    </div>
+    <!-- 最新动态 E-->
+
+    <!-- 友情链接 S-->
+    <h3 class="p2p_title">友情链接</h3>
+    <div id="friedLink_box">
+
+    </div>
+    <!-- 友情链接 E-->
+    <div style="margin: 0 auto 20px;"><img src="images/home-ad.jpg"></div>
+</div>
+<!--p2p_wrapper E-->
+
+
+<script type="text/javascript" >
+    $(function() {
+        PorletLoader.loadPorlet("banner_box", [{ link: "index/banner.html"}]);
+        PorletLoader.loadPorlet("info_box", [{link: "index/info.html"}]);
+        PorletLoader.loadPorlet("hotproj_box", [{link: "index/hotproj.html"}]);
+        PorletLoader.loadPorlet("projlist_box", [{link: "projects/projlist.html"}]);
+        PorletLoader.loadPorlet("news_box", [{link: "index/news.html"}]);
+        PorletLoader.loadPorlet("friedLink_box", [{link: "index/friendLink.html"}]);
+    })
+
+</script>

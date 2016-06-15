@@ -1,0 +1,30 @@
+<div class="p2p_content">
+    <a class="p2p_logo" href="index.html#page=main" title="帝隆P2P">
+        <img style="padding-top: 10px;" src="/dlapi/cms/image/download?id=&fullPath=/内容管理/网站管理/P2P/图片/logo.png" alt="帝隆P2P"/>
+    </a>
+    
+    <ul class="p2p_nav clearfix fr" id="main_nav_box_Temp"></ul>
+</div>
+
+<script>
+    var main_nav_box = {
+        url: "data/nav.json?_" + new Date().getTime(),
+        init: function() {
+            DeelonService.get(main_nav_box.url, function(data) {
+                var temp = '<li class="p2p_nav_li" style="display: block;"><a  @href="$url">$name</a></li>';
+                Utils.bindList($("#main_nav_box_Temp"), $(temp), data.result);
+                main_nav_box.render();
+            });
+
+        },
+        render: function(data) {
+            $(".p2p_nav > .p2p_nav_li").click(function() {
+                $(".p2p_nav > .p2p_nav_li").removeClass("active");
+                $(this).addClass("active");
+            });
+        }
+    };
+
+    main_nav_box.init();
+
+</script>

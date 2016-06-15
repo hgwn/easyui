@@ -1,0 +1,94 @@
+<!--自动投标设置-->
+<!-- accout_main S-->
+<div class="accout_main">
+    <!--<div class="accout_headBar">
+        <a href="#" class="visit">理财管理</a><span>&gt;</span>
+        <a href="#">自动投标设置</a>
+    </div>-->
+
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px; padding-bottom: 12px; position: relative; border-bottom: 1px solid #eee;">
+            自动投标设置
+            <a href="accout.html#page=autobid" class="font_blue" style="position: absolute; right: 0; top: 25px; font-size: 14px;">返回</a>
+        </div>
+
+        <div class="accout_setbid_box">
+            <form class="accout_setbid_form">
+                <dl class="accout_setbid_dl">
+                    <dt>设置投标金额</dt>
+                    <dd>自动投标的最大金额不能超过借款金额的20%</dd>
+                    <dd>
+                        <label> <input  type="radio" name="setbidR" checked="checked">按固定借款数值</label>
+                        <input type="text" class="p2p_accout_text">
+                        <span class="font_999">（最少100元）</span>
+                    </dd>
+                    <dd>
+                        <label> <input  type="radio" name="setbidR" checked="checked">按借款金额比例</label>
+                        <input type="text" class="p2p_accout_text">
+                        %<span class="font_999">（1%~2%）</span>
+                    </dd>
+                    <dd>
+                        <input  type="radio" name="setbidR" checked="checked">
+                        <label>可用余额全部投标</label>
+                    </dd>
+                </dl>
+
+                <dl class="accout_setbid_dl">
+                    <dt>关于借款</dt>
+                    <dd>
+                        <label> <input type="checkbox" checked="checked">还款方式必须为</label>
+                        <select class="p2p_accout_text">
+                            <option value="">请选择</option>
+                            <option value="">一次性还本付息</option>
+                        </select>
+                    </dd>
+                    <dd>
+                        <label> <input type="checkbox" checked="checked">借款期限不大于</label>
+                        <input type="text" class="p2p_accout_text"/>
+                        月<span class="font_999">（大于0）</span>
+                    </dd>
+                    <dd>
+                        <label><input type="checkbox" checked="checked">借款期限不小于</label>
+                        <input type="text" class="p2p_accout_text"/>
+                        %<span class="font_999">（0。1%~24%）</span>
+                    </dd>
+                    <dd>
+                        <label>借款类型</label>
+                        <select class="p2p_accout_text">
+                            <option value="">请选择</option>
+                            <option value="">普通借款标</option>
+                        </select>
+                    </dd>
+                </dl>
+
+                <dl class="accout_setbid_dl">
+                    <dt>其它</dt>
+                    <dd>
+                        <label> <input type="checkbox">单日自动投标金额不能大于</label>
+                        <input type="text" class="p2p_accout_text"/>
+                        元<span class="font_999">（不能小于50）</span>
+                    </dd>
+                    <dd>
+                        <label> <input type="checkbox">自动投标仅在该时间段进行</label>
+                        <input type="text" class="p2p_accout_text" id="setbid_s"/>
+                        到
+                        <input type="text" class="p2p_accout_text" id="setbid_e"/>
+                    </dd>
+                </dl>
+
+                <div style="margin-bottom: 30px;">
+                    <button type="button" class="accout_btn_l">保存设置</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+    $(function(){
+        var setbid_s = new Pikaday({ field: $('#setbid_s')[0] });
+        var  setbid_e = new Pikaday({ field: $('#setbid_e')[0] });
+    });
+</script>

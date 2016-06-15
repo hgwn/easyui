@@ -1,0 +1,25 @@
+<!--p2p_wrapper S-->
+<div class="p2p_wrapper">
+     <div class="p2p_pageresult_box">
+       <img src="images/tip_wx3.png">
+       <h2 id="tip"></h2>
+     </div>
+</div>
+<!--p2p_wrapper E-->
+
+<script type="text/javascript">
+  $(function(){
+    var type=Utils.getUrlParam("type");
+    if(1==type){
+        $("#tip").html("投资失败！");
+    }else if(2==type){
+        $("#tip").html("竞拍失败！");
+    }else if(3==type){
+    	$("#tip").html("还款失败！");
+    }else if(11==type){
+    	$("#tip").html("撤销失败！");
+    }else{
+    	$("#tip").html("操作失败！");
+    }
+  })
+</script>

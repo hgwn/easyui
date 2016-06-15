@@ -1,0 +1,84 @@
+
+<ul id="productsLoanList_box" class="productsLoanList_box clearfix">
+    <li id="productsLoanList_list" class="productsLoanList_list clearfix" hidden="true">
+        <div class="productsLoanList_l">
+            <a href="#"><img id="imgId" src=""></a>
+        </div>
+        <div class="productsLoanList_m">
+            <h3>$name</h3>
+            <p class="font_999">适合人群：$recommend</p>
+            <ul class="clearfix">
+                <li style="width: 50%;">
+                    <span class="font_red">$amountMin - $amountMax</span>元
+                    <p>借款额度</p>
+                </li>
+                <li style="width: 30%;">
+                    <span>$rateMin% -$rateMax%</span>
+                    <p>借款利率</p>
+                </li>
+                <li style="width: 20%;">
+                    <span id="repayWay" style="font-size: 14px; line-height: 28px;">$repayWay</span>
+                    <p>还款方式</p>
+                </li>
+            </ul>
+        </div>
+        <div class="productsLoanList_r">
+            <div class="getTenderProjects_btn"><p href="#" id="onclickOne" class="p2p_btn_m">立即申请</p></div>
+            <p class="ta-center"><a id="onclickTwo">查看该产品的详细说明</a></p>
+        </div>
+    </li>
+    <li class="productsLoanList_list clearfix" hidden="true" style="display: list-item;">
+        <div class="productsLoanList_l">
+            <a href="#"><img id="imgId" src="images/temp/jk-2.jpg"></a>
+        </div>
+        <div class="productsLoanList_m">
+            <h3>首期贷款</h3>
+            <p class="font_999">适合人群：我试试</p>
+            <ul class="clearfix">
+                <li style="width: 50%;">
+                    <span class="font_red">1.00~2.00</span>元
+                    <p>借款额度</p>
+                </li>
+                <li style="width: 30%;">
+                    <span>1% -2%</span>
+                    <p>借款利率</p>
+                </li>
+                <li style="width: 20%;">
+                    <span id="repayWay" style="font-size: 14px; line-height: 28px;">一次性还本付息</span>
+                    <p>还款方式</p>
+                </li>
+            </ul>
+        </div>
+        <div class="productsLoanList_r">
+            <div class="getTenderProjects_btn"><p href="#" id="onclickOne" class="p2p_btn_m" onclick="productsLoan_list.toClickOne(5, 1);">立即申请</p></div>
+            <p class="ta-center"><a id="onclickTwo" onclick="productsLoan_list.toClickTwo(5);">查看该产品的详细说明</a></p>
+        </div>
+    </li><li class="productsLoanList_list clearfix" hidden="true" style="display: list-item;">
+        <div class="productsLoanList_l">
+            <a href="#"><img id="imgId" src="images/temp/jk-2.jpg"></a>
+        </div>
+        <div class="productsLoanList_m">
+            <h3>助学贷</h3>
+            <p class="font_999">适合人群：学生族</p>
+            <ul class="clearfix">
+                <li style="width: 50%;">
+                    <span class="font_red">1,000.00~10,000.00</span>元
+                    <p>借款额度</p>
+                </li>
+                <li style="width: 30%;">
+                    <span>4% -9%</span>
+                    <p>借款利率</p>
+                </li>
+                <li style="width: 20%;">
+                    <span id="repayWay" style="font-size: 14px; line-height: 28px;">等额本息，每月还款</span>
+                    <p>还款方式</p>
+                </li>
+            </ul>
+        </div>
+        <div class="productsLoanList_r">
+            <div class="getTenderProjects_btn"><p href="#" id="onclickOne" class="p2p_btn_m" onclick="productsLoan_list.toClickOne(6, 3);">立即申请</p></div>
+            <p class="ta-center"><a id="onclickTwo" onclick="productsLoan_list.toClickTwo(6);">查看该产品的详细说明</a></p>
+        </div>
+    </li></ul>
+<div class="ta-center" style="margin: 30px  auto 40px;"><p class="p2p_btn_b" onclick="applyCredit_form_dialog.toClick();">额度申请</p></div>
+<!-- 项目列表 E-->

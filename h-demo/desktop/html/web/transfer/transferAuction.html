@@ -1,0 +1,151 @@
+<!--债权竞拍-->
+<div id="transferAuction_box">
+    <div class="transferAuction_content">
+        <h3 class="productApply_title"> ”<span>$tprojectName</span> ”债权竞拍</h3>
+
+        <div id="transferFlag" class="transferAuction_flag" style="display: none;"></div>
+
+        <form id="myForm" class="transferAuction_form" method="post" target="_black">
+            <p class="transferAuction_row"><label class="name">您的账户总额</label>：<span class="font_red" id="allBalance">0.00</span> 元 &nbsp;<a href="#page=accout" class="font_blue" title="充值">充值</a></p>
+            <p class="transferAuction_row"><label class="name">您的可用余额</label>：<span class="font_red" id="availableBalance">0.00</span> 元</p>
+            <p class="transferAuction_row"><label class="name">债权总额：</label><span id="claimsSum">$claimsSum</span> 元</p>
+            <p class="transferAuction_row"><label class="name">拍卖底价：</label><span id="upsetPrice">$upsetPrice</span> 元</p>
+            <p class="transferAuction_row" id="auctionHighestPriceP"><label class="name">已出最高价：</label><span class="font_red fontS20" id="auctionHighestPrice">$auctionHighestPrice</span> 元</p>
+            <p class="transferAuction_row"><label class="name">竞拍金额：</label><input type="text" id="money" class="p2p_text"/>元
+                <span class="font_999" id="tips" style="display: none;">（若有多个相同最高价，则最早出价者中标！）</span></p>
+            <p style="padding-left: 125px;"><button type="button" class="p2p_btn_m" onclick="auction('$transferId','$projectId','$applicantId','$userId')" style="font-weight: bold;	">立即竞拍</button></p>
+			<div class="transfer_bg_change">
+			</div>
+			<input type="hidden" name="transferId" id="transferId" >
+            <input type="hidden" name="opPlatform" id="opPlatform" value="1">
+        </form>
+
+    </div>
+</div>
+<script type="text/javascript">
+	var auctionWay;
+    var transferAuctionBox = {
+            init:function(){
+            	var transferId = Utils.getUrlParam("transferId");
+            	var projectId = Utils.getUrlParam("projectId");
+            	var userId = Utils.getUrlParam("userId");
+                DeelonService.get("/dlbiz/p2p/transfer/"+transferId+"?userId="+userId,function(data){
+                	$("#claimsSum").html(addThousandSign(data.result.claimsSum));
+                	$("#upsetPrice").html(addThousandSign(data.result.upsetPrice));
+                	if(data.result.auctionHighestPrice){
+	                	$("#auctionHighestPrice").html(addThousandSign(data.result.auctionHighestPrice));
+                	}else{
+                		$("#auctionHighestPrice").html("0.00");
+                	}
+                	DeelonService.get("/dlsys/portal/wealth/assetJournal/incomeAndExpenses/"+user.data.account.id,function(data){
+            			availableBalance = data.result.account.amount;
+            			$("#allBalance").html(addThousandSign(parseFloat(data.result.account.amount+data.result.account.freezeAmount)))
+                        $("#availableBalance").html(addThousandSign(parseFloat(data.result.account.amount)));
+                    });
+                    if(data.result.auctionWay == 2){
+						$("#auctionHighestPriceP").hide();                    	
+                    	$("#tips").show();
+                    	$("#transferFlag").html("暗拍");
+                    	$("#transferFlag").removeClass("flag_m");
+                    	$("#transferFlag").addClass("flag_a");
+                    	$(".transfer_bg_change").html('<img id="transfer_bg_img" src="images/transfer_bg1.jpg">');
+                    }else{
+                    	$("#transferFlag").html("明拍");
+                    	$("#transferFlag").removeClass("flag_a");
+                    	$("#transferFlag").addClass("flag_m");
+                    	$(".transfer_bg_change").html('<img id="transfer_bg_img" src="images/transfer_bg2.jpg">');
+                    }
+                    $("#transferFlag").show();
+                    Utils.bindData($("#transferAuction_box"),data.result);
+                    auctionWay = data.result.auctionWay;
+                });
+            },
+            render:function(){}
+        };
+    transferAuctionBox.init();   
+    
+    function auction(transferId,projectId,applicantId,creditor){
+    	var userId = user.data.id;
+    	var money = $("#money").val();
+    	var upsetPrice = removeThousandSign($("#upsetPrice").html());
+    	var auctionHighestPrice = removeThousandSign($("#auctionHighestPrice").html());
+    	
+    	if(!user.islogin()){
+            Utils.gotoPage("index.html#page=login");
+            window.location.reload();
+        }
+    	
+    	if(user.data.id == applicantId){
+    		jAlert.warn("不允许竞拍自己的借款项目");
+    		return;
+    	}
+    	if(user.data.id == creditor){
+    		jAlert.warn("不允许竞拍自己转让的项目");
+    		return;
+    	}
+    	
+    	if(money == ''){
+    		jAlert.warn("请输入竞拍金额");
+    		return;
+    	}else if(eval(money) < eval(upsetPrice)){
+    		jAlert.warn("竞拍金额不能低于竞拍底价");
+    		return;
+    	}
+    	
+    	if(auctionWay == 1 && (eval(money) <= eval(auctionHighestPrice))){
+       		jAlert.warn("竞拍金额必须大于已出最高价");
+       		return;
+    	}
+
+    	//判断用户是否竞标过，如竞标过，则提醒用户先退款再重新竞标
+	    DeelonService.get("/dlbiz/p2p/tprojectAuction/judgeIsLoanTransfer/"+transferId+"/"+userId,function(dataResult){
+	       if(dataResult.code!=-1){
+	            jConfirm("你已竞拍过此债权转让，是否先退款再竞拍？","",function(data){
+                    if(data){
+                        jAlert.info('已经跳到退款页面，如果请求不合法，会给你提示相关信息。<br>退款完成后，请点击确认按钮。',null,null,function(){
+                            window.location.reload();
+                        });
+                        var resultArray=dataResult.result;
+                        var loanIds="";
+                        
+                        for (var i=0; i<resultArray.length;i++){
+                            loanIds+=resultArray[i].transactionNo;
+                            if(i!=resultArray.length-1){
+                                loanIds+=",";
+                            }
+                        }
+                        
+                        
+                        $('#transferId').val(transferId);
+                        $('#myForm').attr("action", '/dlbiz/p2p/audit/audiTrefunded/'+"/"+loanIds+"/3"+"/"+userId).submit();
+                        
+                    }else{
+                        jConfirm("你确认要竞拍"+money+"元吗","",function(data){
+		                    if(data){
+		                        jAlert.info('已经跳到竞拍支付页面，如果请求不合法，会给你提示相关信息。<br>支付完成后，请点击确认按钮。',null,null,function(){
+		                            window.location.reload();
+		                        });
+		                        $('#myForm').attr("action", '/dlbiz/p2p/invest/investTransfer/' + transferId + '/' + projectId + '/' + userId + '/' + money + '/1').submit();
+		                    }
+		                }); 
+                    }
+                });    
+	       }else{
+	            jConfirm("你确认要竞拍"+money+"元吗","",function(data){
+		            if(data){
+		                jAlert.info('已经跳到竞拍支付页面，如果请求不合法，会给你提示相关信息。<br>支付完成后，请点击确认按钮。',null,null,function(){
+		                    window.location.reload();
+		                });
+		                $('#myForm').attr("action", '/dlbiz/p2p/invest/investTransfer/' + transferId + '/' + projectId + '/' + userId + '/' + money + '/1').submit();
+		            }
+		        }); 
+	       }
+	    });
+                    
+
+
+
+    	
+    }
+
+</script>

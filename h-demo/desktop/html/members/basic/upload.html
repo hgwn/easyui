@@ -1,0 +1,205 @@
+<!--上传认证资料-->
+<!-- accout_main S-->
+<div class="accout_main">
+   <!-- <div class="accout_headBar">
+        <a href="#" class="visit">基本设置</a><span>&gt;</span>
+        <a href="#">上传认证资料</a>
+    </div>-->
+
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;">上传认证资料</div>
+
+        <div class="accout_upload_box">
+
+            <table class="table-list" cellpadding="0" cellspacing="0" border="0" style="margin-top: 15px;">
+                <tr>
+                    <th width="20">&nbsp;</th>
+                    <th width="100">资料名称</th>
+                    <th width="100">图片</th>
+                    <th width="100">最近上传时间</th>
+                    <th width="100">备注说明</th>
+                    <th width="100">状态</th>
+                    <th width="100">操作</th>
+                </tr>
+                <tbody id="upload_temp">
+
+                </tbody>
+                <tr  id="upload_list" style="display:none">
+                    <td><span class="font_red" id="isMust"></span></td>
+                    <td>$materialsName</td>
+                    <td><span id="count">0</span>张</td>
+                    <td>$lastTime</td>
+                    <td>$reasons</td>
+                    <td id="state">未上传</td>
+                    <td>
+                    <a href="javascript:void(0);" id="manage_btn" class="font_blue accout_upload_btn">管理附件</a>
+                    <a href="javascript:void(0);" id="upload_btn" onclick="upload_dialogBox.show('$auditMaterialsId','$materialsName')" class="font_blue accout_upload_btn">上传资料</a>
+                    </td>
+                </tr>
+            </table>
+            <!-- 分页 S-->
+            <div id="upload_dialogBox_page" class="pagination"><!-- 这里显示分页 --></div>
+            <!-- 分页 E-->
+        </div>
+
+    </div>
+
+</div>
+
+<!--dialog S-->
+
+<div id="upload_dialog" class="h-dialog" style="display: none;width:500px;height:400px;padding:5px;">
+    <div class="h-dialog_title">
+    		资料上传
+        <a id="hide" class="h-dialog_close" title="关闭">关闭</a>
+    </div>
+    <div class="h-dialog_show" style="margin-top:10px">
+        <div class="accout_upload_db">
+            	资料类型：<span id="materialsName"></span>
+            <div class="accout_upload_br">
+                <button type="button"  id="opBtn" class="zc_btn">添加文件</button>
+                <button type="button" class="zc_btn"  onclick="upload_dialogBox.upload();">开始上传</button>
+            </div>
+        </div>
+    </div>
+
+    <div style="height:300px;overflow-y:auto; ">
+	    <table class="table-list" cellpadding="0" cellspacing="0" border="0" style="margin-top: 15px;" id="files">
+		    <tr>
+		        <th style="width: 32%;text-overflow:ellipsis; white-space:nowrap; overflow:hidden;">文件名</th>
+				<th style="width: 20%;">文件大小(B)</th>
+				<th style="width: 20%;" class="progress-bar">状态</th>
+		        <th>操作</th>
+		    </tr>
+		    <tbody id="files_temp">
+
+            </tbody>
+	    </table>
+    </div>
+    <input type="hidden" id="auditMaterialsId" name="auditMaterialsId" value="" />
+</div>
+<!--dialog E-->
+
+
+<script type="text/javascript">
+	var uploader;
+    var upload_dialogBox= {
+    	url:"/dlbiz/p2p/auditMaterials/uploadInfo",
+    	params:{userId:user.data.id,page:1,pageSize:5},
+    	init:function(url,params){
+    		$("#upload_temp").empty();
+    	      DeelonService.get(upload_dialogBox.url,upload_dialogBox.params,function(data){
+    	    	  upload_dialogBox.render(data);
+    	    })
+    	    $("#hide").click(function(){
+                upload_dialogBox.hide();
+    	    });
+    	 },
+        render:function(data){
+	        Utils.bindList("#upload_temp", "#upload_list", data.result.content,null,function(item,data){
+	        	if(data.count > 0){
+	        		if(data.isPass==1){
+	        			item.find("#state").html('审核通过');
+	        		}else if(data.isPass==0){
+	        			item.find("#state").html('审核不用过');
+	        		}else{
+	        			item.find("#state").html('待审核');
+	        		}
+	        		item.find("#count").html(data.count);
+	        	}else{
+	        		item.find("#manage_btn").remove();
+	        	}
+	        	if(data.isMust==1){
+	        		item.find("#isMust").html("*");
+	        	}
+	        });
+        },
+        show:function(auditMaterialsId,materialsName){
+        	$("#files_temp").empty();
+            showDialog("#upload_dialog", { "bgcolor": "black", "delay": 200 });
+        	$("#materialsName").html(materialsName);
+            uploader = $("#opBtn").uploadFile({
+        		url:'/dlbiz/p2p/resources/uploadTication/'+user.data.id+"?loginName="+user.data.name+"&auditMaterialsId="+auditMaterialsId,
+        		isImage:true,
+        		imageExtensions:"jpg,gif,png",
+        		permitDuplicate:true,
+        		maxFileSize:'5mb',
+        		autoUpload:false,
+        		beforeFilesAdd:function(){ //文件上传之前调用方法
+        		var fileId = $("#productImg").val();
+        		if(""!=fileId){
+        			$("#productImg").val("");
+        		}
+        		return true;
+        	},
+        	filesAdd:function(obj){//文件添加成功时回调的方法
+        	    if(obj.length>0){
+        	    	var table = $("#files_temp");
+        	    	for(var i=0;i<obj.length;i++){
+        	    		var html = "<tr fileId='"+obj[i].id+"'>";
+        	    		html+="<td style='width: 32%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;'>"+obj[i].name+"</td>";
+        	    		html+="<td style='width: 20%;'>"+obj[i].size+"</td>";
+        	    		html+="<td style='width: 20%;'>待上传</td>";
+        	    		html+="<td class='color-main'><a href='javascript:delFile(\""+obj[i].id+"\");'   class='color-main'>删除</a></td>";
+        	    		html+="</tr>";
+        	    		table.append(html);
+        	    	}
+        	    }
+        	},
+        	fileUploaded:function(obj){ //文件上传成功时回调的方法
+        		var name = obj.name; //文件名
+        		var rsp = obj.rspJson; //上传文件时响应的数据 
+        		var fileId=rsp.result[0].fileId;
+        		$("#productImg").val(fileId); //服务器返回的文件ID
+        	}
+            });
+        },
+        hide:function(){
+            hideDialog("#upload_dialog");
+        },
+	    pageselectCallback:function(index,jq){
+        	upload_dialogBox.params.page = index +1;
+	    	upload_dialogBox.init(upload_dialogBox.url,upload_dialogBox.params);
+	        return false;
+	    },upload: function(ele, paramName) {
+	    	//调用上传图方法
+	    	uploader.start();
+	    }
+    };
+    
+    
+    //定义分页对象
+    var upload_dialogBox_page = {
+        init:function(url,params){
+            DeelonService.get(url,params,function(data){
+                $("#upload_dialogBox_page").pagination(data.result.totalElements, {
+                    prev_text: "前一页",
+                    next_text: "后一页",
+                    num_edge_entries: 2,   //两侧显示的首尾分页的条目数
+                    num_display_entries: 5 ,   //连续分页主体部分显示的分页条目数
+                    callback: upload_dialogBox.pageselectCallback,
+                    items_per_page:5     //每页显示的条目数
+                });
+            })
+        }
+    };
+    
+    $(function(){
+    	upload_dialogBox_page.init(upload_dialogBox.url,upload_dialogBox.params);
+    });
+    
+    function delFile(fileId){
+    	var originalUploader = uploader.getUploader();
+		var file = originalUploader.getFile(fileId);
+		if(file){
+			if(file.status==plupload.QUEUED){
+				originalUploader.removeFile(file);
+				$("#files tr[fileId='"+fileId+"']").remove();
+			}else{
+				jAlert.info('不可删除！');
+			}
+		}else{
+			$("#files tr[fileId='"+fileId+"']").remove();
+		}
+	}
+</script>

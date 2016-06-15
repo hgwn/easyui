@@ -1,0 +1,261 @@
+﻿<!--p2p_wrapper S-->
+<div class="p2p_wrapper">
+  <div class="login_box">
+    <div class="login_main">
+      <h3 class="login_title">会员注册</h3>
+      <ul class="clearfix" style="padding-top: 30px;">
+        <li class="fl">
+          <form class="regist_form" id="regist_form">
+            <p class="regist_r"><label class="name"><em>*</em>用户名：</label>
+              <input type="text" id="name" name="name" class="reg_text"  placeholder="6-20字母、数字、下划线"/>
+              <span class="regist_tip"  name="e-name"></span>
+            </p>
+
+            <p class="regist_r"><label class="name"><em>*</em>密码：</label>
+              <input id="password" type="password" class="reg_text" name="password" oncopy="return false;" oncut="return false;" onpaste="return false" placeholder="6-20字母、数字、下划线"/>
+              <span class="regist_tip" name="e-password"></span>
+            </p>
+
+            <p class="regist_r"><label class="name"><em>*</em>确认密码：</label>
+              <input id="rq_password" type="password" class="reg_text" name="rq_password" oncopy="return false;" oncut="return false;" onpaste="return false" placeholder="请输入确认密码"/>
+              <span class="regist_tip"  name="e-rq_password"></span>
+            </p>
+
+            <p id="phone-row-1" class="regist_r"><label class="name"><em>*</em>手机号码：</label>
+              <input type="text" id="mobile" class="reg_text" name="mobile" placeholder="用于接收平台通知、找回密码"/>
+              <span style='font-size: 14px; color: #787878; padding-right: 5px;'>或</span><a href="javascript:void(0)" id="forEmail">验证邮箱</a>
+              <span class="regist_tip" name="e-mobile"></span>
+            </p>
+
+            <p id="phone-row-2" class="regist_r">
+              <label class="name"><em>*</em>短信验证码：</label>
+              <input type="text" class="reg_text" id="verificationCode"  name="verificationCode"  placeholder="请输入验证码" style="width: 160px;"/>
+              <button type="button" class="p_yzBtn" id="getcode">获取短信验证码</button>
+              <button type="button" class="p_yzBtn" id="againcode" style="display:none;">60秒后重发</button>
+              <span id="getcode_msg" style="color: #ff5e53;"></span>
+              <span class="regist_tip"  name="e-verificationCode"></span>
+            </p>
+
+            <p id="email-row-1" class="regist_r" style="display: none;"><label class="name"><em>*</em>邮箱：</label>
+              <input type="text" id="email" name="email" class="reg_text" placeholder="用于找回密码"/>
+              <span style='font-size: 14px; color: #787878; padding-right: 5px;'>或</span><a href="javascript:void(0)" id="forPhone">验证手机</a>
+              <span class="regist_tip" id="r_email_tip" name="e-email"></span>
+            </p>
+
+            <p id="email-row-2" class="regist_r" style="display: none;"><label class="name"><em>*</em>验证码：</label>
+              <input type="text" name="checkNum" id="checkNum" class="reg_text" style="width: 200px;" placeholder="请输入验证码"/>
+              <img  src="/dlsys/portal/sdk/common/validcode" class="p_yzm"  id="validcode" title="看不清，点击换一张"/>
+              <span class="regist_tip"  name="e-checkNum"></span>
+            </p>
+            <p class="regist_r"><a class="coverInviteCodeLink" href="javascript:;" title="我有邀请码">我有邀请码</a></p>
+
+            <p id="coverInviteCodeBox" class="regist_r" style="display:none;"><label class="name">邀请码：</label>
+              <input id="coverInviteCode" name="coverInviteCode" type="text" class="reg_text"  placeholder="请输入邀请码"/>
+            </p>
+
+            <p class="regist_r p2">
+              <label><input type="checkbox" checked="checked" id="regchecked"/>我已阅读并同意P2P</label>
+              <a href="javascript:;" class="font_blue"> 《服务协议》</a>
+              <a href="javascript:;" class="font_blue">《借入协议》 </a>
+              <a href="javascript:;" class="font_blue">《借出协议》</a>
+            </p>
+            <p id="register_tip" class="regist_tip"></p>
+          </form>
+          <p class="regist_r pl"><button class="p_login" type="button" id="p2p_registBtn">注册</button></p>
+          <p class="regist_r pl"><button class="p_register" id="p2p_loginBtn">已有账号？现在就去登录</button></p>
+        </li>
+        <li class="fr">
+          <div class="p_weixin">
+            微信扫一扫，关注公众号
+            <p><img src="images/temp/login_weixin.jpg" alt=""/></p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<!--p2p_wrapper E-->
+
+
+<script type="text/javascript">
+  var p2p_registForm = {
+    id:"#regist_form",
+    url:'/dlsys/portal/sdk/user',
+    params:{},
+    init:function() {
+
+      $("#forEmail").click(function() {
+        $("#phone-row-1,#phone-row-2").hide();
+        $("#email-row-1,#email-row-2").show();
+        $("#mobile").val("");
+
+      });
+
+      $("#forPhone").click(function() {
+        $("#phone-row-1,#phone-row-2").show();
+        $("#email-row-1,#email-row-2").hide();
+        $("#email").val("");
+      });
+      $(".coverInviteCodeLink").click(function() {
+        $(this).parent().hide();
+        $("#coverInviteCodeBox").show();
+      });
+
+      $("#getcode").click(function(){
+        var phone=$.trim($('#mobile').val());
+        if(!phone){
+          //alert("请输入手机号码 ");
+          $("#getcode_msg").text("请输入手机号码");
+          return;
+        }else if(!/^(13[0-9]|14[0-9]|15[0-9]|17[0-9]|18[0-9])\d{8}$/i.test(phone)){
+          jAlert.warn('手机号码格式不合法');
+          return;
+        }
+        p2p_registForm.RegSentMsg(phone);
+      });
+
+      $("#validcode").click(function(){
+        p2p_registForm.getvalidcode();
+      });
+
+      $("#p2p_registBtn").click(function(){
+        $("#regist_form").validate({
+          groups : {
+            g1 : "email mobile",
+            g2 : "verificationCode checkNum"
+          },
+          rules : {
+            name : {
+              required : true,
+              minlength : 6
+            },
+            email : {
+              required : {
+                depends : function() {//二选一
+                  return ($('input[name=email]').val().length <= 0);
+                }
+              },
+              email : true
+            },
+            mobile:{
+              required : {
+                depends : function() {//二选一
+                  return ($('input[name=mobile]').val().length <= 0);
+                }
+              },
+              minlength : 11,
+              maxlength : 11,
+              digits : true
+            },
+            password : {
+              required : true,
+              minlength : 6
+            },
+            rq_password : {
+              required : true,
+              minlength : 6,
+              equalTo: "#password"
+            } ,
+            verificationCode:{
+              required : {
+                depends : function() {//二选一
+                  return ($('input[name=verificationCode]').val().length <= 0);
+                }
+              }
+            },
+
+            checkNum : {
+              required : {
+                depends : function() {//二选一
+                  return ($('input[name=checkNum]').val().length <= 0);
+                }
+              }
+            }
+          },
+          messages : {
+            name : {
+              required : "用户名必填",
+              minlength : "至少6个字符"
+            },
+            mobile:{
+              required : "邮箱与手机必须填一个",
+              minlength : "号码长度为11",
+              maxlength : "号码长度为11",
+              digits : "必须是数字"
+            },
+            password : {
+              required : "请输入密码",
+              minlength : "密码不能少于6个字符"
+            },
+            rq_password : {
+              required : "请输入确认密码",
+              minlength : "密码不能少于6个字符",
+              equalTo: "两次输入密码不一致不一致"
+            },
+            email : {
+              required : "邮箱与手机必须填一个",
+              email : "请填写正确邮箱"
+            },
+            verificationCode : "邮箱验证码与手机验证码必须填一个",
+            checkNum : "邮箱验证码与手机验证码必须填一个",
+          }
+        });
+
+        if(!($(p2p_registForm.id).valid())) return;
+        var temp = {};
+        Utils.bindProps("#regist_form",temp,false);
+        DeelonService.ajax(p2p_registForm.url,"post",temp,function(data){
+          Utils.gotoPage("index.html#page=regsuccess");
+        },function(xhr, status, err){
+          if (xhr.status == 400) {
+            var errDate = $.parseJSON(xhr.responseText);
+            $("#register_tip").text(errDate.msg);
+            p2p_registForm.getvalidcode();
+          }
+          if(xhr.status == 500){
+            var errDate = $.parseJSON(xhr.responseText);
+            $("#register_tip").text(errDate.msg);
+            if($.parseJSON(errDate.msg).code){
+              $("#register_tip").text($.parseJSON(errDate.msg).msg);
+            }
+            p2p_registForm.getvalidcode();
+          }
+        });
+      });
+    },
+    RegSentMsg:function(phone){
+      var getcode=$("#getcode"),againcode=$("#againcode");
+      var appUserId = (user.id ==undefined ? "":user.id);
+      var url = '/dlsys/portal/sdk/user/sendSMS/' + phone+"?Appkey=&appUserId="+ appUserId;
+
+      DeelonService.ajax(url,'get',null,function(data){},function(xhr, status, err){
+        getcode.hide();
+        againcode.show();
+        var tflg = 60;
+        var int = setInterval(function() {
+          $(againcode).html(tflg + '秒后重发');
+          if (tflg == 0) {
+            tflg = 60;
+            getcode.show();
+            againcode.hide();
+            $(againcode).html(tflg + '秒后重发');
+            clearInterval(int);
+          }
+          tflg--;
+        }, 1000);
+      });
+    },
+    getvalidcode:function(){
+      $("#validcode").attr('src','/dlsys/portal/sdk/common/validcode?rand='+Math.random());
+    }
+  };
+
+  $("#p2p_loginBtn").click(function(){
+    location.hash="#page=login";
+  });
+
+  p2p_registForm.init();
+  setErrorLable();
+
+
+</script>

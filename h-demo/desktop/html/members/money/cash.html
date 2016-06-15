@@ -1,0 +1,87 @@
+<!--提现-->
+
+<!-- accout_main S-->
+<div class="accout_main">
+
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding: 15px 0;">提现</div>
+
+        <div class="accout_cashe">
+            <!--<div class="cash_info">-->
+            <!--<span class="bg"></span>您尚未绑定银行卡，将无法提现，点击 <a href="javascript:void(0);" class="font_blue">前往绑定</a>!-->
+            <!--</div>-->
+            <p class="cashe_pl"><label>账户余额：</label><span id="amount" class="cashe_m2"></span>元</p>
+            <div class="accout_cash_money">
+                <div  class="accout_cash_form">
+                    <p class="cash_p1"><input type="text" class="accout_cash_input" maxlength="9" onKeyPress="if (event.keyCode!=46 && event.keyCode!=45 &&
+(event.keyCode<48 || event.keyCode>57)) event.returnValue=false" placeholder="请输入金额，最少提现3元"/></p>
+                    <!--<p class="cash_p2">-->
+                        <!--<select class="accout_cash_select">-->
+                            <!--<option value="">请选择</option>-->
+                            <!--<option value="">正常提现</option>-->
+                        <!--</select>-->
+                    <!--</p>-->
+                    <!--<p class="cash_p3">-->
+                        <!--<select class="accout_cash_select">-->
+                            <!--<option value="">请选择</option>-->
+                            <!--<option value="">民生银行 622 1014 7258 2014</option>-->
+                        <!--</select>-->
+                    <!--</p>-->
+                    <p class="cash_pbn"><button id="cashBtn" class="accout_cash_btn">提现</button></p>
+                </div>
+            </div>
+            <div class="accout_cash_tip">
+                <div class="accout_cashe_msg">
+                    <h4>温馨提示：</h4>
+                    <p> 1．提现前需绑定银行卡，否则无法提现。</p>
+                    <p> 2．部分银行尚不支持提现到信用卡，如果支付平台提示不支持，请更换提现银行卡。</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<form name="form" method="post" id="bindformsumbit" action="" target="_blank" style="display: none;">
+    <textarea rows="23" cols="120"  name="req">$req</textarea>
+    <input type="hidden" id="sign" name="sign" value="$sign">
+</form>
+
+<!-- accout_main E-->
+<script type="text/javascript">
+
+    var cashFun={
+        init:function(){
+            this.render();
+        },
+        render:function(){
+            $.getJSON("/dlsys/portal/wealth/assetJournal/incomeAndExpenses/"+user.data.account.id,function(data){
+                $("#amount").html(addThousandSign(parseFloat(data.result.account.amount)));
+            });
+        },
+        cash:function(){
+            var url="/dlsys/portal/tstransaction/pc/withdraw/yeepayts/"+user.data.account.id,amount=$(".accout_cash_input").val();
+            var returnrul =DeelonService.site+'/desktop/html/p2p/index.html#page=pagesuccess?type=cash';
+            var y_mony=Fcheck.t_mony(amount);
+            if(y_mony){
+                DeelonService.ajax(url,'post',{amount:amount,urlReturn:returnrul},function(data){
+                    $("#bindformsumbit").attr("action",data.result.url);
+                    Utils.bindData($("#bindformsumbit"),data.result);
+                    $("#bindformsumbit").submit();
+                    jAlert.info('提现已经跳到虚拟提现支付页面，如果请求不合法，会给你提示<br>相关信息。提现完成后，请点击确认按钮。',null,null,function(){
+                        location.hash="#page=frecord?bread=资金记录";
+                        //window.location.reload();
+                    });
+                },function(xhr, status, err){});
+            }
+        }
+    };
+
+    cashFun.init();
+
+    $("#cashBtn").on("click",function(){
+        cashFun.cash();
+    });
+
+
+</script>

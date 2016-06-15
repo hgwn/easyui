@@ -1,0 +1,140 @@
+<!--关注的借款-->
+<!-- accout_main S-->
+<div class="accout_main">
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding: 15px 0;">关注的借款</div>
+        <div>
+            <div style="margin-bottom:15px;">
+                从 <input type="text"  class="p2p_accout_text" id="follow_datepicker_s">
+                到 <input type="text"  class="p2p_accout_text" id="follow_datepicker_e">
+                <button type="button" class="zc_btn" onclick="p2p_myAttention_search.search();">查询</button>
+            </div>
+            <table class="table-list" cellpadding="0" cellspacing="0" border="0">
+			<thead>
+			    <tr>
+			        <th width="100">借款标题</th>
+			        <th width="100">还款方式</th>
+			        <th width="100">借款金额（元）</th>
+			        <th width="100">年化利率</th>
+			        <th width="100">发布时间</th>
+			        <th width="100">剩余时间</th>
+			        <th width="100">操作</th>
+			    </tr>
+			</thead>
+			<tbody id="myAttentionBox">
+			    
+			</tbody>
+			<tr id="myAttentionList" style="display:none";>
+			   <td>$name</td>
+			   <td id="repayWay">$repayWay</td>
+			   <td id="loan">$loan</td>
+			   <td>$rate%</td>
+			   <td>$applicationTime</td>
+			   <td id="residualTime">$residualTime</td>
+			   <td><a href="#" class="font_blue" onclick="p2p_myAttentionList.attention('$applicantId','$projectId')">取消关注</a>&nbsp;&nbsp;<a href="#page=showProjectDetail?projectId=$projectId" class="font_blue" >我要投标</a></td>
+			</tr>
+            </table>
+            <div id="myAttentionPagination" class="pagination"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+//分页对象
+    var pagination ={
+        init:function(url,params){
+            DeelonService.get(url,params,function(data){
+               $("#myAttentionPagination").pagination(data.result.totalElements, {
+                   prev_text: "前一页",
+                   next_text: "后一页",
+                   num_edge_entries: 2,
+                   num_display_entries: 4,
+                   callback: p2p_myAttentionList.pageselectCallback,
+                   items_per_page:5
+               });
+            });
+        }
+    };
+    var p2p_myAttentionList = {
+        url:"/dlbiz/p2p/project/attentions/" + user.data.id ,
+        params:{},
+        //请求数据
+        init:function(url,params){
+            DeelonService.get(url, p2p_myAttentionList.params,function(data){
+                p2p_myAttentionList.render(data);
+            })
+        },
+        //加载数据
+        render:function(data){
+            $("#myAttentionBox").empty();
+            Utils.bindList($("#myAttentionBox"), $("#myAttentionList"), data.result.content, null, function(item,data){
+                if(data.repayWay == 1){
+                    item.find("#repayWay").text("一次性还本付息");
+                }else if (data.repayWay == 2){
+                    item.find("#repayWay").text("按月付息，到期还本");
+                }else if (data.repayWay == 3){
+                    item.find("#repayWay").text("等额本息，每月还款");
+                }else if (data.repayWay == 4){
+                    item.find("#repayWay").text("等额本金，每月还款");
+                }
+                item.find("#loan").text(formatCurrency(data.loan));
+                //剩余时间
+                var now = new Date();
+                if(data.isOpen == 1){
+                    if(data.closeDate != null){
+                        var endDate = new Date(Utils.toCommonDateStr(data.closeDate.replace(/-/g, '\/'))),diff = dateDiff(endDate, now);
+                        var residualTime = (diff.date === void 0 ? '0' : diff.date) + '天' + (diff.hour === void 0 ? '0' : diff.hour) + '小时' + (diff.minute === void 0 ? '0' : diff.minute) + '分';
+                        if(diff.date === void 0 && diff.hour === void 0 && diff.minute === void 0 && data.state==2 && data.complete != 100){
+                            var residualTime = "已经结束";
+                        }
+                    }
+                }else{
+                    //item.find("#residualTimeSpan").html("剩余开标时间");
+                    if(data.openDate != null){
+                        var endDate = new Date(Utils.toCommonDateStr(data.closeDate.replace(/-/g, '\/'))),diff = dateDiff(endDate, now);
+                        var residualTime = (diff.date === void 0 ? '0' : diff.date) + '天' + (diff.hour === void 0 ? '0' : diff.hour) + '小时' + (diff.minute === void 0 ? '0' : diff.minute) + '分';
+                    }
+                }
+                item.find("#residualTime").text(residualTime);
+            });
+        },
+        //分页回调
+        pageselectCallback:function(index, jq){
+        	p2p_myAttentionList.params.pageNum = index +1;
+            p2p_myAttentionList.init(p2p_myAttentionList.url, p2p_myAttentionList.params);
+            return false;
+        },
+        attention:function(attentionUserId,projectId){
+            if(!user.islogin()){
+                jAlert.warn('请您先登录');
+                return;
+            }else{
+                DeelonService.post("/dlbiz/p2p/project/attention/" + user.data.id + "/" + attentionUserId + "/" + projectId + "/0", null, function(data){
+                    if(data.code==0){
+                        jAlert.success(data.result);
+                        pagination.init(p2p_myAttentionList.url, "&pageNum=1&pageSize=5");
+                    }else{
+                        jAlert.warn(data.msg);
+                    }
+                });
+            }
+        }
+    };
+    
+    var pickerS = new Pikaday(
+            {
+                field: document.getElementById('follow_datepicker_s')
+            });
+    var pickerE = new Pikaday(
+            {
+                field: document.getElementById('follow_datepicker_e')
+            });
+    var p2p_myAttention_search = {
+            search:function(){
+                p2p_myAttentionList.params.startTime = $("#follow_datepicker_s").val();
+                p2p_myAttentionList.params.endTime = $("#follow_datepicker_e").val();
+                pagination.init(p2p_myAttentionList.url,p2p_myAttentionList.params);
+            }
+        };
+    $(function(){
+        pagination.init(p2p_myAttentionList.url, "&pageNum=1&pageSize=5");
+    });

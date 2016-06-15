@@ -1,0 +1,39 @@
+{
+  "name": "lib.flexible",
+  "version": "0.3.2",
+  "description": "移动端自适应方案",
+  "authors": [
+    "amfe https://github.com/amfe",
+    "dqmmpb https://github.com/dqmmpb"
+  ],
+  "license": "MIT",
+  "main": [
+    "build/flexible_css.js",
+    "build/flexible_css.debug.js",
+    "build/flexible.js",
+    "build/flexible.debug.js"
+  ],
+  "keywords": [
+    "lib",
+    "tbm"
+  ],
+  "homepage": "https://github.com/dqmmpb/lib-flexible",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "0.3.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.3.2",
+    "commit": "27ed0cdd953c7b72ba98da949e7f46a54939383f"
+  },
+  "_source": "https://github.com/dqmmpb/lib-flexible.git",
+  "_target": "^0.3.2",
+  "_originalSource": "lib.flexible",
+  "_direct": true
+}

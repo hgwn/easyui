@@ -1,0 +1,39 @@
+<div id="total2_tmpl">
+    <div class="accout_main_zj">
+        <img src="images/account/accout_zj.png" alt="资金"/>
+        <span class="accout_main_num">$unpaidTotalName</span>元
+        <div class="accout_main_img"></div>
+        <div class="accout_main_bm">待还总额</div>
+    </div>
+    <ul class="accout_main_ul clearfix" style="clear: both;">
+        <li><span>待还本金：</span><label>$unpaidPrincipalName</label> 元</li>
+        <li><span>待还利息：</span><label>$unpaidInterestName</label>元</li>
+        <li><span>待还逾期费用：</span><label>$unpaidLateName</label>元</li>
+    </ul>
+</div>
+
+
+
+<script type="text/javascript">
+
+    var p2p_businessTotal_dh = {
+        url:"/dlbiz/p2p/project/loanStatistic/loanData",
+        params:{userId:user.data.id},
+        init:function(url,params){
+            DeelonService.get(p2p_businessTotal_dh.url,p2p_businessTotal_dh.params,function(data){
+                p2p_businessTotal_dh.render(data);
+            })
+        },
+        render:function(data){
+        	data.result.unpaidTotalName = formatCurrency(data.result.unpaidTotal);
+        	data.result.unpaidPrincipalName = formatCurrency(data.result.unpaidPrincipal);
+        	data.result.unpaidInterestName = formatCurrency(data.result.unpaidInterest);
+        	data.result.unpaidLateName = formatCurrency(data.result.unpaidLate);
+            Utils.bindData($("#total2_tmpl"), data.result);
+        }
+    };
+
+    $(function(){
+        p2p_businessTotal_dh.init();
+    })
+</script>

@@ -1,0 +1,53 @@
+<!--支付密码-->
+<!-- accout_main S-->
+<div class="accout_main">
+
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;">设置支付密码</div>
+        <div class="accout_basic_box">
+            <form>
+                <ul class="accout_person_ul" id="accout_person_ul">
+                    <li><span class="accout_person_n">原交易密码：</span><input id="oldpassword" type="password" class="accout_person_text" oncopy="return false;" oncut="return false;" onpaste="return false" placeholder="6-20字母、数字、下划线"/></li>
+                    <li><span class="accout_person_n">交易密码：</span><input id="newpassword" type="password" class="accout_person_text" oncopy="return false;" oncut="return false;" onpaste="return false" placeholder="6-20字母、数字、下划线"/></li>
+                    <li><span class="accout_person_n">确认交易密码：</span><input id="confirm-password" type="password" class="accout_person_text" oncopy="return false;" oncut="return false;" onpaste="return false" placeholder="6-20字母、数字、下划线"/></li>
+                    <li class="accout_person_btn">
+                        <button id="submit" type="button" class="zc_btn">确定</button>
+                        <button id="resetpassword" type="button" class="tx_btn">重置密码</button>
+                    </li>
+                </ul>
+            </form>
+        </div>
+        <div class="accout_cash_tip" style="top: 57px;">
+            <div class="accout_cashe_msg">
+                <h4>温馨提示：</h4>
+                <p>1、第一次交易密码默认注册密码，为了你的资金安全，请及时修改。</p>
+                <p>2、请不要向外人透露您的交易密码。</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $("#submit").on("click",function(){
+        var y_oldpwd=Fcheck.c_password($("#oldpassword").val());
+        if(y_oldpwd){var y_newP=Fcheck.c_password($("#newpassword").val());}
+        if(y_oldpwd&&y_newP){
+            if($("#newpassword").val()!=$("#confirm-password").val()){
+                jAlert.warn('密码不一致');
+                return false;
+            }else{
+                var url = "/dlsys/portal/wealth/password/"+user.data.account.id;
+                DeelonService.ajax(url,'post',{oldPwd: $("#oldpassword").val(),newPwd: $("#newpassword").val(),comfirmPassword:$("#confirm-password").val()},function(data){
+                    jAlert.success("支付密码修改成功！",null,null,function(){
+                        location.hash="#page=basic?bread=安全中心";
+                    });
+                },function(xhr, status, err){
+                    var errDate=JSON.parse(xhr.responseText);
+                    jAlert.warn(errDate.msg);
+                });
+            }
+        }
+    });
+    $("#resetpassword").on("click",function(){
+        $("#accout_person_ul").find("input").val('');
+    })
+</script>

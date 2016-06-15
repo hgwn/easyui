@@ -1,0 +1,51 @@
+<table>
+    <thead style="width:100%;">
+    <tr>
+        <td>名字</td>
+        <td>备注</td>
+        <td>操作</td>
+    </tr>
+    </thead>
+    <tbody id="demo">
+    <tr id="demo-tmpl" style="display:none;">
+        <td> $name</td>
+        <td> $memo</td>
+        <td>
+            <button click='clickMe'> 查看</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<script>
+
+
+    $(function () {
+
+
+        var demoTable = {
+            actions: {
+                clickMe: function () {
+                    alert("haha...")
+                }
+            },
+
+            render: function (data) {
+
+                $.getJSON("/commons/data/roles.json", function (data) {
+
+
+                    Utils.bindList("#demo", "#demo-tmpl", data, demoTable.actions);
+
+                });
+
+            }
+
+        }
+
+        demoTable.render();
+
+    });
+
+
+</script>

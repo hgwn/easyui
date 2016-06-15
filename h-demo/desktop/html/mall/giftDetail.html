@@ -1,0 +1,59 @@
+<div class="giftDetail_wrap clearfix">
+        <div class="breaknav"><a href="#page=giftlist">积分商城</a> &gt;查看详情</div>
+        <div class="giftDetail_img">
+            <img src="images/mall/gift_m_100.png" alt="">
+        </div>
+        <div class="giftDetail_r">
+            <h1>100元积分红包</h1>
+            <div class="bg"><label class="lb">所需积分：</label><span class="font_red">1800</span></div>
+            <p><label class="lb">使用限制：</label><span class="giftDetail_bg">投标额满 1000元</span></p>
+            <p><label class="lb">每次兑换限制：</label>无</p>
+            <p><label class="lb">每人兑换限制：</label>无</p>
+            <p class="giftDetail_pn"><label class="lb">兑换数量：</label>
+                <span id="giftDetail_num">
+                    <input class="giftDetail_input" type="text" value="1" maxlength="3" onkeyup="value=value.replace(/[^\d]/ig,'')"/>
+                    <span class="jia">+</span>
+                    <span class="jian">-</span>
+                </span>
+                无限库存
+            </p>
+            <p><label class="lb"></label><a href="javascript:void(0);" class="gitfDetail_buy">加入购物车</a><a href="javascript:void(0);"  class="gitfDetail_change">立即兑换</a></p>
+        </div>
+</div>
+
+<div id="giftDetail_bottom">
+    <dl>
+        <dt>
+            <div class="title">礼品描述</div>
+        </dt>
+        <dd class="content">
+            <p>帝隆P2P平台又发红包啦，本次秒杀红包总共100个，不需要任何积分哦，心动的朋友赶紧关注秒杀时间！</p>
+            <p>红包详情：</p>
+            <p>1、秒杀时间：2015-07-08 10:10:00 ，关闭时间：2015-07-08 11:10:00</p>
+            <p>2、获得红包后，限于2015-07-09至2015-07-10两天内使用，过期作废。</p>
+            <p>3、投标时投标额大于（含）1000元才可以使用红包。</p>
+            <p>4、每人限定只能获得一次，已经获得红包的朋友不要继续抢购哦。</p>
+        </dd>
+    </dl>
+
+</div>
+
+<script>
+    $(function(){
+        $(".jia").click(function(){
+            var _input = $(".giftDetail_input");
+            var num = parseInt(_input.val());
+            num +=1;
+            _input.val(num);
+        });
+        $(".jian").click(function(){
+            var _input = $(".giftDetail_input");
+            var num = parseInt(_input.val());
+            if(num >1){
+                num -=1;
+                _input.val(num);
+            }
+        })
+
+    })
+</script>

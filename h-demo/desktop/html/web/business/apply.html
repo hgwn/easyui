@@ -1,0 +1,102 @@
+<!--额度申请记录-->
+
+<!-- accout_main S-->
+<div class="accout_main">
+   <!-- <div class="accout_headBar">
+        <a href="#" class="visit">借款管理</a><span>&gt;</span>
+        <a href="#">额度申请记录</a>
+    </div>-->
+
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding: 15px 0;">额度申请记录</div>
+
+        <div>
+
+            <table class="table-list" cellpadding="0" cellspacing="0" border="0">
+               <thead>
+                <tr>
+                    <th width="100">原有限额</th>
+                    <th width="100">申请限额</th>
+                    <th width="100">申请日期</th>
+                    <th width="100">审核状态</th>
+                    <th width="100">审核意见</th>
+                    <th width="100">审核日期</th>
+                </tr>
+                </thead>
+                <tbody id="apply_temp">
+
+                </tbody>
+                <tr id="apply_tmpl" style="display: none;">
+                    <td>$limitOld</td>
+                    <td>$limitApply</td>
+                    <td>$applyTime</td>
+                    <td>$auditStatusName</td>
+                    <td>$auditDesc</td>
+                    <td>$checkTime</td>
+                </tr>
+            </table>
+            <!-- 分页 S-->
+            <div id="p2p_businessApply_page" class="pagination"><!-- 这里显示分页 --></div>
+            <!-- 分页 E-->
+        </div>
+
+    </div>
+
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+    //定义分页对象
+    var p2p_businessApply_page = {
+        init:function(url,params){
+            DeelonService.get(url,params,function(data){
+                $("#p2p_businessApply_page").pagination(data.result.totalElements, {
+                    prev_text: "前一页",
+                    next_text: "后一页",
+                    num_edge_entries: 2,   //两侧显示的首尾分页的条目数
+                    num_display_entries: 5 ,   //连续分页主体部分显示的分页条目数
+                    callback: p2p_businessApply_list.pageselectCallback,
+                    items_per_page:5     //每页显示的条目数
+                });
+            })
+        }
+    };
+    var p2p_businessApply_list = {
+        url:"/dlbiz/p2p/user/creditRecords",
+        params:{userId:user.data.id,pageNum:1,pageSize:5},
+        init:function(url,params){
+            DeelonService.get(p2p_businessApply_list.url,p2p_businessApply_list.params,function(data){
+                p2p_businessApply_list.render(data);
+            })
+        },
+        render:function(data){
+            $("#apply_temp").empty();
+            for(var i=0; i<data.result.content.length; i++){
+                if(data.result.content[i].auditStatus ==1){
+                    data.result.content[i].auditStatusName = "通过";
+                }else if(data.result.content[i].auditStatus ==2){
+                    data.result.content[i].auditStatusName = "不通过";
+                }else{
+                    data.result.content[i].auditStatusName = "未审核";
+                }
+                data.result.content[i].limitOld = addThousandSign(data.result.content[i].limitOld);
+                data.result.content[i].limitApply = addThousandSign(data.result.content[i].limitApply);
+                if(data.result.content[i].applyTime){
+	                data.result.content[i].applyTime = new Date(data.result.content[i].applyTime).Format("yyyy-MM-dd hh:mm:ss");
+                }
+                if(data.result.content[i].checkTime){
+	                data.result.content[i].checkTime = new Date(data.result.content[i].checkTime).Format("yyyy-MM-dd hh:mm:ss");
+                }
+            }
+            Utils.bindList("#apply_temp", "#apply_tmpl", data.result.content);
+        },
+        pageselectCallback:function(index,jq){
+            p2p_businessApply_list.params.pageNum = index +1;
+            p2p_businessApply_list.init(p2p_businessApply_list.url,p2p_businessApply_list.params);
+            return false;
+        }
+    };
+    $(function(){
+        //分页初始化
+        p2p_businessApply_page.init(p2p_businessApply_list.url,p2p_businessApply_list.params);
+    });
+</script>

@@ -1,0 +1,844 @@
+<!--申请借款-->
+<div id="productApply_box" style="display: none;">
+    <div class="productApply_content">
+        <h3 class="productApply_title">申请 “<span>$name</span>” 借款</h3>
+
+        <form id="productApply_form" class="productApply_form" style="margin-left: 50px;">
+            <div class="productApply_row">
+                <label class="name">借款标题：</label><input id="name" name="name" type="text" maxlength="40" class="productApply_text" style="width: 608px;"/>
+                <span class="regist_tip"  name="e-name"></span>
+                <span id="name_div"></span>
+            </div>
+            <div class="productApply_row">
+                <p class="productApply"><label class="name">借款期限：</label><input id="deadline" name="deadline" type="text" class="productApply_text"/>$deadlineTypeName&nbsp;&nbsp;(借款期限限制：$deadlineMin$deadlineTypeName~$deadlineMax$deadlineTypeName)</p>
+                <span class="regist_tip"  name="e-deadline"></span>
+                <span id="deadline_div"></span>
+                <input id="deadlineType" name="deadlineType" type="hidden" value="$deadlineType"/>
+            </div>
+            <div class="productApply_row">
+                <p class="productApply"><label class="name">借款金额：</label><input id="loan" name="loan" type="text" class="productApply_text"/>元&nbsp;&nbsp;(产品金额限制：$amountMin元~$amountMax元)
+                    <a href="#" onclick="productApplyCredit_form_box.toClick();" style="color: blue;">申请额度</a></p>
+                <span class="regist_tip"  name="e-loan"></span>
+                <span id="loan_div"></span>
+            </div>
+            <div class="productApply_row">
+                <p class="productApply"><label class="name">筹标期限：</label><input id="openDays" name="openDays" type="text" class="productApply_text"/>天&nbsp;&nbsp;(开标天数限制：$votingDaysMin天~$votingDaysMax天)</p>
+                <span class="regist_tip"  name="e-openDays"></span>
+                <span id="openDays_div"></span>
+            </div>
+            <div class="productApply_row">
+                <p class="productApply"><label class="name">年利率：</label><input id="rate" name="rate" type="text" class="productApply_text"/>%&nbsp;&nbsp;(借款利率限制：$rateMin%~$rateMax%)</p>
+                <span class="regist_tip"  name="e-rate"></span>
+                <span id="rate_div"></span>
+            </div>
+            <div class="productApply_row">
+                <p class="productApply">
+                    <label class="name">按份投标：</label>
+                    <label class="group" style="width: 50px;">
+                        <input type="radio" name="isSeveralLoan" value="1" onclick="productsLoan_list.showPortion()"/>是
+                    </label>
+                    <label class="group">
+                        <input type="radio" name="isSeveralLoan" value="0" checked="checked" onclick="productsLoan_list.hidePortion()"/>否
+                    </label>
+                </p>
+            </div>
+            <div id="portionTR" class="productApply_row">
+                <p id="portionP" style="display:none;" class="productApply">
+                    <label class="name">份额：</label>
+                    <input type="text" onkeyup="" id="portion" name="portion" class="productApply_text"/>&nbsp;份
+                </p>
+                <span id="portion_div"></span>
+            </div>
+            <div id="pInvestTR" class="productApply_row">
+                <p class="productApply"><label class="name">起投金额：</label><input id="minInvest" name="minInvest" type="text" class="productApply_text"/>元</p>
+                <span class="regist_tip"  name="e-minInvest"></span>
+                <span id="e-minInvest_div"></span>
+            </div>
+            <div class="productApply_row">
+                <p class="productApply">
+                    <label class="name">还款方式：</label>
+                    <select name="repayWay" id="repayWay" class="productApply_text" disabled="disabled" >
+                        <option id="repayWayId"></option>
+                    </select>
+                </p>
+            </div>
+            
+            
+            <div class="productApply_row">
+                <p class="productApply">
+                    <label class="name">担保意向：</label>
+                    <label class="group" style="width: 50px;">
+                        <input type="radio" value="1" name="guaranteeIntention" onclick="productsLoan_list.showCompanyId()"/>需要
+                    </label>
+                    <label class="group">
+                        <input type="radio" value="0" checked="checked" name="guaranteeIntention" onclick="productsLoan_list.hideCompanyId()"/>不需要
+                    </label>
+                    <input type="hidden" id="guaranteeIntention"/>
+                </p>
+            </div>
+            <!-- <div id="companyIdDiv" style="display:none;" class="productApply_row">
+                <p class="productApply">
+                    <label class="name">担保机构：</label>
+                    <select name="companyId" id="companyId" class="productApply_text">
+                        <option value="0">请选择担保机构</option>
+                        <option value="1">担保机构1</option>
+                        <option value="2">担保机构2</option>
+                    </select>
+                </p>
+                <span id="companyId_div"></span>
+            </div>-->
+            <div class="productApply_row">
+                <p class="productApply">
+                    <label class="name">项目资料附件：</label>
+                    <span class="font_red" id="materialNum">0</span>张 <a href="#" onclick="projectMaterialsDialog.toClick();" class="font_blue">上传或管理附件</a>
+                    <input type="hidden" id="materialId" name="materialId"/>
+                    <input type="hidden" id="fileId" name="fileId"/>
+                </p>
+            </div>
+            <div class="productApply_row clearfix">
+                <label class="name fl">借款描述：</label>
+                <textarea cols="80" id="description" name="description" rows="10"></textarea>
+            </div>
+            <p style="padding-left: 125px;"><button id="p2p_btn_m" class="p2p_btn_m" >立即申请</button></p>
+            <dl class="productApply_tip" style="padding-top: 20px;">
+                <dt>温馨提示：</dt>
+                <dd>1．为了您的账户安全，请在充值前进行身份认证、手机绑定以及提现密码设置。</dd>
+                <dd>2．您的账户资金将通过第三方平台进行充值。</dd>
+                <dd>3．请注意您的银行卡充值限制，以免造成不便。</dd>
+                <dd>4．禁止洗钱，信用卡套现，虚假交易等行为，一经发现并确认，将终止该用户的使用。</dd>
+                <dd>5．如果充值金额没有及时到账，请联系客服。</dd>
+            </dl>
+        </form>
+
+    </div>
+</div>
+
+<!--applyCredit_form_dialog S-->
+<div id="productApply_form_dialog" class="h-dialog" style="display: none; width: 420px; height: 320px;">
+    <div class="h-dialog_title">
+        额度申请
+        <a id="hide2" class="h-dialog_close" title="关闭">关闭</a>
+    </div>
+    <div class="h-dialog_show">
+        <div class="accout_credit_db">
+            <form id="productApplyCredit_form" class="productApply_form">
+                <table class="table-list" cellpadding="0" cellspacing="0" border="0">
+                    <tbody>
+                        <div class="productApply_row">
+                            <label class="name">申请额度：</label>
+                            <input id="applyInMax" name="applyInMax" type="text" class="productApply_text" style="width: 180px;" maxlength="20" onkeyup="this.value=this.value.replace(/\D/g,'')"/>元
+                        </div>
+                        <span class="regist_tip"  name="e-applyInMax"></span>
+                        <span id="applyInMax_div"></span>
+                        <div class="productApply_row">
+                            <label class="name">已有额度：</label>
+                            <span>$limitAmount(最大可借款金额)</span></br>
+                            <label class="name"></label>
+                            <span>$limitAmountCanDo(当前可用)</span>
+                        </div>
+                        <div class="productApply_row" style="text-align: center;margin-top: 20px;">
+                            <button id="p2p_btn_m2" class="p2p_btn_m" >立即申请</button>
+                        </div>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+<!--applyCredit_form_dialog E-->
+
+<!--projectMaterialsDialog S-->
+<div id="projectMaterialsDialog" class="h-dialog" style="display: none; width: 450px; height: 320px;">
+    <div class="h-dialog_title">
+        项目资料附件管理
+        <a id="hide3" class="h-dialog_close" title="关闭">关闭</a>
+    </div>
+    <h4 class="p2p_xq_tt02">
+        <a href="javascript:projectMaterialsUpload.uploadProjectMaterial();" class="p2p_bt_red">上传</a>&nbsp;&nbsp;
+        <a href="javascript:chooseUserMaterial();" class="p2p_bt_red">选择个人资料</a>
+    </h4>
+    <div class="h-dialog_show">
+        <div class="accout_credit_db">
+            <form id="projectMaterials_form" class="projectMaterials_form">
+                <input type="hidden" id="fileIds" name="fileIds"/>
+                <input type="hidden" id="materialIds" name="materialIds" value="${materialIds}"/> 
+                <table class="table-list" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <th style="width: 33%;">资料名称</th>
+                        <th style="width: 33%;">上传时间</th>
+                        <th>操作</th>
+                    </tr>
+                    <tbody id="productApply_tab_box"></tbody>
+                    <tr id="productApply_tab_list" style="display:none;">
+                        <td>$materialName</td>
+                        <td>$uploadTime</td>
+                        <td>
+                            <a href="/dlbiz/p2p/resources/previewProject/downloadProject/$materialId" class="color-main" target="_blank">下载</a>&nbsp;&nbsp;
+                            <a href="/dlbiz/p2p/resources/previewProject/$fileId" class="color-main" target="_blank">预览</a>&nbsp;&nbsp;
+                            <a href="javascript:void(0);" class="color-main" onclick="delMaterial('$materialId','$fileId');">删除</a>
+                        </td>
+                    </tr>
+                </table>
+                <!-- 分页 S-->
+	            <div id="productApply_tab_box_page" class="pagination"><!-- 这里显示分页 --></div>
+	            <!-- 分页 E-->
+            </form>
+        </div>
+    </div>
+</div>
+<!--projectMaterialsDialog E-->
+<!--projectMaterialsUpload S-->
+<div id="projectMaterialsUpload" class="h-dialog" style="display: none; width: 450px; height: 320px;">
+    <div class="h-dialog_title">
+        项目资料附件管理
+        <a id="hide4" class="h-dialog_close" title="关闭">关闭</a>
+    </div>
+    <div class="h-dialog_show">
+        <div class="accout_credit_db">
+            <div class="mb15">
+                <a href="javascript:void(0);" class="p2p_bt_red" id="choose">添加文件</a>
+                <a href="javascript:void(0);" class="p2p_bt_red" id="upload">开始上传</a>
+            </div>
+            <div class="mb15" style="text-align: center; color:red;">
+                (温馨提示：只支持jpg、png、gif等格式的文件)
+            </div>
+            <div style="height:300px;overflow-y:auto; ">
+            <table class="p2p_table2" id="files">
+            </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!--projectMaterialsUpload E-->
+
+<script type="text/javascript">
+    var flag = false;
+    var pageNum = 1;
+	//定义分页对象
+	var productApply_tab_box_page = {
+	    init:function(url,params){
+	        DeelonService.get(url,params,function(data){
+	            $("#productApply_tab_box_page").pagination(data.result.totalElements, {
+	                prev_text: "前一页",
+	                next_text: "后一页",
+	                num_edge_entries: 2,   //两侧显示的首尾的条目数
+	                num_display_entries: 3 ,   //连续分页主体部分显示的分页条目数
+	                callback: projectMaterialsDialog.pageselectCallback,
+	                items_per_page:3     //每页显示的条目数
+	            });
+	        })
+	    }
+	};
+
+    //定义弹窗dialog 对象
+    var productApplyCredit_form_box= {
+        init:function(){
+            $("#hide2").click(function(){
+                productApplyCredit_form_box.hide();
+            });
+        },
+        render:function(){
+            if(!user.islogin()){
+                Utils.gotoPage("index.html#page=login");
+                window.location.reload();
+            }else{
+                var userId = user.data.id;
+                DeelonService.get("/dlbiz/p2p/user/"+userId+"?isApply=1", null, function(data){
+                    if(data.code==0){
+                        productApplyCredit_form_box.show();
+                        var limitAmount = data.result.limitAmount;
+                        data.result.limitAmount = addThousandSign(data.result.limitAmount);
+                        data.result.limitAmountCanDo = addThousandSign(data.result.limitAmountCanDo);
+                        Utils.bindData($("#productApplyCredit_form"),data.result);
+                        $("#p2p_btn_m2").click(function(){
+                            $("#productApplyCredit_form").validate({
+                                submitHandler: function(form){   //表单提交句柄,为一回调函数，带一个参数：form
+                                    var params = {};
+                                    var url = "/dlbiz/p2p/user/"+userId+"/credit";
+                                    Utils.bindProps("#productApplyCredit_form",params,false);
+                                    var applyInMax = params.applyInMax;
+                                    if(parseFloat(applyInMax) <= parseFloat(limitAmount)){
+                                        $("#applyInMax_div").html("<font color='red' id='red_applyInMax'>申请额度必须高于已有额度！</font>");
+                                        $("#red_applyInMax").fadeOut(5000);
+                                        $("#applyInMax").focus();
+                                        return false;
+                                    }
+                                    DeelonService.post("/dlbiz/p2p/user/"+userId+"/credit", params, function(data){
+                                        if(data.code==0){
+                                            jAlert.success("额度申请成功");
+                                        }else{
+                                            jAlert.error("额度申请失败");
+                                        }
+                                        productApplyCredit_form_box.hide();
+                                    });
+                                },
+                                rules : {
+                                    applyInMax : {
+                                        required : true
+                                    }
+                                },
+                                messages : {
+                                    applyInMax : {
+                                        required : "额度值必填！"
+                                    }
+                                }
+                            });
+                        });
+                    }else{
+                        jAlert.error(data.msg);
+                    }
+                    
+                });
+            }
+        },
+        show:function(){
+            showDialog("#productApply_form_dialog", { "bgcolor": "black", "delay": 200 });
+        },
+        hide:function(){
+            hideDialog("#productApply_form_dialog");
+        },
+        toClick:function(productsLoanId){
+            productApplyCredit_form_box.render();
+        }
+    };
+    
+    //定义项目附件管理弹窗对象
+    var projectMaterialsDialog = {
+        arr : new Array(),
+        parames :{},
+        url :"/dlbiz/p2p/tProjectMaterials/projectMaterialList?",
+        init:function(){
+            $("#hide3").click(function(){
+                projectMaterialsDialog.hide();
+            });
+            //angel TODO
+            if(projectMaterialsDialog.arr.length>0){
+            	projectMaterialsDialog.parames = projectMaterialsDialog.arr.toString();
+                projectMaterialsDialog.url="/dlbiz/p2p/tProjectMaterials/projectMaterialList?fileId="+projectMaterialsDialog.parames+"&pageNum="+pageNum+"&pageSize=3";
+                DeelonService.get(projectMaterialsDialog.url,projectMaterialsDialog.parames,function(data){
+                    $("#materialNum").html(data.result.totalElements);
+                    projectMaterialsDialog.render(data);
+                });
+                var thisUrl = "/dlbiz/p2p/tProjectMaterials/projectMaterialList?fileId="+projectMaterialsDialog.parames;
+                DeelonService.get(thisUrl,projectMaterialsDialog.parames,function(data){
+                    var _materialId = '';
+                    for(var i=0;i<data.result.content.length;i++){
+                        if(i==data.result.content.length-1){
+                            _materialId += data.result.content[i].materialId;
+                        }else{
+                            _materialId += data.result.content[i].materialId+",";
+                        }
+                    }
+                    $("#materialId").val(_materialId);
+                });
+            }else{
+            	$("#productApply_tab_box").empty();
+            }
+        },
+        render:function(data){
+            $("#productApply_tab_box").empty();
+            if(!user.islogin()){
+                Utils.gotoPage("index.html#page=login");
+                window.location.reload();
+            }else{
+                if(typeof(data) != "undefined" && data != ''){
+                    Utils.bindList($("#productApply_tab_box"),$("#productApply_tab_list"),data.result.content,null,function(item,data){
+                    });
+                }else{
+                	if(flag){
+	                	productApply_tab_box_page.init(projectMaterialsDialog.url,"&pageNum="+pageNum+"&pageSize=3");
+                	}
+                }
+                projectMaterialsDialog.show();
+            }
+        },
+        show:function(){
+            showDialog("#projectMaterialsDialog", { "bgcolor": "black", "delay": 200 });
+        },
+        hide:function(){
+            hideDialog("#projectMaterialsDialog");
+        },
+        toClick:function(){
+            projectMaterialsDialog.render();
+        },
+        pageselectCallback:function(index,jq){
+        	pageNum = index+1;
+            projectMaterialsDialog.init(projectMaterialsDialog.url, "&pageNum=" + pageNum);
+            return false;
+        }
+    };
+    //定义项目附件上传弹窗对象
+    var projectMaterialsUpload = {
+        init:function(){
+            $("#hide4").click(function(){
+                projectMaterialsUpload.hide();
+            });
+        },
+        render:function(){
+            if(!user.islogin()){
+                Utils.gotoPage("index.html#page=login");
+                window.location.reload();
+            }else{
+            	$("#files").empty();
+                var table = $("#files");
+                var html = "<tr>";
+                html+="<th style='width: 32%;text-overflow: ellipsis;overflow: hidden;'>文件名</th>";
+                html+="<th style='width: 20%;'>文件大小(B)</th>";
+                html+="<th style='width: 20%;'>状态</th>";
+                html+="<th>操作</th>";
+                html+="</tr>";
+                table.append(html);
+                projectMaterialsUpload.show();
+            }
+        },
+        show:function(){
+            showDialog("#projectMaterialsUpload", { "bgcolor": "black", "delay": 200 });
+        },
+        hide:function(){
+            hideDialog("#projectMaterialsUpload");
+            flag = true;
+            projectMaterialsDialog.init();
+            productApply_tab_box_page.init(projectMaterialsDialog.url,"&pageNum="+pageNum+"&pageSize=3");
+        },
+        uploadProjectMaterial:function(){
+            projectMaterialsUpload.render();
+        }
+    };
+
+    var productsLoan_list ={
+        id:"#productApply_form",
+        url:"/dlbiz/p2p/project",
+        init:function(){
+            var productsLoanId = Utils.getUrlParam("productsLoanId");
+            var repayWay = Utils.getUrlParam("repayWay");
+            var deadlineType = "";
+            DeelonService.get("/dlbiz/p2p/products/" + productsLoanId, null, function(data){
+            	deadlineType = data.result.deadlineType;
+                if(deadlineType == "DAY"){
+                    data.result.deadlineTypeName = "天";
+                }else if (deadlineType == "MONTH"){
+                    data.result.deadlineTypeName = "月";
+                }else if (deadlineType == "YEAR"){
+                    data.result.deadlineTypeName = "年";
+                }
+                if(repayWay == 1){
+                    $("#repayWayId").html("一次性还本付息");
+                }else if (repayWay == 2){
+                    $("#repayWayId").html("按月付息，到期还本");
+                }else if (repayWay == 3){
+                    $("#repayWayId").html("等额本息，每月还款");
+                }else if (repayWay == 4){
+                    $("#repayWayId").html("等额本金，每月还款");
+                }
+                Utils.bindData($("#productApply_box"),data.result);
+                $("#productApply_box").show();
+                $("#p2p_btn_m").click(function(){
+                    $("#productApply_form").validate({
+                        submitHandler: function(form){   //表单提交句柄,为一回调函数，带一个参数：form
+                            //业务数据校验
+                            if(parseFloat($("#deadline").val()) < parseFloat(data.result.deadlineMin)){
+                                $("#deadline_div").html("<font color='red' id='red_deadline'>借款期限不符合限制条件！</font>");
+                                $("#red_deadline").fadeOut(5000);
+                                $("#deadline").focus();
+                                return false;
+                            }
+                            if(parseFloat($("#deadline").val()) > parseFloat(data.result.deadlineMax)){
+                                $("#deadline_div").html("<font color='red' id='red_deadline'>借款期限不符合限制条件！</font>");
+                                $("#red_deadline").fadeOut(5000);
+                                $("#deadline").focus();
+                                return false;
+                            }
+                            if(parseFloat($("#loan").val()) < parseFloat(data.result.amountMin)){
+                                $("#loan_div").html("<font color='red' id='red_loan'>借款金额不符合限制条件！</font>");
+                                $("#red_loan").fadeOut(5000);
+                                $("#loan").focus();
+                                return false;
+                            }
+                            if(parseFloat($("#loan").val()) > parseFloat(data.result.amountMax)){
+                                $("#loan_div").html("<font color='red' id='red_loan'>借款金额不符合限制条件！</font>");
+                                $("#red_loan").fadeOut(5000);
+                                $("#loan").focus();
+                                return false;
+                            }
+                            if(parseFloat($("#openDays").val()) < parseFloat(data.result.votingDaysMin)){
+                                $("#openDays_div").html("<font color='red' id='red_openDays'>开标天数不符合限制条件！</font>");
+                                $("#red_openDays").fadeOut(5000);
+                                $("#openDays").focus();
+                                return false;
+                            }
+                            if(parseFloat($("#openDays").val()) > parseFloat(data.result.votingDaysMax)){
+                                $("#openDays_div").html("<font color='red' id='red_openDays'>开标天数不符合限制条件！</font>");
+                                $("#red_openDays").fadeOut(5000);
+                                $("#openDays").focus();
+                                return false;
+                            }
+                            if(parseFloat($("#rate").val()) < parseFloat(data.result.rateMin)){
+                                $("#rate_div").html("<font color='red' id='red_rate'>年利率不符合限制条件！</font>");
+                                $("#red_rate").fadeOut(5000);
+                                $("#rate").focus();
+                                return false;
+                            }
+                            if(parseFloat($("#rate").val()) > parseFloat(data.result.rateMax)){
+                                $("#rate_div").html("<font color='red' id='red_rate'>年利率不符合限制条件！</font>");
+                                $("#red_rate").fadeOut(5000);
+                                $("#rate").focus();
+                                return false;
+                            }
+                            //份额
+                            var isSeveralLoan = $("input[name='isSeveralLoan']:checked").val();
+                            if(isSeveralLoan == "1"){
+                                var loan = $("#loan").val();
+                                var remainder = 0;//余数
+                                var portion = $("#portion").val();
+                                if(portion == ''){
+                                    $("#portion_div").html("<font color='red' id='red_portion'>份额不可以为空。</font>");
+                                    $("#red_portion").fadeOut(5000);
+                                    $("#portion").focus();
+                                    return false;
+                                }else if(portion == '0'){
+                                    $("#portion_div").html("<font color='red' id='red_portion'>份额不可以为0。</font>");
+                                    $("#red_portion").fadeOut(5000);
+                                    $("#portion").focus();
+                                    return false;
+                                };
+                                //判断借款额是否可以被份额整除
+                                if(loan.indexOf('.') != -1){
+                                    var ploanA = loan.substr(0,loan.indexOf('.'));
+                                    var ploanB = loan.substr(loan.indexOf('.')+1,ploan.lenght);
+                                    var remainderA = parseFloat(ploanA) % parseFloat($("#portion").val());
+                                    var remainderB = 0;
+                                    if(ploanB != ''){
+                                        remainderB = parseFloat(ploanB) % parseFloat($("#portion").val());
+                                    }
+                                    remainder = remainderA + remainderB;
+                                }else{
+                                    remainder = parseFloat($("#loan").val()) % parseFloat($("#portion").val());
+                                };
+                                if(remainder > 0){
+                                    $("#portion_div").html("<font color='red' id='red_portion'>借款额无法等额分成"+$("#portion").val()+"份。</font>");
+                                    $("#red_portion").fadeOut(5000);
+                                    $("#portion").focus();
+                                    return false;
+                                };
+                            }else{//起投金额不允许大于借款金额
+                                var loan = $("#loan").val();
+                                var minInvest = $("#minInvest").val();
+                                if(eval(loan) < eval(minInvest)){
+                                    $("#e-minInvest_div").html("<font color='red' id='red_portion'>起投金额不可大于借款金额</font>");
+                                    $("#red_portion").fadeOut(5000);
+                                    $("#portion").focus();
+                                    return false;
+                                }
+                                
+                            }
+                            //需要担保
+                            /* if($("#guaranteeIntention").val() == "1"){
+                                if($("#companyId").val() == "0"){
+                                    $("#companyId_div").html("<font color='red' id='red_companyId'>请选择担保机构！</font>");
+                                    $("#red_companyId").fadeOut(5000);
+                                    $("#companyId").focus();
+                                    return false;
+                                }
+                            } */
+                            //可用额度是否满足借款金额判断
+                            if(!user.islogin()){
+                                Utils.gotoPage("index.html#page=login");
+                                window.location.reload();
+                            }else{
+                                DeelonService.get("/dlbiz/p2p/user/" + user.data.id + "?isApply=0", null, function(data){
+                                    var limitAmountCanDo = data.result.limitAmountCanDo;
+                                    var params = {};
+                                    params.productsLoanId = productsLoanId;
+                                    params.publishType = "0";
+                                    params.userId = user.data.id;
+                                    Utils.bindProps("#productApply_form",params,false);
+                                    if(parseFloat(params.loan) > parseFloat(limitAmountCanDo)){
+                                        $("#loan_div").html("<font color='red' id='red_loan'>借款金额高于可用额度，请先申请更大额度！</font>");
+                                        $("#red_loan").fadeOut(5000);
+                                        $("#loan").focus();
+                                        return false;
+                                    }
+                                    params.isSeveralLoan = $("input[name='isSeveralLoan']:checked").val();
+                                    params.repayWay = repayWay;
+                                    params.deadlineType = deadlineType;
+		                            params.guaranteeIntention = $("#guaranteeIntention").val();
+                                    DeelonService.post(productsLoan_list.url, params, function(data){
+                                        if(data.code==0){
+                                            jAlert.success("借款申请成功");
+                                            Router.routeTo("getTenderProjects");
+                                        }else{
+                                            jAlert.error("借款申请失败");
+                                        }
+                                    });
+                                });
+	                            DeelonService.get("/dlbiz/p2p/user/" + user.data.id + "?isApply=0", null, function(data){
+	                            	var limitAmountCanDo = data.result.limitAmountCanDo;
+		                            var params = {};
+		                            params.productsLoanId = productsLoanId;
+		                            params.publishType = "0";
+		                            params.userId = user.data.id;
+		                            Utils.bindProps("#productApply_form",params,false);
+	                                if(parseFloat(params.loan) > parseFloat(limitAmountCanDo)){
+	                                    $("#loan_div").html("<font color='red' id='red_loan'>借款金额高于可用额度，请先申请更大额度！</font>");
+	                                    $("#red_loan").fadeOut(5000);
+	                                    $("#loan").focus();
+	                                    return false;
+	                                }
+		                            params.isSeveralLoan = $("input[name='isSeveralLoan']:checked").val();
+		                            params.repayWay = repayWay;
+		                            params.deadlineType = deadlineType;
+		                            params.guaranteeIntention = $("#guaranteeIntention").val();
+		                        	DeelonService.post(productsLoan_list.url, params, function(data){
+		                                if(data.code==0){
+		                                	jAlert.success("借款申请成功");
+		                                    Router.routeTo("getTenderProjects");
+		                                }else{
+		                                	jAlert.error("借款申请失败");
+		                                }
+		                            });
+	                            });
+                            }
+                        },
+                        rules : {
+                            name : {
+                                required : true
+                            },
+                            deadline : {
+                                required : true
+                            },
+                            loan : {
+                                required : true,
+                                maxlength : 9
+                            },
+                            openDays : {
+                                required : true
+                            },
+                            rate : {
+                                required : true
+                            },
+                            minInvest : {
+                                required : true
+                            }
+                        },
+                        messages : {
+                            name : {
+                                required : "借款标题必填"
+                            },
+                            deadline : {
+                                required : "借款期限必填"
+                            },
+                            loan : {
+                                required : "借款金额必填",
+                                maxlength : "最大9位"
+                            },
+                            openDays : {
+                                required : "筹标期限必填"
+                            },
+                            rate : {
+                                required : "年利率必填"
+                            },
+                            minInvest : {
+                                required : "起投金额必填"
+                            }
+                        }
+                    });
+                });
+                
+            });
+        },
+        //显示份额--隐藏投资金额
+        showPortion:function(){
+            $("#portionTR").show();
+            $("#pInvestTR").hide();
+            $("#portionP").removeAttr('style');
+            $('#minInvest').textbox({required:false});
+            $('#portion').textbox({required:true});
+            
+        },
+        hidePortion:function(){
+            $("#portionTR").hide();
+            $("#pInvestTR").show();
+        },
+        showCompanyId:function(){
+            $("#companyIdDiv").show();
+            $("#guaranteeIntention").val("1");
+        },
+        hideCompanyId:function(){
+            $("#companyIdDiv").hide();
+            $("#guaranteeIntention").val("0");
+        }
+    };
+    
+    $(function(){
+        $("#guaranteeIntention").val("0");
+        productsLoan_list.init();
+        setErrorLable();
+        //弹窗初始化
+        productApplyCredit_form_box.init();
+        projectMaterialsDialog.init();
+        projectMaterialsUpload.init();
+    });
+    
+    /************************************************/
+    var uploader;
+    var fileIds
+    $(function(){
+    	if(!user.islogin()){
+            Utils.gotoPage("index.html#page=login");
+            window.location.reload();
+        }
+        var maxSize = '';
+        var materialType = $("#materialType").val();
+        var param = {materialType:materialType};
+        if(!maxSize || maxSize==''){
+            maxSize = 10*1024*1024;
+        }else{
+            maxSize = parseInt(maxSize);
+        }
+        uploader = new plupload.Uploader({
+            url : '/dlbiz/p2p/resources/uploadProject?loginName='+user.data.name+'&loginId='+user.data.id,
+            browse_button : 'choose',
+            multi_selection:true,
+            multipart_params:{loginName:user.data.name,loginId:user.data.id},
+            flash_swf_url : '../js/plupload/Moxie.swf',
+            silverlight_xap_url : '../js/plupload/Moxie.xap',
+            filters: {
+            	mime_types : [ //只允许上传图片和zip文件
+         	        { title : "Image files", extensions : "jpg,gif,png" }, 
+         	        { title : "Zip files", extensions : "zip" }],
+                max_file_size : maxSize, //最大只能上传1GB的文件
+                prevent_duplicates : false //不允许选取重复文件
+            }
+        });
+        uploader.init();
+        //选择文件
+        uploader.bind('FilesAdded', function(up, files) {
+            if(files.length>0){
+                var table = $("#files");
+                for(var i=0;i<files.length;i++){
+                    var html = "<tr fileId='"+files[i].id+"'>";
+                    html+="<td style='width: 32%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;'>"+files[i].name+"</td>";
+                    html+="<td style='width: 20%;'>"+files[i].size+"</td>";
+                    html+="<td style='width: 20%;'>未上传</td>";
+                    html+="<td class='color-main'><a href='javascript:delFile(\""+files[i].id+"\");' class='color-main'>删除</a></td>";
+                    html+="</tr>";
+                    table.append(html);
+                }
+            }
+            
+        });
+        //angel TODO 上传成功回调
+        uploader.bind('FileUploaded',function(up,file,responseObj){
+            var status = file.status;
+            var fileId = file.id;
+            if(status==plupload.FAILED){
+                $("#files tr[fileid='"+fileId+"']").children().eq(2).html("<label style='color:#EA0000'>上传失败</label>");
+            }else if(status==plupload.DONE){
+                $("#files tr[fileid='"+fileId+"']").children().eq(2).html("<label style='color:#90EE90'>上传成功</label>");
+            }
+            if(responseObj.status==200){
+                if(responseObj.response){
+                    try{
+                        var rsp = eval("("+responseObj.response+")");
+                        var fileId = file.id;
+                        if("0" == rsp.code){
+                            var result = rsp.result[0].id;
+                            $("#files tr[fileid='"+fileId+"']").children().eq(2).html("<label style='color:#90EE90'>上传成功</label>");
+                            $("#files tr[fileid='"+fileId+"']").children().eq(3).html("");
+                            projectMaterialsDialog.arr.push(result);
+                        }else{
+                            $("#files tr[fileid='"+fileId+"']").children().eq(2).html("<label style='color:#EA0000'>"+rsp.msg+"</label>");
+                        }
+                    }catch(e){
+                    }
+                }
+            }else{
+            }
+        });
+        uploader.bind('UploadProgress',function(up,file){
+            var fileId = file.id;
+            $("#files tr[fileId='"+fileId+"']").children().eq(2).text(file.percent+"%");
+            var tds = $("#files tr[fileid='"+fileId+"']").children();
+            tds.get(2);
+        });
+        uploader.bind('UploadComplete',function(up,file){
+            try{
+                window.parent.changed = true;
+            }catch(e){
+                
+            }
+            jAlert.success("文件上传完成！");
+        });
+        $("#upload").click(function(){
+            var files = uploader.files;
+            var filecount = 0;
+            for(var i=0;i<files.length;i++){
+                if(files[i].status==plupload.DONE){
+                    continue;
+                }
+                filecount ++;
+            }
+            if(filecount==0){
+                jAlert.info("你尚未选择要上传的文件！");
+            }else{
+                var materialType = $("#materialType").val();
+                if(materialType==''){
+                    artDialog.info("请选择资料类别或填写创建新类别");
+                }else{
+                    var param = {materialType:materialType};
+                    uploader.setOption('multipart_params',param);
+                    uploader.start();
+                }
+            }
+        });
+
+    });
+
+    function delFile(fileId){
+        var file = uploader.getFile(fileId);
+        if(file){
+            if(file.status==plupload.QUEUED){
+                uploader.removeFile(file);
+                $("#files tr[fileId='"+fileId+"']").remove();
+            }else{
+                jAlert.success("不可删除！");
+            }
+        }else{
+            $("#files tr[fileId='"+fileId+"']").remove();
+        }
+    }
+    
+    function delMaterial(materialId,fileId){
+    	var url = "/dlbiz/p2p/resources/delProject/"+materialId+"/"+fileId;
+    	DeelonService.ajax(url,'post',{},function(data){
+            jAlert.info('删除成功',null,null,function(){
+               	projectMaterialsDialog.arr = projectMaterialsDialog.arr.remove(fileId);
+               	if(projectMaterialsDialog.arr.length>0){
+	                $("#materialNum").html(parseInt($("#materialNum").html())-1);
+               	}else{
+               		$("#materialNum").html(0);
+               	}
+                if(flag){
+                    productApply_tab_box_page.init(projectMaterialsDialog.url,"&pageNum=1&pageSize=3");
+                }
+            });
+        },function(xhr, status, err){});
+    }
+    
+    /*
+    *方法:Array.indexOf(val) 判断数组是否存在某元素
+    */
+    Array.prototype.indexOf = function(val) {
+        for (var i = 0; i < this.length; i++) {
+            if (this[i] == val) return i;
+        }
+        return -1;
+    };
+    Array.prototype.remove = function(val) {
+        var index = this.indexOf(val);
+        if (index > -1) {
+            this.splice(index, 1);
+        }
+        return this;
+    };
+</script>

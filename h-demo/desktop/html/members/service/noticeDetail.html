@@ -1,0 +1,31 @@
+<!--我的通知-->
+<div class="accout_main">
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px; position: relative; padding-bottom: 15px; border-bottom:1px solid #eee;">
+            我的通知
+            <a href="#page=notice?bread=我的通知" class="font_blue" style="position: absolute; right: 0; top: 25px; font-size: 14px;">返回</a>
+        </div>
+
+        <div class="accout_noticeDetail_tip">
+            发送人：<span id="msgcomein"></span> <label style="padding-left: 30px;" id="updatation"></label>
+            <p class="content"></p>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var msgID=(getHash("msgid")==undefined ? '':getHash("msgid"));
+    var msgFun={
+        init:function(){
+            this.render();
+        },
+        render:function(){
+            var url='/dlsys/portal/sdk/msg/info/'+msgID+'?token='+encodeURIComponent(user.data.token);
+            $.get(url, function(res) {
+                $("#msgcomein").text(res.result.fromName);
+                $("#updatation").text("时间："+res.result.sendTime);
+                $(".content").html(res.result.content);
+            });
+        }
+    };
+    msgFun.init();
+</script>

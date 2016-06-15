@@ -1,0 +1,135 @@
+<!--还款管理-->
+<!-- accout_main S-->
+<div class="accout_main">
+   <!-- <div class="accout_headBar">
+        <a href="#" class="visit">借款管理</a><span>&gt;</span>
+        <a href="#">还款管理</a>
+    </div>-->
+
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;">还款管理</div>
+
+        <div class="member_tab">
+            <ul class="member_tab_menu clearfix">
+                <li class="active" onclick="p2p_businessReapy_search.toclick(4);">还款中的借款</li>
+                <li onclick="p2p_businessReapy_search.toclick(5);">已还清的借款</li>
+            </ul>
+            <div class="member_tab_content">
+
+                <div class="member_tab_list">
+
+                    <table class="table-list" cellpadding="0" cellspacing="0" border="0" style="margin-top: 15px;">
+                        <thead>
+                        <tr>
+                            <th width="100">借款标题</th>
+                            <th width="100">实际借款额（元）</th>
+                            <th width="100">年化利率（%）</th>
+                            <th width="100">期限</th>
+                            <th width="100">还款总额（元）</th>
+                            <th width="100">放款日期</th>
+                            <th width="100" class="operate">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody id="repay_temp">
+
+                        </tbody>
+                        <tr id="repay_tmpl" style="display: none;">
+                            <td>$name</td>
+                            <td><span class="font_red" id="loanReal"></span></td>
+                            <td>$rate</td>
+                            <td>$deadline$deadlineTypeName</td>
+                            <td><span class="font_red" id="sumPayBack"></span></td>
+                            <td>$havedPayTime</td>
+                            <td class="operate"><a href="#page=repayment?bread=$name&projectId=$projectId&state=$state&prepayRate=$prepayRate" class="font_blue">还款管理</a></td>
+                        </tr>
+                    </table>
+                    <!-- 分页 S-->
+                    <div id="p2p_businessReapy_page" class="pagination"><!-- 这里显示分页 --></div>
+                    <!-- 分页 E-->
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+    var p2p_businessReapy_search = {
+        toclick:function(state){
+            if(state){
+                p2p_businessReapy_list.params.state = parseInt(state);
+            }else{
+                p2p_businessReapy_list.params.state="";
+            }
+            p2p_businessReapy_page.init(p2p_businessReapy_list.url,p2p_businessReapy_list.params);
+            
+            if(state==5){
+            	$(".operate").hide();
+            }else{
+            	$(".operate").show();
+            }
+        }
+    };
+    //定义分页对象
+    var p2p_businessReapy_page = {
+        init:function(url,params){
+            DeelonService.get(url,params,function(data){
+                $("#p2p_businessReapy_page").pagination(data.result.totalElements, {
+                    prev_text: "前一页",
+                    next_text: "后一页",
+                    num_edge_entries: 2,   //两侧显示的首尾分页的条目数
+                    num_display_entries: 5 ,   //连续分页主体部分显示的分页条目数
+                    callback: p2p_businessReapy_list.pageselectCallback,
+                    items_per_page:5     //每页显示的条目数
+                });
+            })
+        }
+    };
+    //定义列表对象
+    var p2p_businessReapy_list = {
+        url:"/dlbiz/p2p/projects",
+        params:{userId:user.data.id,pageNum:1,pageSize:5,state:4,requestChannel:1},
+        init:function(url,params){
+            DeelonService.get(p2p_businessReapy_list.url,p2p_businessReapy_list.params,function(data){
+                p2p_businessReapy_list.render(data);
+            })
+        },
+        render:function(data){
+            $("#repay_temp").empty();
+            var temp = ["新申请","平台初审通过","担保审核通过","招标中","满标","还款中","已还完","流标"];
+            for(var i=0; i<data.result.content.length; i++){
+                data.result.content[i].stateName = temp[parseInt(data.result.content[i].state)-1];
+                if(data.result.content[i].deadlineType == "DAY"){
+                	data.result.content[i].deadlineTypeName = "天";
+                }else if(data.result.content[i].deadlineType == "MONTH"){
+                    data.result.content[i].deadlineTypeName = "个月";
+                }else if(data.result.content[i].deadlineType == "YEAR"){
+                    data.result.content[i].deadlineTypeName = "年";
+                }
+            }
+            Utils.bindList("#repay_temp", "#repay_tmpl", data.result.content,null,function(item,data){
+                item.find("a.lookbtn").attr('onclick','p2p_businessReapy_list.toClick(' + data.projectId + ');');
+                item.find("#loanReal").html(addThousandSign(data.loanReal));
+                item.find("#sumPayBack").html(addThousandSign(data.sumPayBack));
+            });
+        },
+        pageselectCallback:function(index,jq){
+            p2p_businessReapy_list.params.pageNum = index +1;
+            p2p_businessReapy_list.init(p2p_businessReapy_list.url,p2p_businessReapy_list.params);
+            return false;
+        },
+        toClick:function(projectId){
+            location.href="#page=repay?bread=还款管理&projectId="+projectId;
+        }
+    };
+    $(function(){
+        //调用tab选项卡
+        myTab();
+        //分页初始化
+        p2p_businessReapy_page.init(p2p_businessReapy_list.url,p2p_businessReapy_list.params);
+    });
+</script>

@@ -1,0 +1,158 @@
+<!--充值-->
+<div class="accout_main">
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding: 15px 0;">充值</div>
+
+        <div class="accout_recharge">
+            <div class="accout_recharge_fl">
+                <p class="recharge_pl"><label>账户资产：</label><span id="accountamount" class="recharge_m1"></span>元</p>
+                <p class="recharge_pl"><label>可用资产：</label><span id="amount" class="recharge_m2"></span>元</p>
+                <div class="accout_recharge_money accout_recharge_poolmoney">
+                    <p class="cash_p1">
+                        <input type="text" id="auction" class="accout_recharge_input" maxlength="9" onKeyPress="if (event.keyCode!=46 && event.keyCode!=45 &&
+(event.keyCode<48 || event.keyCode>57)) event.returnValue=false"  placeholder="请输入金额，最少充10元"/>
+                    </p>
+                    <p class="cash_p2">
+                    <select class="accout_cash_select" id="rechargechannel">
+                        <option value="">请选择充值通道</option>
+                    </select>
+                    </p>
+                    <p class="recharge_btn"><button id="rechargeBtn" class="accout_recharge_btn">充值</button></p>
+                </div>
+            </div>
+            <div class="accout_recharge_tip">
+                <div class="accout_recharge_msg">
+                    <h4>温馨提示：</h4>
+                    <p>  1．为了您的账户安全，请在充值前进行身份认证、手机绑定以及提现密码设置。</p>
+                    <p>  2．您的账户资金将通过第三方平台进行充值。</p>
+                    <p>  3．请注意您的银行卡充值限制，以免造成不便。</p>
+                    <p>  4．禁止洗钱，信用卡套现，虚假交易等行为，一经发现并确认，将终止该用户的使用。</p>
+                    <p>  5．如果充值金额没有及时到账，请联系客服 。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="yeepay" name="yeepay" action="" method="post" target="_blank" style="display:none;">
+    <input type="hidden" name="p0_Cmd" id="p0_Cmd" value="" >
+    <input type="hidden" name="p1_MerId" id="p1_MerId" value="" >
+    <input type="hidden" name="p2_Order" id="p2_Order" value="" >
+    <input type="hidden" name="p3_Amt" id="p3_Amt" value="" >
+    <input type="hidden" name="p4_Cur" id="p4_Cur" value="" >
+    <input type="hidden" name="p5_Pid" id="p5_Pid" value="" >
+    <input type="hidden" name="p6_Pcat" id="p6_Pcat" value="" >
+    <input type="hidden" name="p7_Pdesc" id="p7_Pdesc" value="" >
+    <input type="hidden" name="p8_Url" id="p8_Url" value="" >
+    <input type="hidden" name="p9_SAF" id="p9_SAF" value="" >
+    <input type="hidden" name="pa_MP" id="pa_MP" value="" >
+    <input type="hidden" name="pd_FrpId" id="pd_FrpId" value="" >
+    <input type="hidden" name="pm_Period" id="pm_Period" value="" >
+    <input type="hidden" name="pn_Unit" id="pn_Unit" value="" >
+    <input type="hidden" name="pr_NeedResponse" id="pr_NeedResponse" value="" >
+    <input type="hidden" name="hmac" id="hmac" value="" >
+</form>
+
+<!--dialog S-->
+<div id="dialog" class="h-dialog" style="display: none;">
+    <div class="h-dialog_title">系统提示<a id="hide" class="h-dialog_close" title="关闭">关闭</a>
+    </div>
+    <div class="h-dialog_show">
+        <div class="accout_recharge_db">
+            <img style="margin-top: 20px;" src="images/account/icon-warn.png" alt=""/>
+            <p id="warnMsg" style="text-align: center; padding:20px  50px;"></p>
+        </div>
+    </div>
+    <div class="h-dialog_bottom" style="right:50%; margin-right:-38px; bottom:20px;">
+        <button id="h-dialog_btn2" class="h-dialog_btn">立即认证</button>
+    </div>
+</div>
+<!--dialog E-->
+<!-- accout_main E-->
+<script type="text/javascript">
+
+    var str=window.location.href,result='',returnrul='';
+    locationurl = str.split("returnUrl=");
+    result=locationurl[1];
+    if(result==''||result==undefined){
+        returnrul =encodeURIComponent(DeelonService.site+'/desktop/html/p2p/index.html#page=pagesuccess?type=recharge')
+    }else{
+        returnrul=encodeURIComponent(result);
+    }
+
+    var channel='';
+
+    var rechargeFun={
+        init:function(){
+            this.render();
+        },
+        render:function(){
+            //加载余额
+            $.getJSON("/dlsys/portal/wealth/assetJournal/incomeAndExpenses/"+user.data.account.id,function(data){
+                $("#accountamount").html(addThousandSign(parseFloat(data.result.account.amount+data.result.account.freezeAmount)));
+                $("#amount").html(addThousandSign(parseFloat(data.result.account.amount)));
+            });
+            //加载通道
+            $.getJSON("/dlsys/portal/wealth/payChannel/channels/active", null, function(json){
+                if (json.code == "" || json.code == null) {
+                    var tpl='<option @value="$code">$name</option>';
+                    Utils.bindList("#rechargechannel",$(tpl),json,'',function(item,data){
+                        if(data.type==1){
+                            $(item).hide();
+                        }
+                    });
+                }
+            });
+        },
+        recharge:function(){
+            var url='/dlsys/portal/sdk/user/info/'+user.data.id+'/personal';
+            $.get(url, function(res) {
+                if(res.certificationStatus==1){
+                    var rechargeurl='/dlsys/portal/tstransaction/pc/recharge/yeepay/'+user.data.account.id,amount=$("#auction").val();
+                    var y_mony=Fcheck.c_poolmony(amount);
+                    if(y_mony){
+                        var rechargechannel=$("#rechargechannel").val();
+                        if(rechargechannel==''){
+                            jAlert.warn('请选择充值通道');
+                        }else{
+
+                            DeelonService.ajax(rechargeurl,'post',{amount:amount,urlReturn:returnrul},function(data){
+                                $("#yeepay").attr("action",data.result.url);
+                                Utils.bindProps("#yeepay",data.result,true);
+                                $("#yeepay").submit();
+                                jAlert.info('充值已经跳到虚拟充值支付页面，如果请求不合法，会给你提示<br>相关信息。充值完成后，请点击确认按钮。',null,null,function(){
+                                    location.hash="#page=frecord?bread=资金记录";
+                                });
+                            },function(xhr, status, err){});
+                        }
+                    }
+                }else if(res.certificationStatus==2){
+                    jAlert.warn('实名认证审核中，不能执行该操作');
+                }else{
+                    showDialog("#dialog", { "bgcolor": "black", "delay": 50 },function(){
+                        $("#warnMsg").html('您还没有实名认证。');
+                    });
+                }
+            });
+        },
+        hide:function(){
+            hideDialog("#dialog");
+            $("#warnMsg").html('');
+            $("#h-dialog_btn").html('');
+        }
+    };
+    rechargeFun.init();
+
+    $("#rechargeBtn").on("click",function(){
+        rechargeFun.recharge();
+    });
+
+    $("#hide,#h-dialog_btn1").click(function(){
+        rechargeFun.hide();
+    });
+
+    $("#h-dialog_btn2").on("click",function(){
+        $("#maskDiv").remove();
+        location.hash="#page=verified?bread=实名认证";
+    });
+</script>

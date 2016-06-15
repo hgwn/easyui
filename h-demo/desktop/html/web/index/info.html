@@ -1,0 +1,27 @@
+<div class="p2p_contentBox">
+      <div class="fl" id="p2p_info_tmp" style="display: none;">
+         <p class="p2p_home_p">为借款人筹资<br><span>$investSum</span>元</p>
+         <p class="p2p_home_p">已为投资人创收<br><span>$earnSum</span>元</p>
+         <!-- <p class="p2p_home_p p2p_home_line"><a href="#" class="p2p_lookview">查看详情</a></p> -->
+      </div>
+      <ul class="fr" id="p2p_info_fr_tmp"></ul>
+</div>
+
+<script type="text/javascript">
+    var p2p_infoBox = {
+        init:function(){
+            DeelonService.get("/dlbiz/p2p/project/dataStatistics",function(data){
+            	data.result.investSum = addThousandSign(data.result.investSum);
+            	data.result.earnSum = addThousandSign(data.result.earnSum);
+                Utils.bindData($("#p2p_info_tmp"),data.result);
+                $("#p2p_info_tmp").show();
+            });
+            var temp ='<li class="p2p_home_link"><a href="#"><img @src="$src" alt=""/><br>$name</a></li>';
+            DeelonService.get("data/info-fr.json",function(data){
+                Utils.bindList($("#p2p_info_fr_tmp"),$(temp),data.result);
+            });
+        },
+        render:function(){}
+    };
+   p2p_infoBox.init();
+</script>

@@ -1,0 +1,196 @@
+<!--还款管理-->
+<!-- accout_main S-->
+<div class="accout_main">
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;" id="temp_repayMent_name">还款记录</div>
+
+        <div class="member_tab">
+            <div class="member_tab_content">
+
+                <div class="member_tab_list">
+
+                    <table class="table-list" cellpadding="0" cellspacing="0" border="0" style="margin-top: 15px;">
+                        <thead>
+                        <tr>
+                            <th width="100">还款期</th>
+                            <th width="100">应还金额（元）</th>
+                            <th width="100">应还款时间</th>
+                            <th width="120">实际还款金额（元）</th>
+                            <th width="100">实际还款时间</th>
+                            <th width="90">逾期天数</th>
+                            <th width="90">逾期罚金</th>
+                            <th width="100">是否支付罚金</th>
+                            <th width="100">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody id="repay_temp">
+
+                        </tbody>
+                        <tr id="repay_tmpl" style="display: none;">
+                            <td>$currentOfAll</td>
+                            <td><span class="font_red" id="pay"></span></td>
+                            <td>$planPayTime</td>
+                            <td id="realPay"></td>
+                            <td>$realPayTime</td>
+                            <td>$lateDays</td>
+                            <td id="repaymentLate"></td>
+                            <td id="isPayLateName">否</td>
+                            <td>
+                                <a href="javascript:void(0);" class="font_blue" id="btn_repayment_pay" onclick="javascript:repay('$repaymentId','$advanceState');">还款&nbsp;&nbsp;</a>
+                                <a href="javascript:void(0);" class="font_blue" id="btn_repayment_late" onclick="javascript:payFine('$repaymentId','$payLess');">罚金</a>
+                                <span id="isPayOff">已还清</span>
+                            </td>
+                        </tr>
+                    </table>
+                    <!-- 分页 S-->
+                    <div id="p2p_repayMent_page" class="pagination"><!-- 这里显示分页 --></div>
+                    <!-- 分页 E-->
+                    <dl class="accout_repDetail_dl" id="repayLoanAhead_btns">
+                		<button type="button" class="zc_btn" id="repayLoanAhead_btn" onclick="p2p_repayment_list.repayLoan();">提前还款</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                		<a href="javascript:void(0);" class="font_red" id="cancel_btn" onclick="javascript:p2p_repayment_list.cancel();">取消提前还款</a>
+                	</dl>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+
+    //定义分页对象
+    var p2p_repayMent_page = {
+        init:function(url,params){
+            DeelonService.get(url,params,function(data){
+                $("#p2p_repayMent_page").pagination(data.result.totalElements, {
+                    prev_text: "前一页",
+                    next_text: "后一页",
+                    num_edge_entries: 2,   //两侧显示的首尾分页的条目数
+                    num_display_entries: 5 ,   //连续分页主体部分显示的分页条目数
+                    callback: p2p_repayment_list.pageselectCallback,
+                    items_per_page:5     //每页显示的条目数
+                });
+            })
+        }
+    };
+    //定义列表对象
+    var p2p_repayment_list = {
+        url:"/dlbiz/p2p/projectRepayment/"+Utils.getUrlParam("projectId"),
+        params:{page:1,pageSize:5},
+        init:function(url,params){
+            DeelonService.get(p2p_repayment_list.url,p2p_repayment_list.params,function(data){
+                p2p_repayment_list.render(data);
+            })
+        },
+        render:function(data){
+        	var prepayRate = Utils.getUrlParam("prepayRate");
+        	if(prepayRate<1){
+        		$("#cancel_btn").remove();
+        	}
+        	
+        	var state = Utils.getUrlParam("state");
+        	if(state==5){//已还清
+        		$("#repayLoanAhead_btns").remove();
+        	}
+        	
+            $("#repay_temp").empty();
+            Utils.bindList("#repay_temp", "#repay_tmpl", data.result.content,null,function(item,data){
+            	item.find("#pay").html(addThousandSign(data.pay));
+            	item.find("#realPay").html(addThousandSign(data.realPay));
+            	item.find("#repaymentLate").html(addThousandSign(data.repaymentLate));
+            	
+                if(data.isPayLate==1){
+                	item.find("#isPayLateName").html("是");
+                }
+                
+                if(data.isPayOff!=1){//不等于已还清
+                	item.find("#isPayOff").remove();
+	                if(data.payLess<1){
+	                	//剩余未还为0
+	                	item.find("#btn_repayment_pay").remove();
+	                }
+	                if(data.advanceState==1 || data.lateDays<1 || data.isPayLate==1){
+	                	item.find("#btn_repayment_late").remove();
+	                }
+                }else{
+                	item.find("#btn_repayment_late").remove();
+                	item.find("#btn_repayment_pay").remove();
+                }
+            });
+        },
+        pageselectCallback:function(index,jq){
+            p2p_repayment_list.params.page = index +1;
+            p2p_repayment_list.init(p2p_repayment_list.url,p2p_repayment_list.params);
+            return false;
+        },repayLoan:function(){
+        	var prepayRate = Utils.getUrlParam("prepayRate");
+        	if(prepayRate>0){
+        		location.hash = '#page=repayLoanAheadDetail?bread=提前还款明细&projectId=' + Utils.getUrlParam("projectId");
+        	}else{
+	        	jConfirm('是否确认提前还款?如果未对任何投资方进行提前还款，<br>则可以主动撤销提前还款，进行正常还款。', '提示', function(r) {
+	        		if(r){
+	        		    DeelonService.get("/dlbiz/p2p/projectRepayment/checkRepaymentCanPreRepay",{projectId:Utils.getUrlParam("projectId")},function(data){
+	        		    	if (data.code == -1) {
+	        		    		jAlert.info(data.msg);
+	        		    		return;
+	        		    	}
+	        		    	location.hash = '#page=repayLoanAheadDetail?bread=提前还款明细&projectId=' + Utils.getUrlParam("projectId");
+	                    });
+	        		}
+	        	});
+        	}
+	    },cancel:function(){
+        	jConfirm('是否确认取消提前还款?成功取消后你可以进行正常还款。', '提示', function(r) {
+        		if(r){
+        		    DeelonService.get("/dlbiz/p2p/projectRepayment/cancelPrepay",{projectId:Utils.getUrlParam("projectId")},function(data){
+        		    	if(data.code==0){
+        		    		jAlert.success(data.msg,null,null,function(){
+	        		    		var projectId = Utils.getUrlParam("projectId")
+	        		    		var bread = Utils.getUrlParam("bread")
+	        		    		var state = Utils.getUrlParam("state")
+	        		    		location.hash = "#page=repayment?bread="+bread+"&projectId="+projectId+"&state="+state+"&prepayRate=0";
+	        		        });
+        		    	}else{
+        		    		jAlert.warn(data.msg);
+        		    	}
+                    });
+        		}
+        	});
+	    }
+    };
+    $(function(){
+        //分页初始化
+        p2p_repayMent_page.init(p2p_repayment_list.url,p2p_repayment_list.params);
+        $("#temp_repayMent_name").text(Utils.getUrlParam("bread"));
+
+    });
+    
+    function payFine(repaymentId,payLess){
+        if (payLess > 0) {
+        	jAlert.info('请先还款，再支付罚金！');
+        } else {
+            location.hash = '#page=payFineDetail?bread=罚金支付明细&repaymentId=' + repaymentId;
+        }
+    }
+    
+    function repay(repaymentId,advanceState){
+    	var prepayRate = Utils.getUrlParam("prepayRate");
+    	if(prepayRate>0){
+    		jAlert.warn('当前借款项目已申请提前还款，请及时完成提前还款，<br>否则提前还款将被强制取消，已还的提前款项也将无法退回，<br>如果你想返回正常还款，请联系平台撤销提前还款。');
+    	}else {
+    	    DeelonService.get("/dlbiz/p2p/projectRepayment/checkRepaymentCanRepay",{projectId:Utils.getUrlParam("projectId"),repaymentId:repaymentId},function(data){
+		    	if (data.code == -1) {
+		    		jAlert.info(data.msg);
+		    		return;
+		    	}
+                //未垫付正常还款界面
+                if (advanceState == null || advanceState == 0) {
+                	location.hash = '#page=repdetail?bread=还款明细&repaymentId=' + repaymentId;
+                } else {
+                	location.hash = '#page=payAdvanceDetail?bread=还垫付款&repaymentId=' + repaymentId;
+                }
+            });
+        }
+    }
+</script>

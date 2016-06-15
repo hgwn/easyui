@@ -1,0 +1,71 @@
+<div class="p2p_footer">
+
+    <div class="p2p_footer_n clearfix">
+        <div class="p2p_footer_nav clearfix" id="p2p_foot_temx">
+            <!--<dl id="p2p_foot_teml" style="display: none;">
+                <dt>$groupname</dt>
+            </dl> -->
+            <dl id="p2p_foot_teml" style="display: none;">
+                <dt>$resName</dt>
+            </dl>
+        </div>
+        <div class="p2p_footer_mobile clearfix">
+            <dl class="p2p_footer_mobile_r">
+                <dt>关注我们</dt>
+                <dd> <span class="p2p_wx"></span> </dd>
+            </dl>
+            <dl class="p2p_footer_mobile_r">
+                <dt>扫描下载客户端</dt>
+                <dd> <span class="p2p_wx"></span> </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="p2p_approve clear_fix">
+        <a href="#" class="approve_1" target="_blank"></a>
+        <a href="#" class="approve_2"target="_blank"></a>
+        <a href="#" class="approve_3"  target="_blank"></a>
+        <a href="#" class="approve_4"  target="_blank"></a>
+        <a href="#" class="approve_5"  target="_blank"></a>
+        <a href="#" class="approve_6"  target="_blank"></a> </div>
+    <p class="p2p_copyright"> <span>Copyright &copy;2006-2016  Deelon. All Rights Reserved.</span><span>帝隆科技 版权所有</span><a class="fs12" href="#">粤ICP备11044630号</a> </p>
+
+    <ul class="p2p_toolbar ie6fixedBR">
+        <li class="p2p_tb_01"><a href="#page=index"> 购物<br />
+            车 </a> </li>
+        <li class="p2p_tb_02"><a href="#page=index"> 新手<br />
+            指引 </a> </li>
+        <li class="p2p_tb_03"><a href="#page=index"> 项目<br />
+            登记</a></li>
+        <li class="p2p_tb_04"><a href="#page=projectincomelist"> 收益<br />
+            计算 </a> </li>
+        <li class="p2p_tb_05"><a href="#page=index" id="returnTop"> 返回<br />
+            顶部 </a> </li>
+    </ul>
+
+</div>
+
+<script type="text/javascript">
+
+    var p2p_footerBox = {
+        init:function(){
+            var temp = '<dd><a href="$resUrl">$resName</a></dd>';
+            DeelonService.CMSService.dir({fullPath: "/内容管理/网站管理/P2P/栏目管理/页脚栏目/"}, function(data) {
+                Utils.bindList($("#p2p_foot_temx"),$("#p2p_foot_teml"), data.children,null,function(item,data){
+                    DeelonService.get("/dlapi/cms/assets/list?parent_id=&parent_path=/"+encodeURIComponent("内容管理/网站管理/P2P/栏目管理/页脚栏目/")+encodeURIComponent(data.resName)+"/&pageNum=1&pageSize=1000",{},function(data){
+                        Utils.bindList($(item), $(temp), data.content);
+                    });
+                })
+
+            });
+
+        },
+        render:function(){}
+    }
+    $(function(){
+        p2p_footerBox.init();
+        $("#returnTop").click(function () {
+            $('body,html').animate({ scrollTop: 0 }, 200);
+            return false;
+        });
+    });
+</script>

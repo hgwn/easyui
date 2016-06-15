@@ -1,0 +1,101 @@
+<!--S -->
+<div class="p2p_selector_box">
+    <dl class="p2p_selector_item clearfix">
+        <dt>债权总额：</dt>
+        <dd><a onclick="getTransferListByItem.loadItem1('');" class="active">全部</a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem1('&claimsSumMinimum=&claimsSumMaximum=3000');">3000元以下</a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem1('&claimsSumMinimum=3000&claimsSumMaximum=5000');">3000-5000</a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem1('&claimsSumMinimum=5000&claimsSumMaximum=10000');">5000-10000</a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem1('&claimsSumMinimum=10000&claimsSumMaximum=20000');">1万-2万</a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem1('&claimsSumMinimum=20000&claimsSumMaximum=50000');">2万-5万</a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem1('&claimsSumMinimum=50000&claimsSumMaximum=');">5万以上</a></dd>
+    </dl>
+    <dl class="p2p_selector_item clearfix">
+        <dt>拍卖底价：</dt>
+        <dd><a onclick="getTransferListByItem.loadItem2('');" class="active">全部</a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem2('&upsetPriceMinimum=&upsetPriceMaximum=3000');">3000元以下</a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem2('&upsetPriceMinimum=3000&upsetPriceMaximum=5000');">3000-5000</a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem2('&upsetPriceMinimum=5000&upsetPriceMaximum=10000');">5000-10000</a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem2('&upsetPriceMinimum=10000&upsetPriceMaximum=20000');">1万-2万</a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem2('&upsetPriceMinimum=20000&upsetPriceMaximum=50000');">2万-5万</a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem2('&upsetPriceMinimum=&upsetPriceMaximum=50000');">5万以上</a></dd>
+    </dl>
+    <dl class="p2p_selector_item clearfix">
+        <dt>拍卖模式：</dt>
+        <dd><a onclick="getTransferListByItem.loadItem3('');"  class="active">全部</a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem3('&auctionWay=1');">明拍</a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem3('&auctionWay=2');">暗拍</a></dd>
+    </dl>
+    <dl class="p2p_selector_item clearfix">
+        <dt>发布时间：：</dt>
+        <dd><a onclick="getTransferListByItem.loadItem4('');"  class="active">全部</a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem4('&openDateBegin=0&openDateEnd=1');"> 1天内 </a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem4('&openDateBegin=0&openDateEnd=2');">2天内</a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem4('&openDateBegin=0&openDateEnd=7');">7天内  </a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem4('&openDateBegin=0&openDateEnd=10');">10天内</a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem4('&openDateBegin=0&openDateEnd=30');"> 30天内</a></dd>
+        <dd><a onclick="getTransferListByItem.loadItem4('&openDateBegin=30&openDateEnd=0');">一个月以上</a></dd>
+    </dl>
+</div>
+<!--E -->
+
+<script type="text/javascript">
+
+    var getTransferListByItem = {
+        condition1:"",
+        condition2:"",
+        condition3:"",
+        condition4:"",
+        conditions:"",
+        init:function(){
+            getTransferListByItem.addItems();
+            desktop_p2p_getTransfers_queryform.init(getTransferListByItem.conditions);
+        },
+        addItems:function() {
+            getTransferListByItem.conditions = "";
+            getTransferListByItem.conditions = getTransferListByItem.condition1 + getTransferListByItem.condition2 + getTransferListByItem.condition3 + getTransferListByItem.condition4;
+        },
+        loadItem1:function(item) {
+            getTransferListByItem.condition1 = "";
+            if(item != ""){
+                getTransferListByItem.condition1 = item;
+            }else{
+                getTransferListByItem.condition1 = "";
+            }
+            getTransferListByItem.init();
+        },
+        loadItem2:function(item) {
+            getTransferListByItem.condition2 = "";
+            if(item != ""){
+                getTransferListByItem.condition2 = item;
+            }else{
+                getTransferListByItem.condition2 = "";
+            }
+            getTransferListByItem.init();
+        },
+        loadItem3:function(item) {
+            getTransferListByItem.condition3 = "";
+            if(item != ""){
+                getTransferListByItem.condition3 = item;
+            }else{
+                getTransferListByItem.condition3 = "";
+            }
+            getTransferListByItem.init();
+        },
+        loadItem4:function(item) {
+            getTransferListByItem.condition4 = "";
+            if(item != ""){
+                getTransferListByItem.condition4 = item;
+            }else{
+                getTransferListByItem.condition4 = "";
+            }
+            getTransferListByItem.init();
+        }
+    };
+    $(function(){
+        $(".p2p_selector_item").find("a").click(function(){
+            $(this).parent().siblings().find("a").removeClass("active");
+            $(this).addClass("active");
+        });
+    });
+</script>

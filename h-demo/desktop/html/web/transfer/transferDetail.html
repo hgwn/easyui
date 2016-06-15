@@ -1,0 +1,245 @@
+<!--债权转让详情-->
+<!--showProjectDetail_bg S-->
+<div class="showProjectDetail_bg"></div>
+<!--showProjectDetail_bg E-->
+
+<!--p2p_wrapper S-->
+<div class="p2p_wrapper">
+    <!-- 项目详情 S-->
+    <div id="showProjectDetail_box" class="showProjectDetail_box clearfix">
+        <div class="showProjectDetail_box_l">
+            <img src="images/temp/product.jpg" alt=""/>
+            <p class="showProjectDetail_p"><a id="isFoucs" href="javascript:focusTransfer()"><span class="icon_ga"></span>关注</a></p>
+        </div>
+        <!-- showProjectDetail_box_m S-->
+        <div class="showProjectDetail_box_m">
+            <div class="showProjectDetail_box_m_name">
+                $tprojectName<span class="icon-identity">明拍</span>
+            </div>
+            <ul class="clearfix getTenderProjects_ul transferDetail_ul">
+                <li style="width: 33%;"><div><span class="getTenderProjects_rate">7.5</span><span class="font_red">%</span></div>年化收益</li>
+                <li style="width: 33%;"><p><span class="getTenderProjects_num">800.00</span><span class="font_555">万</span></p>债权总额</li>
+                <li style="width: 33%;"><p><span class="getTenderProjects_num">800.00</span><span class="font_555">万</span></p>竞拍底价</li>
+            </ul>
+            <div class="transferDetail_bottom getTenderProjects_pay ">
+                <span>债权期数：<label>3期   </label></span>
+                <span>剩余时间：<label>24天00小时39分钟15秒 </label></span><br>
+                <span>竞拍次数：<label>0次  </label></span>
+            </div>
+        </div>
+        <!-- showProjectDetail_box_m E-->
+        <div class="showProjectDetail_box_r">
+            <div class="transferDetail_box_r_name">我要竞标</div>
+            <p>竞拍时间： <span class="">2016-04-05</span></p>
+            <p  id="myBalance">我的余额：<span class="font_red">$myBalance</span> 元 <a href="#page=recharge?bread=充值" target="_blank" class="font_blue">充值</a></p>
+            <p>最高竞价： <span class="fontS20">5,000.00</span>元</p>
+            <p class="font_999 ta-center pt20">出价必须高于最高竞价</p>
+            <button class="p2p_btn_l" onclick="transferDetail.toClick();">立即竞标</button>
+        </div>
+    </div>
+    <!-- 项目详情 E-->
+    <!-- 项目明细 S-->
+    <div class="showProjectDetail_main">
+
+        <div class="showProjectDetail_main_title">
+            <ul class="showProjectDetail_main_ul clearfix transferDetail_main_ul">
+                <li><a href="#" class="active" name="ms">转让描述</a></li>
+                <li><a href="#">转让人信息</a></li>
+                <li><a href="#">竞拍记录</a></li>
+                <li><a href="#" class="last font_blue"><img src="images/transfer_look.jpg">查看原项目</a></li>
+            </ul>
+        </div>
+        <div class="showProjectDetail_main_content">
+            <!-- 描述 S-->
+            <div name="ms" id="ms" class="showProjectDetail_main_ms">
+                <dl>
+                    <dt><img src="images/icon-common_03.jpg" alt=""/>转让描述</dt>
+                    <dd>
+                        <p> 转让方成立于2011年，注册资本1.7亿人民币，是海南省第一家专业中外合资的全国性融资租赁公司。公司拥有现代化的法人治理结构、专业化的租赁业务团队、严谨全面的风险控制体系，科学高效的项目管理流程。目前已与多家银行、设备制造商、担保公司等形成战略合作关系。公司目前致力于船舶飞机、装备制造、工程机械、交通运输、医疗器械、节能环保、新能源、通信技术等传统领域的融资租赁业务，并积极开拓游艇、水上飞机、房车、过山车、索道、摩天轮、酒店等旅游产业融资租赁业务。随着公司不断发展，目前已经面向全国进行重点区域的布局谋篇，计划在上海、重庆、武汉、山东、京津以及东三省等地设立分支机构。</p>
+                    </dd>
+                </dl>
+            </div>
+            <!-- 描述 E-->
+
+
+            <!-- 信息 S-->
+            <div name="info" id="info" class="showProjectDetail_main_ms">
+                <dl>
+                    <dt><img src="images/icon-common_02.jpg" alt=""/>转让人信息</dt>
+                    <dd>
+                        <table class="table-detail" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                                <th width="100">用户名</th>
+                                <td width="200">李*</td>
+                                <th width="100">公司行业</th>
+                                <td>互联网金融行业</td>
+                                <th width="100">收入范围</th>
+                                <td>10000~20000元</td>
+                            </tr>
+                            <tr>
+                                <th>年龄</th>
+                                <td>38岁</td>
+                                <th>地址</th>
+                                <td>天河区黄埔大道中336号御发商务大
+                                    厦6楼</td>
+                                <th>收入范围</th>
+                                <td>10000~20000元</td>
+                            </tr>
+                            <tr>
+                                <th>用户名</th>
+                                <td>李*</td>
+                                <th>公司行业</th>
+                                <td>互联网金融行业</td>
+                                <th>收入范围</th>
+                                <td>10000~20000元</td>
+                            </tr>
+                        </table>
+                    </dd>
+                </dl>
+            </div>
+            <!-- 信息 E-->
+
+            <!-- 记录 S-->
+            <div name="jl"  class="showProjectDetail_main_ms">
+                <dl>
+                    <dt><img src="images/icon-common_11.jpg" alt=""/>竞拍记录</dt>
+                    <dd>
+                        <table class="table-list" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                                <th width="100">投资人</th>
+                                <th width="100">投资金额</th>
+                                <th width="100">投资时间</th>
+                                <th width="100">是否中标</th>
+                            </tr>
+                            <tr>
+                                <td>李*</td>
+                                <td><span class="font_red">￥2,000.00</span></td>
+                                <td>2016-03-30 17:53</td>
+                                <td>未中标</td>
+                            </tr>
+                            <tr>
+                                <td>李*</td>
+                                <td><span class="font_red">￥2,000.00</span></td>
+                                <td>2016-03-30 17:53</td>
+                                <td>未中标</td>
+                            </tr>
+                            <tr>
+                                <td>李*</td>
+                                <td><span class="font_red">￥2,000.00</span></td>
+                                <td>2016-03-30 17:53</td>
+                                <td>已中标</td>
+                            </tr>
+                        </table>
+                    </dd>
+                </dl>
+            </div>
+            <!-- 投资记录 E-->
+
+            <!-- 分页 S-->
+            <div id="Pagination" class="pagination"><!-- 这里显示分页 --></div>
+            <!-- 分页 E-->
+        </div>
+    </div>
+    <!-- 项目明细 E-->
+</div>
+<!--p2p_wrapper E-->
+
+<script type="text/javascript">
+    var transferDetail={
+        url:"/dlbiz/p2p/transfer",
+        init:function(){
+            //定义参数
+            var url=transferDetail.url;
+            var userId = '';
+            var transferId=Utils.getUrlParam("transferId");
+            var projectId=Utils.getUrlParam("projectId");
+            
+            //是否已登录
+            if(user.islogin()){
+                userId=user.data.id;
+            }else{
+                
+            }
+         
+            //封装参数
+            url=url+"/"+transferId+"?userId="+userId;          
+            
+            
+            DeelonService.get(url, null,function(data){
+                var isFoucs=data.result.isFoucs;
+                //1为已关注
+                if(1==isFoucs){
+                    $("#isFoucs").html("<span class='icon_ga'></span>取消关注");
+                    $("#isFoucs").attr("href","javascript:transferCancelFocusOn()");
+                }else{
+                //0或者其他为为关注
+                    $("#isFoucs").html("<span class='icon_ga'></span>关注");
+                    $("#isFoucs").attr("href","javascript:focusTransfer()");
+                }
+                
+                //拍卖模式：1：明拍，2：暗拍
+                var auctionWay=data.result.auctionWay;
+                if(2==auctionWay){
+                    $(".icon-identity").html("暗拍");
+                }
+                
+                
+                
+                Utils.bindData($("#showProjectDetail_box"), data.result);
+                if(!user.islogin()){
+                    $("#mybalance").html("<span class='font_red' >请登录后再查看</span>");
+                }
+                
+            });
+        },
+        render:function(){},
+        toClick:function(){
+            Router.routeTo("transferAuction");
+        }
+    };
+    
+    $(function(){
+        transferDetail.init();
+    });
+    
+    //关注债权
+    function focusTransfer(){
+        if(!user.islogin()){
+            jAlert.warn('请您先登录再关注');
+            return;
+        }else{
+            var transferId=Utils.getUrlParam("transferId");
+            var userId=user.data.id;
+            var projectId=Utils.getUrlParam("projectId");
+            DeelonService.post("/dlbiz/p2p/transfer/transferFocusOnThat/"+userId+"/"+userId+"/"+projectId+"/"+transferId, null, function(data){
+                if(data.code==0){
+                    transferDetail.init();
+                    jAlert.success(data.result);
+                }else{
+                    jAlert.warn(data.msg);
+                }
+            });
+        }
+    }
+    
+    
+    //取消关注债权
+    function transferCancelFocusOn(){
+        if(!user.islogin()){
+            jAlert.warn('请您先登录再取消关注');
+            return;
+        }else{
+            var transferId=Utils.getUrlParam("transferId");
+            var userId=user.data.id;
+            var projectId=Utils.getUrlParam("projectId");
+            DeelonService.put("/dlbiz/p2p/transfer/transferCancelFocusOn/"+userId+"/"+userId+"/"+projectId+"/"+transferId, null, function(data){
+                if(data.code==0){
+                    transferDetail.init();
+                    jAlert.success(data.result);
+                }else{
+                    jAlert.warn(data.msg);
+                }
+            });
+        }
+    }
+</script>
