@@ -1,0 +1,14 @@
+<!--start postList-->
+<div id="postList" style="height:100%;">
+	<div id="postList-search" class="form-search" style="height: 8%"></div>
+	<div id="postList-table" class="form-table" style="height: 92%; clear: both;"></div>
+</div>
+<!--end postList-->
+<script type="text/javascript">
+    $(function(){
+        //异步加载div片段--查询条件
+        PorletLoader.loadPorlet("postList .form-search", [{link: "html/p2p/post-lend/postListForm.html"}]);
+        PorletLoader.loadPorlet("postList .form-table", [{link: "html/p2p/post-lend/postListTable.html"}]);
+        $.parser.parse("#postList");
+    });
+</script>

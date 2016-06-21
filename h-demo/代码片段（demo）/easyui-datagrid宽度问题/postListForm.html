@@ -1,0 +1,50 @@
+<form id="postListForm" action="#" class="h-form-search clearfloat"  style="padding-bottom: 15px;padding-top: 15px;">
+    <!-- start h-search-box-->
+    <div class="h-search-box">
+        <ul class="form-search-row clearfloat" >
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">项目名称：</span>
+                <input type="text" name="projectName"  class="easyui-textbox" style="height: 22px; width: 70%" value=""/>
+            </li>
+            <li class="h-row-3" style="width: 66%;">
+	            <span class="label" style="width: 25%;">计划还款时间：</span>
+	            <input type="text" name="planPayTimeBegin"  class="easyui-datebox" editable="false" style="height: 22px; width: 180px;" value=""/>
+	            <span class="label" style="width: 25px;">至：</span>
+	            <input type="text" name="planPayTimeEnd"  class="easyui-datebox" editable="false" style="height: 22px; width: 180px;" value=""/>
+            </li>
+        </ul>
+    </div>
+    <!-- end h-search-box-->
+    <div class="h-search-btn" style="padding-top: 11px;">
+        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" name="submit" style="width:80px">查询</a>
+    </div>
+</form>
+<script>
+    var postListForm ={
+        id:"#postListForm",
+        init:function(){
+            $("#postListForm [name='submit']").click(function(){
+                postListForm.submit();
+            })
+        },
+        submit:function(){
+            var param = {};
+            Utils.bindProps($(postListForm.id),param,false);
+            if(param.planPayTimeEnd!=null && param.planPayTimeBegin==null){
+            	MessageBox.info("计划还款开始时间不能为空!");
+            	return;
+            }
+            var date = new Date(param.planPayTimeBegin)
+            var date2 = new Date(param.planPayTimeEnd);
+            if(date.getTime() > date2.getTime()){
+            	MessageBox.info("计划还款结束时间不能小于开始时间!");
+            	return;
+            }
+            postListTable.init(postListTable.url,param);
+        }
+    };
+    $(function () {
+        postListForm.init();
+        $.parser.parse(".h-form-search");
+    })
+</script>

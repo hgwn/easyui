@@ -1,0 +1,144 @@
+<!--待收款列表-->
+<table id="postListTable" 
+       data-options="remoteSort:false, striped:true, pagination:true, collapsible:true, rownumbers:false" style="width:auto;">
+    <thead>
+    <tr>
+		<th data-options="field:'ck',checkbox:true"></th>
+	    <th data-options="field:'name',width:140,formatter:postListTable.formatter,align:'center',halign:'center'">项目名称</th>
+	    <th data-options="field:'state',fit:true,formatter:postListTable.state,align:'center',halign:'center'">项目状态</th>
+	    <th data-options="field:'applicantName',fit:true,align:'center',halign:'center'">姓名</th>
+	    <th data-options="field:'loanReal',fit:true,align:'center',halign:'center'">实际借款金额</th>
+	    <th data-options="field:'rate',fit:true,align:'center',halign:'center'">借款年利率(%)</th>
+	    <th data-options="field:'sumInterest',fit:true,align:'center',halign:'center'">实际总利息</th>
+	    <th data-options="field:'deadline',fit:true,formatter:postListTable.deadline,align:'center',halign:'center'">借款期限</th>
+	    <th data-options="field:'bidCount',fit:true,align:'center',halign:'center'">投标数</th>
+	    <th data-options="field:'isLate',fit:true,formatter:postListTable.isLate,align:'center',halign:'center'">是否逾期</th>
+	    <th data-options="field:'lateDays',fit:true,align:'center',halign:'center'">逾期天数</th>
+	</tr>
+    </thead>
+</table>
+<script type="text/javascript">
+var postListTable = {
+    rootScope:{},
+    url:factory.url.uncollectedList,
+    params:{},//还款中状态
+    //初始化
+    init:function(url,params){
+        if(url !=undefined){
+            postListTable.url = url;
+        }
+        if(params && typeof params ==="object"){
+            $.extend(postListTable.params, params);
+        }
+        postListTable.render();
+    },
+    //刷新
+    reload:function(){
+        $('#postListTable').datagrid("reload");
+    },
+    //渲染datagrid
+    render:function(){
+        $('#postListTable').datagrid({
+        	singleSelect:true,
+        	height:'100%',
+            fitColumns : true,
+            queryParams:postListTable.params,
+            toolbar:postListTable.toolbar,
+            url:postListTable.url,
+            method:'get',
+            onDblClickRow: function(index,row){
+                $(this).datagrid('clearSelections');
+                $(this).datagrid('selectRow',index);
+                for(var k in row){
+                	postListTable.rootScope[k] = row[k];
+                }
+                mainTab.addTab("待收款明细","html/p2p/post-lend/followList.html",true);
+            }
+        });
+    },
+    //定义工具条
+    toolbar:[
+//         {
+//        text:'查看详情',
+//        iconCls:'icon-add',
+//        handler:function(){
+//            var row = $('#postListTable').datagrid('getSelections');
+//            if(row.length){
+//                if(row.length!=1){
+//                    $.messager.alert('提示','只能勾选一条数据进行审核!','info');
+//                    return;
+//                }else{
+//                    for(var k in row[0]){
+//                        postListTable.rootScope[k] = row[0][k];
+//                    }
+//                    mainTab.addTab("项目详情","html/p2p/post-lend/postListDialog.html",true);
+//                }
+//            }else{
+//                $.messager.alert('提示','请勾选数据进行操作','info');
+//            }
+//        }
+//    },'-',
+    {
+        text:'跟进',
+        iconCls:'icon-save',
+        handler:function(){
+            var result = $('#postListTable').datagrid('getSelections');
+            if(result.length){
+             	if(result.length>1){
+             		$.messager.alert('提示','只能勾选一条数据进行跟进!','info');
+             		return;
+	           	}else{
+	                for(var k in result[0]){
+	                	postListTable.rootScope[k] = result[0][k];
+	                }
+	                mainTab.addTab("待收款明细","html/p2p/post-lend/followList.html",true);
+	           	}
+            }else{
+                MessageBox.info("请勾选数据进行操作!");
+            }
+        }
+    }],
+    state:function(value,row,index){
+        if(row.state){
+            var state = Number(row.state);
+            var stateName = ["新申请","招标中","满标","还款中","已还清","流标"];
+            return stateName[state-1];
+        }else{
+            return value;
+        }
+    },
+    formatter:function(value,row,index){  
+    	return '<span title="'+value+'">'+value+'</span>'; 
+    },
+    deadline:function(value,row,index){  
+    	if(row.deadlineType){
+            var deadlineType = row.deadlineType;//期限类型：DAY:天，MONTH:月，YEAR:年
+            var deadlineValue;
+            if("DAY"==deadlineType){
+            	deadlineValue = "(天)";
+            }else if("MONTH"==deadlineType){
+            	deadlineValue = "(月)";
+            }else if("YEAR"==deadlineType){
+            	deadlineValue = "(年)";
+            }
+            return value+deadlineValue;
+        }else{
+            return value;
+        }
+    },
+    isLate:function(value,row,index){  
+        if("0"==value){
+        	return "否";
+        }else if("1"==value){
+            return "是";
+        }
+    }
+};
+
+$(function(){
+    //调用表格初始化函数
+    postListTable.init();
+    //解决jq/easyui异步加载组件
+    $.parser.parse("#postListTable");
+});
+</script>

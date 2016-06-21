@@ -1,0 +1,14 @@
+<!--start businessList-->
+<div id="businessList" style="height: 100%">
+    <div id="businessList-search" class="form-search" style="height: 8%"></div>
+    <div id="businessList-table" class="form-table" style="height: 92%;"></div>
+</div>
+<!--end businessList-->
+<script type="text/javascript">
+    $(function() {
+        //异步加载div片段--查询条件
+        PorletLoader.loadPorlet("businessList-search", [{link: "html/p2p/business/listForm.html"}]);
+        PorletLoader.loadPorlet("businessList-table", [{link: "html/p2p/business/listTable.html"}]);
+        $.parser.parse("#businessList");
+    });
+</script>

@@ -1,0 +1,53 @@
+<form action="#" class="h-form-search clearfloat" id="listForm" style="padding-bottom: 15px;padding-top: 15px;">
+    <!-- start h-search-box-->
+    <div class="h-search-box clearfloat">
+        <ul class="form-search-row clearfloat" >
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">借款人：</span>
+                <input type="text" name="applicantName"  class="easyui-textbox" style="height: 22px; width: 70%" value=""/>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">项目名称：</span>
+                <input type="text" name="name"  class="easyui-textbox" style="height: 22px; width: 70%" value=""/>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">项目状态：</span>
+                <select name="state"   class="easyui-combobox" style="height: 22px; width: 100px;" editable="false">
+                    <option value="">请选择</option>
+                    <option value="1">新申请</option>
+                    <option value="2">招标中</option>
+                    <option value="3">满标</option>
+                    <option value="4">还款中</option>
+                    <option value="5">已还完</option>
+                    <option value="6">流标</option>
+                </select>
+            </li>
+            <!-- h-search-box -->
+        </ul>
+        <div class="h-search-btn" style="top: -4px;">
+            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" name="submit" style="width:80px">查询</a>
+        </div>
+    </div>
+</form>
+<script>
+    var listForm ={
+        id:"#listForm",
+        init:function(){
+            $("#listForm [name='submit']").click(function(){
+                listForm.submit();
+            })
+        },
+        submit:function(){
+            var param = {};
+            Utils.bindProps($(listForm.id),param,false);
+            listTable.init(listTable.url,param);
+        }
+    };
+
+    $(function () {
+        $.parser.parse(".h-form-search");
+        listForm.init();
+    })
+
+</script>
+

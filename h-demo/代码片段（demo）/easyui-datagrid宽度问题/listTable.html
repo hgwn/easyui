@@ -1,0 +1,374 @@
+<!--所有借款列表-->
+<table id="listTable"
+       data-options="remoteSort:false, striped:true, pagination:true, collapsible:true, rownumbers:false" style="height:450px;width:auto;">
+    <thead>
+    <tr>
+    	<th data-options="field:'ck', checkbox:true"></th>
+        <th data-options="field:'name', width:140,formatter:listTable.formatter,align:'center',halign:'center'">项目名称</th>
+        <th data-options="field:'state', fit:true, formatter:listTable.state,align:'center',halign:'center'">项目状态</th>
+        <th data-options="field:'isRecommend', fit:true, formatter:listTable.isRecommend,align:'center',halign:'center'">是否特推</th>
+        <th data-options="field:'applicantName', fit:true,align:'center',halign:'center'">借款人</th>
+        <th data-options="field:'loan', formatter:listTable.formatCurrency, fit:true,align:'center',halign:'center'">申请借款金额(元)</th>
+        <th data-options="field:'loanReal', formatter:listTable.formatCurrency, fit:true,align:'center',halign:'center'">实际借款金额(元)</th>
+        <th data-options="field:'rate', fit:true,align:'center',halign:'center'">利率(%)</th>
+        <th data-options="field:'deadline', fit:true,formatter:listTable.deadline, align:'center',halign:'center'">期限</th>
+        <th data-options="field:'applicationTime', fit:true,align:'center',halign:'center'">申请时间</th>
+        <th data-options="field:'complete', fit:true,align:'center',halign:'center'">完成进度(%)</th>
+        <th data-options="field:'projectId', fit:true, formatter:listTable.formatterComplete,align:'center',halign:'center'">是否达标</th>
+        <th data-options="field:'havedPay', fit:true, formatter:listTable.havedPay,align:'center',halign:'center'">是否放款</th>
+        <th data-options="field:'isPayOff', fit:true, formatter:listTable.isPayOff, align:'center',halign:'center'">是否还清</th>
+        <th data-options="field:'sumPayBack', formatter:listTable.formatCurrency, fit:true,align:'center',halign:'center'">应偿还金额(元)</th>
+        <th data-options="field:'sumHavedPay', formatter:listTable.formatCurrency, fit:true,align:'center',halign:'center'">已偿还金额(元)</th>
+    </tr>
+    </thead>
+</table>
+<div id="listTableDialog">流标</div>
+<script type="text/javascript">
+	//获取系统设置达标线
+	var complete;
+	factory.httpGet(factory.url.getSysDic,{code:'TENDER_MIN_LIMIT_PROPORTION'},function(data){
+		if(data.code == 0){
+		    complete = data.result;
+		}
+	});
+
+    //定义dialog对话框对象
+    var businessDialog = {
+        id:'#listTableDialog',
+        init:function(){
+            $(businessDialog.id).dialog({
+                title: '流标',
+                width: 450,
+                height: 200,
+                closed: true,
+                cache: false,
+                href: 'html/p2p/business/listTableDialog.html',
+                modal: true,
+                buttons:[{text:'提交',iconCls:'icon-ok',
+                    handler:function(){
+                        listTableDialogForm.submit();
+                        setTimeout('listTable.reload()',1000);
+                        businessDialog.hide();
+
+                    }},
+                    {text:'取消',iconCls:'icon-cancel',handler:function(){
+                        businessDialog.hide();
+                    }}
+                ]
+            });
+        },
+        show:function(){
+            $(businessDialog.id).dialog('open');
+        },
+        hide:function(){
+            $(businessDialog.id).dialog('close');
+        }
+    };
+    //定义列表对象
+    var listTable = {
+        rootScope:{},
+        url:factory.url.listTable,
+        projectIds:"",//定义批量流标id集
+        params:{},
+        //初始化
+        init:function(url,params){
+            if(url !=undefined){
+                listTable.url = url;
+            }
+            listTable.params = {"backListOrder":1};
+            if(params && typeof params ==="object"){
+                $.extend(listTable.params, params);
+            }
+            listTable.render();
+        },
+        //刷新
+        reload:function(){
+            $('#listTable').datagrid("reload");
+        },
+        //渲染datagrid
+        render:function(){
+            $('#listTable').datagrid({
+            	 //双击打开项目审核tab
+                onDblClickRow: function(index,row){
+                    for(var k in row){
+                        listTable.rootScope[k] = row[k];
+                    }
+                    $(this).datagrid('clearSelections');
+                    $(this).datagrid('selectRow',index);
+                    mainTab.addTab("项目审核","html/p2p/business/audit.html",true);
+                },
+            	height:'100%',
+                fitColumns : true,
+                queryParams:listTable.params,
+                toolbar:listTable.toolbar,
+                url:listTable.url,
+                method:'get',
+                pageSize:20
+            });
+        },
+        openDetailpage: function (rowData) {
+        },
+        //定义工具条
+        toolbar:[{
+            text:'发布借款',
+            iconCls:'icon-add',
+            handler:function(){
+                mainTab.addTab("发布借款","html/p2p/business/addProject.html");
+            }
+        },'-',{
+            text:'项目审核',
+            iconCls:'icon-accept',
+            handler:function(){
+                var profitids = $('#listTable').datagrid('getSelections');
+                if(profitids.length){
+                    if(profitids.length!=1){
+                        $.messager.alert('提示','只能勾选一条数据进行审核!','info');
+                        return;
+                    }else{
+                        for(var k in profitids[0]){
+                            listTable.rootScope[k] = profitids[0][k];
+                        }
+                        mainTab.addTab("项目审核","html/p2p/business/audit.html",true);
+                    }
+                }else{
+                    $.messager.alert('提示','请勾选数据进行操作'+'<br><br>或者双击某行进行操作!','info');
+                }
+            }
+        },'-',
+        {
+            text:'满标',
+            iconCls:'icon-coins',
+            handler:function(){
+                var result = $('#listTable').datagrid('getSelections');
+                
+                if(result.length){
+                    var params = [];
+                    var error = [];
+                    for(var i=0; i <result.length; i++){
+                        if(result[i].state ==2 && result[i].complete>=complete){
+                            params.push(result[i].projectId);
+                        }else{
+                            error.push(result[i].name);
+                        }
+                    }
+                    if(error.length>0 || params.length<1){
+                    	MessageBox.info("所选借款不符合满标条件,请重新选择!"); 
+                    	return;
+                    }
+                    $.messager.confirm('满标','确认进行满标操作?',function(r){
+                        if (r){
+                            factory.httpPut(factory.url.full,{projectIds:params.join(",")},function(data){
+                                if(data.code==0){
+                                    MessageBox.info(data.msg);
+                                    listTable.reload();
+                                }else{
+                                    MessageBox.info("失败!");
+                                }
+                            })
+                        }
+                    });
+                }else{
+                    MessageBox.info("请勾选数据操作!");
+                }
+
+            }
+        },'-',{
+              //流标操作  在 state = 1,2,3
+                text:'流标',
+                iconCls:'icon-coins_delete',
+                handler:function(){
+                    var result = $('#listTable').datagrid('getSelections');
+                    if(result.length){
+                        var params = [];
+                        var error = [];
+	                    if(result.length!=1){
+	                        $.messager.alert('提示','只能勾选一条数据进行审核!','info');
+	                        return;
+	                    }else{
+	                        for(var i=0; i <result.length; i++){
+	                            if(result[i].state ==1 || result[i].state ==2 ||result[i].state ==3  ){
+	                                params.push(result[i].projectId);
+	                                listTable.projectIds = params.join(",");
+	                            }else{
+	                                error.push(result[i].name);
+	                                MessageBox.info("所选借款不符合流标条件,请重新选择!");
+	                                return;
+	                            }
+	                        }
+	                        if(params.length){
+	                            //$('#listTableDialog').dialog("open");
+                                businessDialog.show();
+	                        }
+                     }
+                    }else{
+                        MessageBox.info("请勾选数据操作!");
+                    }
+
+                }
+
+            },'-',
+           /* {
+                text:'一键流标',
+                iconCls:'icon-save',
+                handler:function(){
+                    $.messager.confirm('一键流标','确认一键流标吗?',function(r){
+                        if (r){
+                            factory.httpPut(factory.url.onekeyFailedProject,null,function(data){
+                                if(data.code==0){
+                                    MessageBox.info(data.msg);
+                                }else{
+                                    MessageBox.info("失败!");
+                                }
+                            })
+                        }
+                    });
+                }
+            },'-', */{
+            text:'确认放款',
+            iconCls:'icon-coins_add',
+            handler:function(){
+            	var result = $('#listTable').datagrid('getSelections');
+                if(result.length){
+                	if(result.length>1){
+                		 $.messager.alert('提示','只能勾选一条数据进行放款!','info');
+                		 return;
+                	}else{
+                		 //项目状态  1:新申请 2:招标中 3:满标 4:还款中 5:已还清 6:流标
+                		 var state = listTable.state("",result[0],"");
+                         if (result[0].state != 3){
+                        	 $.messager.alert('提示',state+'项目不能进行放款操作!','info');
+                        	 return;
+                         }
+                         for(var k in result[0]){
+                             listTable.rootScope[k] = result[0][k];
+                         }
+                         mainTab.addTab("确认放款","html/p2p/business/platformPayLoan.html",true);
+                	}
+                }else{
+                    $.messager.alert('提示','请勾选数据进行操作!','info');
+                }
+            }
+        },'-',{
+            text:'设置特推项目',
+            iconCls:'icon-save',
+            handler:function(){
+            	  var result = $('#listTable').datagrid('getSelections');
+            	  var projectIds = '';
+            	  for(var i=0; i <result.length; i++){
+            		  if(result[i].state!=2){
+            			  MessageBox.info("请选择招标中的借款项目");
+            			  return;
+            		  }
+            		  if(i==0){
+	            		  projectIds += result[i].projectId;
+            		  }else{
+            			  projectIds += ","+result[i].projectId;
+            		  }
+            	  }
+                  factory.httpPost(factory.url.setRecommendProject,{projectIds:projectIds,type:1},function(data){
+                      if(data.code==0){
+                          MessageBox.info(data.msg,function(){
+                        	  listTable.reload();
+                          });
+                      }else{
+                          MessageBox.info(data.msg);
+                      }
+                  })
+            }
+        },'-',{
+            text:'取消特推项目',
+            iconCls:'icon-save',
+            handler:function(){
+            	  var result = $('#listTable').datagrid('getSelections');
+            	  var projectIds = '';
+            	  for(var i=0; i <result.length; i++){
+            		  if(result[i].isRecommend != 1){
+            			  MessageBox.info("请选择已特推的借款项目");
+            			  return;
+            		  }
+            		  if(i==0){
+	            		  projectIds += result[i].projectId;
+            		  }else{
+            			  projectIds += ","+result[i].projectId;
+            		  }
+            	  }
+                  factory.httpPost(factory.url.setRecommendProject,{projectIds:projectIds,type:0},function(data){
+                      if(data.code==0){
+                          MessageBox.info(data.msg,function(){
+                        	  listTable.reload();
+                          });
+                      }else{
+                          MessageBox.info(data.msg);
+                      }
+                  })
+            }
+        }],
+        state:function(value,row,index){
+            //1:新申请 2:平台初审通过 3:担保审核通过 4:招标中 5:满标 6:还款中 7:已还完 8:流标'
+            //1:新申请 2:招标中 3:满标 4:还款中 5:已还清 6:流标'
+           if(row.state){
+               var state = Number(row.state);
+               var stateName = ["新申请","招标中","满标","还款中","已还清","流标"];
+               return stateName[state-1];
+           }else{
+               return value;
+           }
+        },
+        havedPay:function(value,row,index){
+            if(Number(row.havedPay)==1){
+                return "是";
+            }else{
+                return "否";
+            }
+        },
+        isRecommend:function(value,row,index){
+            if(value == '1'){
+                return '<span style="color:green">是</span>';
+            }else{
+                return "否";
+            }
+        },
+        isPayOff:function(value,row,index){
+            if(Number(row.state)==5){
+                return "是";
+            }else{
+                return "否";
+            }
+        },
+        //期限设置
+        deadline:function(value,row,index){
+            if(row.deadlineType=="DAY"){
+                return row.deadline+"天";
+            }else if(row.deadlineType=="MONTH"){
+                return row.deadline+"个月";
+            }else if(row.deadlineType=="YEAR"){
+            	return row.deadline+"年";
+            }
+        },
+        formatter:function(value,row,index){  
+        	return '<span title="'+value+'">'+value+'</span>'; 
+        },
+        formatterComplete:function(value,row,index){
+        	if(complete > row.complete){
+        		return '<span style="color:red">未达标</span>'; 
+        	}else if(row.complete == 100){
+	        	return '<span style="color:green">已满标</span>'; 
+        	}else{
+        		return '<span style="color:green">已达标</span>'; 
+        	}
+        },
+        //金额格式化
+        formatCurrency:function(val,row){
+            return  formatCurrency.formatCurrency(val);
+        }
+    };
+
+
+    $(function(){
+        //调用表格初始化函数
+        listTable.init();
+        businessDialog.init();
+        //解决jq/easyui异步加载组件
+        $.parser.parse("#listTable");
+    });
+</script>
