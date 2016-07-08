@@ -1,0 +1,66 @@
+<div class="pad10 minilist "  >
+    <h3 class="project_companyNew_title">
+        $title
+        <a href="article.html#page=folders?bread=$title&path=/内容管理/关于我们/&fname=$title" class="p2p_lookmore">更多</a>
+    </h3>
+    <div class="project_companyNew_main">
+        <img src="images/temp/temp1.jpg" alt="" class="minlist_img" id="minlist_img"/>
+        <a  href="article.html#page=articledetail?bread=详情&id=$id">$resName</a><span class="createTime">$createTime</span>
+    </div>
+    <ul class="clearfix project_companyNew_ul">
+        <!--<li name="detail_tmpl" style="display:none;"><a href="article.html#page=articledetail?bread=详情&id=$id&fname=$title">$resName</a></li>-->
+
+    </ul>
+</div>
+
+<script>
+
+        function createMiniList(pitem, title, path) {
+
+
+            Utils.bindData($(pitem).find(".minilist").children("h3"), {title: title, path: path});
+
+            var url = '/dlapi/cms/article/search?pageNum=1&pageSize=3&column=id&condition=desc&queryParams={"fullPath":"$path"}'.replace("$path",path);
+            var minilist = {
+                init: function(url) {
+
+                    DeelonService.get(url, function(data) {
+
+                        minilist.render(data.content);
+
+                    });
+
+                },
+                render: function(data) {
+
+                    if(data.lenth === 0) {
+                        return;
+                    } 
+                    
+                    Utils.bindData($(pitem).find(".project_companyNew_main"), data[0]);
+                    //debugger;
+                    if(data[0].archiveIds && data[0].archiveIds.length > 0){
+                        //document.getElementById("minlist_img").src="/dlapi/cms/archive/download?id="+data[0].archiveIds[0]+"&fullPath=";
+                        $(pitem).find(".minlist_img").attr('src',"/dlapi/cms/archive/download?id="+data[0].archiveIds[0]+"&fullPath=");
+                    }
+
+                    if (data.length >= 2) {
+                        var temp = ' <li name="detail_tmpl" style="display:none;">' +
+                                '<a href="article.html#page=articledetail?bread=详情&id=$id&fname='+title+'">$resName</a></li>';
+                        //Utils.bindList($(pitem).find(".project_companyNew_ul"), $(pitem).find("[name='detail_tmpl']"), data.slice(1));
+                        Utils.bindList($(pitem).find(".project_companyNew_ul"), $(temp), data.slice(1));
+                    }
+
+                    //console.log(title+":"+data[0].archiveIds[0]);
+
+                }
+
+            };
+
+          minilist.init(url);
+        };
+
+ 
+
+
+</script>

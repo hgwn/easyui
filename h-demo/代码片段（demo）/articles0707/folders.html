@@ -1,0 +1,118 @@
+
+<div class="accout_sideBar_nav" id="folder_box">
+
+	<ul class="dropdown" id="folder_tmpl" style="display: none;">
+		<li class="main" name="$resName"  onclick="article_folder.onFolderClick(this, $id)">$resName<span
+				class="new-icon"></span></li>
+		<li class="dropdown_list"></li>
+	</ul>
+
+</div>
+<script>
+	var FOLDERS = "FOLDERS";
+	var FSTATE = "FSTATE";
+	var article_folder = {
+		onFolderClick : function(item, fid) {
+			var title = $(item).text();
+			$.cookie(FSTATE,title);
+			article_folder.loadsubfolder($(item).siblings(),title, fid);
+
+			$("ul.dropdown > li.main").siblings().hide();
+			$(item).next("li.dropdown_list").slideToggle("1500");
+			$(item).find(".new-icon").toggleClass("down-icon");
+			$("ul.dropdown > li.main").removeClass("active");
+			$(item).addClass("active");
+			if ($(item).next("li.dropdown_list").is(":visible")) {
+				$(item).parent().siblings().find("li.dropdown_list").slideUp(
+						"1500");
+			}
+
+		},
+		init : function(url) {
+			var path = Utils.getUrlParam("path");
+			if(path){
+				var arr = path.split("/");
+				var folder = "/"+arr[1]+"/"+arr[2]+"/";
+				$.cookie(FOLDERS,folder);
+			}
+			//debugger;
+			DeelonService.get(url, function(data) {
+
+				if (data.children) {
+
+					article_folder.render(data.children);
+				}
+
+			});
+
+		},
+		render : function(data) {
+			Utils.bindList("#folder_box", "#folder_tmpl", data);
+			var _href = location.href;
+			var fname = Utils.getUrlParam("fname");
+			var flag = _href.lastIndexOf("articledetail")>0;
+			  if(fname ){
+				  if(!flag){
+					  $("#folder_box").find("[name='"+fname+"']").trigger("click");
+					  $("#folder_box").find("[name='"+fname+"']").addClass("active");
+				  }
+				  $("#folder_box").find("[name='"+fname+"']").addClass("active");
+			  }else{
+				  if(!flag){
+					  $("#folder_box ul:eq(1) li:eq(0)").click();
+					  $("#folder_box ul:eq(1) li:eq(0)").addClass("active");
+				  }
+			  }
+		},
+		loadsubfolder : function(parentItem,title, fid) {
+			//debugger;
+			var subUrl = "/dlapi/cms/directory/list?id=$id&fullPath=&deepin=1";
+			subUrl = subUrl.replace("$id", fid);
+
+			$(parentItem).html("");
+			var temp = '<a @href="#page=articlelist?bread=$resName&fid=$id" style="display:block;">$resName</a>';
+
+			DeelonService.get(subUrl, function(data) {
+				//debugger;
+				if(data!=null&& data.children!=null&&data.children.length>0){
+					Utils.bindList($(parentItem), $(temp), data.children);
+					$(parentItem).find("a").click(function(){
+						$(this).addClass("on").siblings().removeClass("on");
+					});
+					location.href = $(parentItem).find("a").eq(0).attr("href");
+					$(parentItem).find("a").eq(0).addClass("on");
+				}else{
+			       location.hash = "#page=articlelist?bread=" + title + "&fid=" + fid;
+				}
+			});
+
+
+
+		}
+	};
+
+
+	$(document).ready(function() {
+
+		// /dlapi/cms/directory/list?id=&fullPath=$path&deepin=2
+		var url = "/dlapi/cms/directory/list?id=&fullPath=$path&deepin=2";
+
+		var path = Utils.getUrlParam("path");
+		if(path == "/内容管理/关于我们/联系我们/联系我们"){
+			path = "/内容管理/关于我们/";
+		}
+
+		if (!path) {
+
+			if($.cookie(FOLDERS)){
+				path = $.cookie(FOLDERS);
+			}else{
+				path = "/内容管理/关于我们/";
+			}
+
+		}
+		url = url.replace("$path", encodeURIComponent(path));
+
+		article_folder.init(url);
+	});
+</script>

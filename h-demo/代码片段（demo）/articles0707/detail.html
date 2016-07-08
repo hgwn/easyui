@@ -1,0 +1,49 @@
+<!-- 主体内容 S-->
+<div class="accout_main_content" id="article_detail_box" style="display: none;">
+    <div class="about_title tx" style="text-align: center;">$resName</div>
+    <div class="about_content">
+        <div class="about_newdetail_box articles_detail_sorce" >
+            来源：<span class="about_newdetail_source"></span>发布时间：<span>$createTime</span>
+        </div>
+        <div class="about_newdetail_content">
+            $content
+        </div>
+
+    </div>
+</div>
+<!-- 主体内容 E-->
+<script>
+
+    var article_detail = {
+        init: function(url, params) {
+            DeelonService.get(url, function(data) {
+                Utils.bindData($("#article_detail_box"), data);
+                $("#article_detail_box").show();
+
+            });
+        }
+
+
+    };
+
+    var id = Utils.getUrlParam("id");
+    if (id) {
+        var url = "/dlapi/cms/article?id=$id&fullPath=".replace("$id", id);
+        article_detail.init(url);
+
+    } else {
+
+        var path = Utils.getUrlParam("path");
+
+        if (path) {
+
+            var url = "/dlapi/cms/article?id=&fullPath=$path".replace("$path", path);
+            article_detail.init(url);
+        }
+
+
+
+    }
+
+
+</script>

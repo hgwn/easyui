@@ -1,0 +1,114 @@
+
+
+<!-- 主体内容 S-->
+<div class="accout_main_content">
+    <div class="about_title" id="articlelist_title"></div>
+    <div class="about_content">
+        <div class="about_new" >
+
+            <ul class="about_new_ul" id="article_box">
+
+
+            </ul>
+            <li class="clearfix" id="list_tmpl" style="display:none;">
+                <div class="about_new_r">
+                    <span class="font_999">$createTime</span>
+                    <a href="#page=articledetail?bread=详情&id=$id" class="about_new_title">$resName</a>
+                    <p class="font_999">$intro</p></div>
+            </li>
+
+            <!--分页 S-->
+
+            <!--分页 E-->
+        </div>
+
+        <div class="pagination" style="margin: 10px auto;" id="aticle_pagination">
+
+        </div>
+    </div>
+</div>
+<!-- 主体内容 E-->
+
+<script>
+
+    var pagination = {
+        url: '/dlapi/cms/article/search?pageNum=$num&pageSize=5&column=orderId&condition=asc',
+        queryParam: {},
+        initById: function(fid, num) {
+            pagination.queryParam = 'queryParams={"parent_id":$fid}'.replace("$fid", fid);
+
+            pagination.init(num);
+
+        },
+        initByPath: function(path, num) {
+            pagination.queryParam = 'queryParams={"fullPath":"$path"}'.replace("$path", path);
+
+            pagination.init(num);
+
+        },
+        init: function(num) {
+
+            var url = pagination.url.replace("$num", num) + "&" + pagination.queryParam;
+
+           
+            var opt = {
+                prev_text: "前一页",
+                next_text: "后一页",
+                num_edge_entries: 2,
+                num_display_entries: 4,
+                items_per_page: 5,
+                current_page: num-1,
+                callback: function(cur, item) {
+
+                    var url = pagination.url.replace("$num", cur + 1) + "&" + pagination.queryParam;
+                    article_list.init(url);
+                }
+            };
+
+
+            DeelonService.get(url, function(data) {
+
+                $("#aticle_pagination").pagination(data.totalElements, opt);
+            });
+
+
+
+        }
+
+    };
+
+    var article_list = {
+        init: function(url, data) {
+
+            DeelonService.get(url, function(data) {
+                article_list.render(data);
+
+            });
+        },
+        render: function(data) {
+            $("#article_box").empty();
+            Utils.bindList($("#article_box"), $("#list_tmpl"), data.content);
+            $("#articlelist_title").text(Utils.getUrlParam("bread"));
+        }
+    };
+
+    function initPageination() {
+        var fid = Utils.getUrlParam("fid");
+
+        if (fid) {
+            pagination.initById(fid, 1);
+        }else{
+            
+            var path = Utils.getUrlParam("path");
+            
+            if(path){
+                
+                 pagination.initByPath(path, 1);
+            }
+        }
+    }
+
+
+    initPageination();
+
+</script>
