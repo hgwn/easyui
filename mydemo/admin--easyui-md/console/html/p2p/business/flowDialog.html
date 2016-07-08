@@ -1,0 +1,42 @@
+<form id="flowDialogForm">
+    <table class="table-detail" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+            <th>流标说明:</th>
+            <td colspan="3" style="position: relative; padding: 5px;">
+                <input type="text" class="easyui-textbox" name="remarks" data-options="multiline:true" style=" height: 60px; width: 100%;margin: auto;" placeholder="请填写流标说明">
+            </td>
+        </tr>
+    </table>
+</form>
+
+<script>
+    var flowDialogForm={
+        //url:"/project/flow",
+        url:factory.url.flowDialogForm,
+        params:{},
+        submit:function(){
+            if(!($('#flowDialogForm').form('enableValidation').form('validate'))){
+                return ;
+            }
+            //Utils.bindProps("#flowDialogForm",aduitDialogForm.params,false);
+            flowDialogForm.params.remarks = $("#flowDialogForm").find("input[name=remarks]").attr("value");
+            debugger;
+            if(audit.rootScope.result.project.projectId){
+                flowDialogForm.params.projectIds =audit.rootScope.result.project.projectId;
+            }
+            factory.httpPut(flowDialogForm.url,flowDialogForm.params,function(data){
+                $('#flowDialog').dialog("close");
+                if(data.code==0){
+                    MessageBox.info(data.msg);
+                }else{
+                    MessageBox.info("失败!");
+                }
+                flowDialogForm.reset();
+                audit.echo();
+            });
+        },
+        reset:function(){
+            $("#flowDialogForm").form("clear");
+        }
+    };
+</script>

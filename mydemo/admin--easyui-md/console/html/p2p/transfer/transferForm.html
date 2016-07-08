@@ -1,0 +1,60 @@
+<form id="transferForm" action="#" class="h-form-search clearfloat"  style="padding-bottom: 15px;">
+    <!-- start h-search-box-->
+    <div class="h-search-box">
+        <ul class="form-search-row clearfloat" >
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">借款人：</span>
+                <input type="text" name="applyName"  class="easyui-textbox" style="height: 22px; width: 70%;" value=""/>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">转让人：</span>
+                <input type="text" name="transferName"  class="easyui-textbox" style="height: 22px; width: 70%" value=""/>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">项目名称：</span>
+                <input type="text" name="tprojectName"  class="easyui-textbox" style="height: 22px; width: 70%" value=""/>
+
+            </li>
+        </ul>
+        <ul class="form-search-row clearfloat">
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">转让状态：</span>
+                <select name="state" id="" class="easyui-combobox" style="height: 22px; width: 70%;">
+                    <option value=" ">请选择</option>
+                    <option value="0">转让中</option>
+                    <option value="1">中标</option>
+                    <option value="2">已撤销</option>
+                    <option value="3">已放款</option>
+                </select>
+            </li>
+        </ul>
+    </div>
+    <!-- end h-search-box-->
+    <div class="h-search-btn">
+        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" name="submit" style="width:80px">查询</a>
+    </div>
+</form>
+<script>
+    var transferForm ={
+        id:"#transferForm",
+        init:function(){
+            $("#transferForm [name='submit']").click(function(){
+                transferForm.submit();
+            })
+        },
+        submit:function(){
+            var param = {};
+            Utils.bindProps($(transferForm.id),param,false);
+            transferTable.init(transferTable.url,param);
+        }
+    };
+    $(function () {
+        transferForm.init();
+        $.parser.parse(".h-form-search");
+        $('#Q_contractType_S').combobox({
+            url:'data/contract-combobox.json',
+            valueField:'id',
+            textField:'name'
+        });
+    })
+</script>

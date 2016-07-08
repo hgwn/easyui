@@ -1,0 +1,189 @@
+﻿<div id="role_ll" class="easyui-layout"
+	style="width: 1000px; height: 600px;">
+	<div class="easyui-layout" data-options="region:'west'"
+		style="width: 450px;">
+		<table id="dg_role" border="0"></table>
+	</div>
+	<div class="easyui-layout" data-options="region:'east'"
+		style="width: 550px;">
+		<div id="role_tabs" class="easyui-tabs"
+			style="width: 100%; height: 100%;">
+			<div title="授权列表" style="overflow: auto; padding: 20px;"
+				id="tab_accessList" data-options="tools:'#tab_accessList_tools'">单击左表一条数据进行加载</div>
+			<div title="成员列表" style="padding: 20px;" id="tab_opGird"
+				data-options="tools:'#tab_opGird_tools'">单击左表一条数据进行加载</div>
+		</div>
+
+	</div>
+	<div id="tab_accessList_tools">
+		<a href="javascript:void(0)" class="icon-mini-add" id="accessAdd"></a>
+		<a href="javascript:void(0)" class="icon-remove" id="accessRemove"></a>
+	</div>
+	<div id="tab_opGird_tools">
+		<a href="javascript:void(0)" class="icon-mini-add" id="operatorAdd"></a>
+		<a href="javascript:void(0)" class="icon-remove" id="operatorRemove"></a>
+	</div>
+</div>
+<script type="text/javascript" src="html/admin/role/dialogs.js"></script>
+<script type="text/javascript">
+	var roleTable = {
+		id : "#dg_role",
+		url : {},
+		roleId : 0,
+		params : {
+			"token" : op.data.token
+		},
+		init : function(url, params) {
+			$("#accessAdd").bind('click', function() {
+				if (accessFormDlg) {
+					if (roleTable.roleId != 0) {
+						data = {
+							role : {
+								id : roleTable.roleId
+							}
+						};
+						accessFormDlg.show("添加权限", data);
+					} else {
+						MessageBox.info("请在左表选定一个角色进行添加！");
+					}
+				}
+			});
+			$("#accessRemove").bind('click', function() {
+				if (accesstable) {
+					accesstable.remove();
+				}
+			});
+			$("#operatorAdd").bind('click', function() {
+				if (roleOperatorTableDlg) {
+					if (roleTable.roleId != 0) {
+						data = {
+							role : {
+								id : roleTable.roleId
+							}
+						};
+						roleOperatorTableDlg.show("添加成员", data);
+					} else {
+						MessageBox.info("请在左表选定一个角色进行添加！");
+					}
+				}
+			});
+			$("#operatorRemove").bind('click', function() {
+				if (roleOptable) {
+					roleOptable.remove(roleTable.roleId);
+				}
+			});
+			roleTable.url = url;
+			$.extend(roleTable.params, params);
+			roleTable.render();
+		},
+		reload : function() {
+			$('#dg_role').datagrid("reload");
+		},
+		remove : function(id) {
+			var data = {
+				id : id
+			};
+			var url = "/admin/sdk/op/role/remove?id=" + data.id + "&token="
+					+ encodeURIComponent(op.data.token);
+			MessageBox.confirm('是否删除', function() {
+				$.post(url, function(data) {
+					roleTable.reload();
+				});
+			});
+		},
+		render : function() {
+			$('#dg_role').datagrid({
+				title : '角色列表',
+				url : roleTable.url,
+				queryParams : roleTable.params,
+				pagination : true,
+				nowrap : true,
+				fitColumns : true,
+				striped : true,
+				singleSelect : true,
+				onClickRow : function(index, row) {
+					var pp = $('#role_tabs').tabs('getSelected');
+					roleTable.roleId = row.id;
+					roleTable.switchTab(pp.panel('options').title);
+				},
+				columns : [ [ {
+					field : 'id',
+					title : 'Item ID',
+					width : 40,
+					sortable : true,
+					hidden : true
+				}, {
+					field : 'name',
+					title : '名称',
+					width : 40
+				}, {
+					field : 'remark',
+					title : '备注',
+					width : 80,
+					align : 'center'
+				} ] ],
+
+				toolbar : [ {
+					text : '添加',
+					iconCls : 'icon-add',
+					handler : function() {
+						roleFormDlg.show("添加角色");
+					}
+				}, '-', {
+					text : '修改',
+					iconCls : 'icon-edit',
+					handler : function() {
+						var rows = $(roleTable.id).datagrid("getSelections");
+						if (rows.length != 1) {
+							MessageBox.info("请选定一条数据进行修改，不能多选！");
+						} else {
+							roleFormDlg.show("修改角色", rows[0]);
+						}
+					}
+				}, '-', {
+					text : '删除',
+					iconCls : 'icon-remove',
+					handler : function() {
+						var rows = $(roleTable.id).datagrid("getSelections");
+						if (rows.length != 1) {
+							MessageBox.info("请选定一条数据进行修改，不能多选！");
+						} else {
+							roleTable.remove(rows[0].id);
+						}
+					}
+				}, '-' ]
+			});
+		},
+		switchTab : function(title) {
+			if ("授权列表" == title) {
+				$("#tab_accessList").load("html/admin/access/index.html",
+						function() {
+							accesstable.roleId = roleTable.roleId;
+							if(roleTable.roleId!=0){
+								accesstable.init("/admin/sdk/op/access/findAllByRoleId?roleId="+ roleTable.roleId);
+							}
+						});
+			} else {
+				$("#tab_opGird").load(
+						"html/admin/role/opTable.html",
+						function() {
+							if(roleTable.roleId!=0){
+								roleOptable.init("/admin/sdk/op/findAll?roleId="
+									+ roleTable.roleId);
+							}
+						});
+			}
+		}
+	};
+	$('#role_ll').layout();
+	$('#role_tabs').tabs({
+		border : false,
+		onSelect : function(title) {
+			roleTable.switchTab(title);
+		}
+	});
+	$(function() {
+		roleTable.init("/admin/sdk/op/role/findAll");
+	});
+</script>
+

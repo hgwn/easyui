@@ -1,0 +1,38 @@
+<!--列表 流标-->
+<form id="listTableDialogForm">
+    <table class="table-detail" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+            <th width="15%;">流标意见:</th>
+            <td colspan="3" style="position: relative; padding: 5px;">
+                <input type="text" class="easyui-textbox" name="remarks" data-options="multiline:true" required="true" missingMessage="不能为空"  style=" height: 60px; width: 100%;margin: auto;" placeholder="请填写流标意见">
+            </td>
+        </tr>
+    </table>
+</form>
+<script>
+    var listTableDialogForm = {
+        url:factory.url.flowDialogForm,
+        //ajax提交
+        submit:function(){
+            var remarks = $('#listTableDialogForm').find('input[name=remarks]').val();
+            var isValid = $('#listTableDialogForm').form('validate');
+            var pamra = {remarks:remarks,projectIds:listTable.projectIds};
+            if(isValid){
+                factory.httpPut(listTableDialogForm.url,pamra,function(data){
+                    $('#listTableDialog').dialog('close');
+                    if(data.code==0){
+                        MessageBox.info(data.msg);
+                    }else{
+                        MessageBox.info("失败!");
+                        console.log(data);
+                    }
+                    listTableDialogForm.reset();
+                    listTable.reload();
+                });
+            }
+        },
+        reset:function(){
+            $('#listTableDialogForm').form('clear');
+        }
+    };
+</script>

@@ -1,0 +1,143 @@
+<div style="padding:10px 5px 5px;">
+    <a href="javascript:void(0)" class="easyui-linkbutton l-btn l-btn-small" onclick="addProjectForm.submitForm();">
+        <span class="l-btn-left l-btn-icon-left"><span class="l-btn-text">确认无误，发布</span>
+        <span class="l-btn-icon icon-save">&nbsp;</span></span>
+    </a>
+    <a href="javascript:void(0)" class="easyui-linkbutton l-btn l-btn-small"  onclick="addProjectForm.clearForm();" >
+        <span class="l-btn-left l-btn-icon-left"><span class="l-btn-text">重置表单</span>
+        <span class="l-btn-icon icon-reload">&nbsp;</span></span>
+    </a>
+
+</div>
+<!--start form-->
+<form id="addProjectForm" method="post">
+    <table class="table-detail" cellpadding="0" cellspacing="0" border="0" id="addProjectTable">
+        <tr>
+            <th>借款产品：<span class="required" style=" color:red;">*</span></th>
+            <td>
+                <input class="easyui-textbox" required="true"  missingMessage="不能为空" id="productName" style="width:200px" readonly="readonly" name="productName" onclick="addProjectForm.selectProduct();"><a class="link add easyui-linkbutton" style="color:#F3EEEE;"  href="javascript:addProjectForm.selectProduct();">选择产品</a>（请选择产品再填以下信息）</td>
+            <th>借款会员：<span class="required" style=" color:red;">*</span></th>
+            <td>
+            <input class="easyui-textbox"  style="width:160px;" type="text" id="userId" name="userName" required="true"  missingMessage="不能为空" readonly="readonly" onfocus="addProjectForm.userSelect();"/><a class="link add easyui-linkbutton" style="color:#F3EEEE;" href="javascript:addProjectForm.userSelect();">选择会员</a>&nbsp;&nbsp;&nbsp;&nbsp;
+            <div class="fsh16lh16" id="div_0" style="line-height:34px;"></div>
+        </td>
+        </tr>
+        <tr>
+            <th width="15%">借款标题：<span class="required" style=" color:red;">*</span></th>
+            <td colspan="3">
+                <input class="easyui-textbox"  required="true" missingMessage="不能为空" validType="length[0,30]" invalidMessage="不能超过30个字符！" style="width:90%"  type="text" id="name" name="name"/>
+                <div class="fsh16lh16" id="div_1" style="line-height:34px;"></div>
+            </td>
+        </tr>
+        <tr>
+            <th width="15%">借款金额：<span class="required" style=" color:red;">*</span></th>
+            <td>
+                <input class="easyui-textbox easyui-numberbox"  data-options="events:{keyup: function(){ factory.num(this)},blur: function(){ addProjectForm.interest()} }" required="true" missingMessage="不能为空" style="width:100px;" type="text"   id="loan" name="loan"/>元&nbsp;&nbsp;<label id="ploan_label"></label>
+            </td>
+
+            <th width="15%">借款期限：<span class="required" style=" color:red;">*</span></th>
+            <td><input class="easyui-textbox easyui-numberbox" data-options="events:{keyup: function(){ factory.num(this)},blur: function(){ addProjectForm.interest()} }"  required="true" missingMessage="不能为空" style="width:100px;" type="text"   id="pdeadline" name="deadline"/><label id="pdeadline_label"></label>
+                <div class="fsh16lh16" id="div_3"></div>
+            </td>
+        </tr>
+
+
+        <tr>
+            <th width="15%">年利率：<span class="required" style=" color:red;">*</span></th>
+            <td>
+                <input class="easyui-textbox easyui-numberbox"  data-options="events:{keyup: function(){ factory.num(this)},blur: function(){ addProjectForm.interest()} }" required="true" missingMessage="不能为空" style="width:100px;" type="text" id="prateIn" name="rate"/>%&nbsp;&nbsp;<label id="prateIn_label"></label>
+                <div class="fsh16lh16" id="div_4"></div>
+            </td>
+
+            <th width="15%">筹标期限：<span class="required" style=" color:red;">*</span></th>
+            <td>
+                <input class="easyui-textbox easyui-numberbox" data-options="events:{keyup: function(){ factory.num(this)},blur: function(){ addProjectForm.interest()} }"  required="true" missingMessage="不能为空" style="width:100px;" type="text" id="popenDays" name="openDays"/>天&nbsp;&nbsp;<label id="popenDays_label"></label>
+                <div class="fsh16lh16" id=""></div>
+            </td>
+        </tr>
+
+
+        <tr>
+            <th width="15%">还款方式：<span class="required" style=" color:red;">*</span></th>
+            <td>
+                <select name="repayWay"  id="repayWay" class="easyui-combobox" data-options="onSelect:function(){ addProjectForm.interest() }"  required="true" missingMessage="不能为空" >
+                    <option value="1">一次性还本付息</option>
+                    <option value="2">按月付息,到期还本</option>
+                    <option value="3">等额本息,每月还款</option>
+                    <option value="4">等额本金,每月还款</option>
+                </select>
+
+                <div class="fsh16lh16" id="div_5"></div>
+            </td>
+            <th width="15%">按份投标：</th>
+            <td>
+                <input type="radio" name="isSeveralLoan" value="1" onclick="addProjectForm.showPortion()"/>是
+                <input type="radio" name="isSeveralLoan" value="0" onclick="addProjectForm.hidePortion()" checked="checked"/>否
+            </td>
+        </tr>
+        <tr id="portionTR" style="display: none;">
+            <th width="15%">份额：</th>
+            <td><input class="easyui-textbox" style="width:100px;" type="text" onkeyup="" id="portion" name="portion"/>份
+                <div class="fsh16lh16" id="div_9"></div>
+            </td>
+            <th width="15%"></th><td></td>
+        </tr>
+        <tr id="pInvestTR">
+            <th width="15%">起投金额：<span class="required" style=" color:red;">*</span></th>
+            <td><input class="easyui-textbox easyui-numberbox" data-options="events:{keyup: function(){ factory.num(this)} }"  required="true" missingMessage="不能为空" style="width:100px;" type="text" onkeyup="" id="minInvest" name="minInvest"/>元
+                <div class="fsh16lh16" id="div_6"></div>
+            </td>
+            <th width="15%"></th><td></td>
+        </tr>
+        <tr>
+            <th width="15%">实际支付利息： </th>
+            <td><span id="interest"></span></td>
+
+            <th width="15%">投标返金比例：</th>
+            <td><input class="easyui-textbox easyui-numberbox" data-options="events:{keyup: function(){ factory.num(this)} }" style="width:100px;" type="text" id="investReturnAmoutRate" name="investReturnAmoutRate">%
+            <div class="fsh16lh16" id="div_7"></div>
+        </td>
+
+
+        </tr>
+        <tr>
+            <th width="15%">是否需要密码：</th>
+            <td>
+                <input type="radio" name="needPassword" value="1" onclick="addProjectForm.showPpassword()"/>是
+                <input type="radio" name="needPassword" value="0" onclick="addProjectForm.hidePpassword()" checked="checked"/>否
+            </td>
+            <th width="15%">
+                <span id="ppasswordTH"></span>
+            </th>
+            <td>
+                <span id="pPassword" style="display: none;"><input class="easyui-textbox" style="width:100px;"  type="password"  name="password"></span>
+            </td>
+        </tr>
+        <tr>
+            <th width="15%">服务费用请参照：<td colspan="3"><a  href="javascript:addProjectForm.addProjectRateDialog();" title="资费说明">资费说明</a></td>
+        </tr>
+        <tr>
+            <th width="15%" >借款描述：</th>
+            <td colspan="3">
+                <div  style="position: relative; width: 100%;  overflow: hidden;">
+                    <div class="fsh16lh16" id="ueditor" style="padding: 10px; overflow: hidden;"></div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</form>
+<!--end form-->
+
+<div id="selectProductDialog">选择借款产品.</div>
+<div id="userSelectDialog">选择借款人.</div>
+<div id="addProjectRateDialog">资费说明</div>
+
+<script type="text/javascript">
+
+    $(function(){
+        addProjectForm.initDialog();
+        //加载富文本编辑器
+        $("#ueditor").load("html/p2p/business/wysiwyg.html");
+        $.parser.parse("#addProjectForm");
+    })
+</script>

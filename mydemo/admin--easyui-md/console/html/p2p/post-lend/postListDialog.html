@@ -1,0 +1,294 @@
+<div style="position: relative; padding: 5px;">
+    <!--start 借款项目信息-->
+    <dl class="audit-box" id="audit_project2">
+        <dt class="audit-title">借款项目信息</dt>
+        <dd class="audit-content">
+            <table class="table-detail" cellpadding="0" cellspacing="0" border="0">
+                <tbody>
+                <tr>
+                    <th width="15%">项目名称:</th>
+                    <td width="35%">
+                        $name
+                    </td>
+                    <th width="15%">实贷金额:</th>
+                    <td>
+                        <span>$loanReal</span>元
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">申请金额:</th>
+                    <td>
+                        $loan
+                    </td>
+                    <th width="15%">年利率:</th>
+                    <td>
+                        <span>$rate</span>%
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">还款方式:</th>
+                    <td>
+                        $repayWayName
+                    </td>
+                    <th width="15%">手续费比例:</th>
+                    <td>
+                        1.00%
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">标的类型:</th>
+                    <td>
+                        $typeName
+
+                    </td>
+                    <th width="15%">项目状态:</th>
+                    <td>
+                        $stateName
+                    </td>
+                </tr>
+
+                <tr>
+                    <th width="15%">期限:</th>
+                    <td>
+                        <span>$deadline</span><span>$deadlineTypeName</span>
+                    </td>
+                    <th width="15%">开标天数:</th>
+                    <td>
+                        $openDays
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">申请人:</th>
+                    <td>
+                        $applicantName
+                    </td>
+                    <th width="15%">申请时间:</th>
+                    <td>
+                        $applicationTime
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">是否担保:</th>
+                    <td>
+                        $isNeedGuaranteeName
+                    </td>
+                    <th width="15%">&nbsp;</th>
+                    <td>
+
+                    </td>
+                </tr>
+                <tr>
+                    <th>平台审核备注:</th>
+                    <td colspan="3">$checkRemarksPlatform</td>
+                </tr>
+                </tbody></table>
+        </dd>
+    </dl>
+    <!--end 借款项目信息-->
+
+    <!-- start 借款条件进度-->
+    <dl class="audit-box">
+        <dt class="audit-title">借款条件进度</dt>
+        <dd class="audit-content clearfloat">
+            <div class="fl"  style="width: 100px;">资料完成情况：</div>
+            <div class="audit-condition fl" id="audit-condition2">
+                <label class="itemTmpl" style="display: none;">
+                    <input type="checkbox" name="condition" value="" checked="checked" disabled="disabled">
+                    $materialsName
+                </label>
+            </div>
+        </dd>
+    </dl>
+    <!-- end 借款条件进度-->
+
+    <!-- start 用户信息-->
+    <dl class="audit-box" style="" id="audit_personal2">
+        <dt class="audit-title">用户信息</dt>
+        <dd class="audit-content clearfloat">
+            <table class="table-detail" cellpadding="0" cellspacing="0" border="0">
+                <tbody>
+                <tr>
+                    <th width="15%">用户名:</th>
+                    <td width="35%">
+                        $realName
+                    </td>
+                    <th width="15%">年龄:</th>
+                    <td>
+                        $age
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">性别:</th>
+                    <td width="35%">
+                        $sex
+                    </td>
+                    <th width="15%">婚否:</th>
+                    <td>
+                        $marriaged
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">地址:</th>
+                    <td>
+                        $address
+                    </td>
+                    <th width="15%">学历:</th>
+                    <td>
+                        $edu
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">学校:</th>
+                    <td>
+                        $school
+                    </td>
+                    <th width="15%">借入信用:</th>
+                    <td>
+                        $borrowingCredit
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">借出信用:</th>
+                    <td>
+                        $lendingCredit
+
+                    </td>
+                    <th width="15%">是否购车:</th>
+                    <td>
+                        $whetherCar
+                    </td>
+                </tr>
+
+                <tr>
+                    <th width="15%">住宅状况:</th>
+                    <td>
+                        $housingConditions
+                    </td>
+                    <th width="15%">是否有车贷:</th>
+                    <td>
+                        $whetherCarLoan
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">是否有房贷:</th>
+                    <td>
+                        $whetherBuyLoan
+                    </td>
+                    <th width="15%">工作年限:</th>
+                    <td>
+                        $workingYearName
+                    </td>
+                </tr>
+                <tr>
+                    <th width="15%">收入范围:</th>
+                    <td>
+                        $incomeRangeName
+                    </td>
+                    <th width="15%">公司规模:</th>
+                    <td>
+                        $companySizeName
+                    </td>
+                </tr>
+                <th>备注:</th>
+                <td colspan="3">$remark</td>
+                </tr>
+                </tbody></table>
+        </dd>
+    </dl>
+    <!-- end 用户信息-->
+
+</div>
+
+<script type="text/javascript">
+    //调用接口项目详情
+    var postListDialog={
+        url:"/p2p/project/projectDetail",
+        params:{projectId:postListTable.rootScope.projectId},
+        rootScope:{},
+        echoObj :{},
+        init:function(){
+            postListDialog.echo();
+        },
+        echo:function(){
+            factory.httpGet(postListDialog.url,postListDialog.params,function(data){
+                postListDialog.echoObj = data.result.project;
+                for(var k in data){
+                    postListDialog.rootScope[k] = data[k];
+                }
+                var user = {};
+                var obj ={};
+                for(var k in data.result.project){
+                    obj[k] = data.result.project[k];
+                }
+                for(var k in data.result.user){
+                    user[k] = data.result.user[k];
+                }
+                //isNeedGuarantee 是否选择担保 isNeedGuarantee 1是 0否
+                if(obj.isNeedGuarantee ==1){
+                    obj.isNeedGuaranteeName = "是";
+                }else{
+                    obj.isNeedGuaranteeName = "否";
+                }
+                var deadlineTypeObj = {"DAY":"天","MONTH":"月","YEAR":"年"};
+                obj.deadlineTypeName = deadlineTypeObj[obj.deadlineType];
+
+                //按钮操作：1标的认证、2设置担保、3附件管理 4开标 、 5流标  6满标  都在project  ：audit.echoObj = data.result.project;
+                //开标设置时间条件：state=1 && openDate（开标时间）> 当前时间   || openDate == null
+                // state = 1, 1234可用
+                //  state  != 1 不可用 1234
+                //流标操作  在 state = 1,2,3
+                //满标操作 只能在state =2(招标中 state=2 && complete ==100)
+
+                //type 1:信用认证标 2:实地认证标 3:担保机构标 4:智能理财标
+                var  type = ["信用认证标","实地认证标","担保机构标","智能理财标"];
+                if(obj.type){
+                    obj.typeName =type[Number(obj.type)-1];
+                }else{
+                    obj.typeName = obj.type;
+                }
+                //debugger;
+                var  state = ["新申请","招标中","满标","还款中","已还清","流标"];
+                if(obj.state){
+                    obj.stateName = state[Number(obj.state)-1];
+                }else{
+                    obj.stateName = obj.state;
+                }
+                postListDialog.echoObj.stateName = obj.stateName;
+                var  repayWayName = ["一次性还本付息","按月付息","按月付息","到期还本","等额本金，每月还款"];
+                if(obj.repayWay){
+                    obj.repayWayName = repayWayName[Number(obj.repayWay)-1];
+                }else{
+                    obj.repayWayName = obj.repayWay;
+                }
+
+                var typeName = ["信用认证标","实地认证标","担保机构标","智能理财标"];
+                if(obj.type){
+                    obj.typeName = typeName[Number(obj.type)-1];
+                }else{
+                    obj.typeName = obj.type
+                }
+                user.sex = user.sex=1? "男":"女";
+                user.marriaged = user.marriaged=1? "是":"否";
+                user.whetherCar = user.whetherCar=0? "是":"否";
+                user.whetherCarLoan = user.whetherCarLoan=0? "是":"否";
+                user.whetherBuyLoan = user.whetherBuyLoan=0? "是":"否";
+                //housingConditions 0：自置无按揭，1：自置有按揭，3：商住两用，4：租用，5：与父母共住，6：集体宿舍，7：其他
+                var housingConditions = ["自置无按揭","自置有按揭","商住两用","租用","与父母共住","集体宿舍","其他"];
+                user.housingConditionsName = housingConditions[Number(user.housingConditions)];
+                //workingYear 0：半年以内，1：1年以内，2：2年以内，3：3年以内，4：3年以上
+                var workingYear = ["半年以内","1年以内","2年以内","3年以内","3年以上"];
+                user.workingYearName = workingYear[Number(user.workingYear)];
+                // companySize 0：小于50人，1：50人至200人，2:200人至1000人，3：1千人至1万人，4：大于一万人
+                var companySize = ["小于50人","50人至200人","200人至1000人","1千人至1万人","大于一万人"];
+                user.companySizeName = companySize[Number(user.companySize)];
+                Utils.bindData($("#audit_project2"),obj);
+                Utils.bindData($("#audit_personal2"),user);
+                Utils.bindList("#audit-condition2", ".itemTmpl", data.result.tuserAuditmat);
+            })
+        }
+    };
+
+    $(function(){
+        postListDialog.init();
+    });
+</script>

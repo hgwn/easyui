@@ -1,0 +1,95 @@
+<!--待放款的债权转让-->
+<!--start tprojecttransfer-->
+<table id="tprojecttransfer" class="easyui-datagrid"
+       data-options="remoteSort:false,striped:true,fit:false, rownumbers:true" style="height:400px; width:800px;">
+    <thead frozen="true">
+    <tr>
+        <th data-options="field:'ck',checkbox:true"></th>
+    </tr>
+    </thead>
+    <thead>
+    <tr>
+        <th data-options="field:'auctionName',width:120">投资人</th>
+        <th data-options="field:'auctionPrice',width:60">投资额</th>
+        <th data-options="field:'auctionTime',width:120">投标时间</th>
+        <th data-options="field:'fear',width:60">平台费用</th>
+        <th data-options="field:'auctionState',width:60">竞标状态</th>
+        <!--<th data-options="field:'authState',width:60,formatter:tprojecttransfer.authState">审核状态</th>-->
+    </tr>
+    </thead>
+</table>
+
+<script type="text/javascript">
+    var tprojecttransfer = {
+        loadData:{},
+        url:"html/p2p/transfer/tprojecttransfer2.json",
+        params:{},
+        //初始化
+        init:function(url,params){
+            if(url !=undefined){
+                tprojecttransfer.url = url;
+            }
+            if(params && typeof params ==="object"){
+                $.extend(tprojecttransfer.params, params);
+            }
+            factory.httpPost(tprojecttransfer.url,tprojecttransfer.params,function(data){
+                for(var k in data){
+                    tprojecttransfer.loadData[k] = data[k];
+                }
+                if(data.result){
+                    tprojecttransfer.loadData.rows =  data.result;
+                }
+                if(data.totalElements){
+                    tprojecttransfer.loadData.total =  data.totalElements;
+                }
+                tprojecttransfer.render(tprojecttransfer.loadData);
+            });
+        },
+        //刷新
+        reload:function(){
+            $('#tprojecttransfer').datagrid("reload");
+        },
+        //渲染datagrid
+        render:function(data){
+            $('#tprojecttransfer').datagrid({
+                // singleSelect:true,
+               //pagination : true,
+                nowrap : true,
+                fitColumns : true,
+                striped : true,
+                queryParams:tprojecttransfer.params,
+                toolbar:tprojecttransfer.toolbar,
+                //url:tprojecttransfer.url,
+                data:data,
+                method:'post'
+            });
+        },
+        authState:function(value,row,index){
+            if(row.authState){
+                switch (row.authState){
+                    case 1:
+                        return "已审核";
+                    case 2:
+                        return "竞标中";
+                    default :
+                        return " "
+                }
+            }else{
+                if(value ===0) return "未审核";
+                return value;
+            }
+        }
+    };
+
+    $(function(){
+        //调用表格初始化函数
+        tprojecttransfer.init();
+        //解决jq/easyui异步加载组件
+        $.parser.parse("#tprojecttransfer");
+
+        /*
+        * 1/审核退回未中标转账 :
+        * */
+    });
+</script>
+<!--end tprojecttransfer-->

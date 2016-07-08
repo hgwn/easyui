@@ -1,0 +1,88 @@
+﻿<br/>
+<div align="center">
+    <input type="text" name="param" id="param" value=""/>
+</div>
+<br/>
+<div id="roleOperatorList"></div>
+
+<script type="text/javascript">
+    var roleOperatorBox = {
+        queryParams : {
+            "token" : op.data.token,
+            "page" : 1,
+            "rows" : 1000
+        },
+
+        init : function(url) {
+
+            $('#roleOperatorList').datalist({
+                url : url,
+                method : 'post',
+                queryParams : this.queryParams,
+                columns : [[{
+                    field : 'Id',
+                    title : 'Name',
+                    width : 80,
+                    formatter : function(value, row, index) {
+                        if (row.name) {
+                            return row.name;
+                        } else {
+                            return value;
+                        }
+                    }
+                }]],
+                checkbox : true,
+                rownumbers : true,
+                singleSelect : false,
+                lines : true,
+                pagination : true,
+                pagePosition : 'bottom',
+                pageNumber : 1,
+                pageSize : 10
+            });
+
+            $("#param").change(function() {
+
+                $.extend(operatorBox.queryParams, {
+                    "operatorName" : $("#param").val()
+                });
+                var node = groupTree.getSelected();
+                roleOperatorBox.init("/admin/sdk/op/findAll/notEqualRoleId?roleId=" + roleTable.roleId);
+
+            });
+
+        },
+
+        getChecked : function() {
+            return $('#roleOperatorList').datagrid('getChecked');
+        },
+        submit : function() {
+
+            var checkeds = this.getChecked();
+
+            if (checkeds == "") {
+                MessageBox.info('请选择要读取的项');
+                return false;
+            }
+
+            var params = "";
+
+            for (var s in checkeds) {
+
+                params += checkeds[s].id + ",";
+            }
+
+            //去掉最后一个,
+            params = params.substring(0, params.length - 1);
+
+            $.post("/admin/sdk/op/role/" + roleTable.roleId + "/operators/" + params + "?token=" + encodeURIComponent(op.data.token), function(data) {
+                //optable.init("/sdk/op/findAll?groupId=" + node.groupId);
+                roleOperatorTableDlg.close();
+            });
+        }
+    };
+
+    $(function() {
+        roleOperatorBox.init("/admin/sdk/op/findAll/notEqualRoleId?roleId=" + roleTable.roleId);
+    }); 
+</script>

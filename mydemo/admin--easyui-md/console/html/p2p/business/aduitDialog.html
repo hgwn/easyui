@@ -1,0 +1,46 @@
+<form id="aduitDialogForm">
+    <table class="table-detail" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+            <th>审核状态:</th>
+            <td colspan="3">
+                <label><input type="radio" name="states" value="" checked="checked">同意</label>
+                <label><input type="radio" name="states" value="" >流标</label>
+                <label><input type="radio" name="states" value="">放标</label>
+                <label><input type="radio" name="states" value="">招标中</label>
+                <label><input type="radio" name="states" value="">满标</label>
+            </td>
+        </tr>
+        <tr>
+            <th>审核意见:</th>
+            <td colspan="3" style="position: relative; padding: 5px;">
+                <input type="text" class="easyui-textbox" name="" data-options="multiline:true" style=" height: 60px; width: 100%;margin: auto;" placeholder="请填写审核意见">
+            </td>
+        </tr>
+    </table>
+</form>
+
+<script>
+    var aduitDialogForm={
+        url:"data/datagrid2.json",
+        params:{},
+        submit:function(){
+            if(!($('#aduitDialogForm').form('enableValidation').form('validate'))){
+                return ;
+            }
+            //$('input[name=states][checked]').val();
+            Utils.bindProps("#aduitDialogForm",aduitDialogForm.params,false);
+            factory.httpPut(aduitDialogForm.url,aduitDialogForm.params,function(data){
+                $('#auditDialog').dialog("close");
+                if(data.code==0){
+                    MessageBox.info(data.msg);
+                }else{
+                    MessageBox.info("失败!");
+                }
+                aduitDialogForm.reset();
+            });
+        },
+        reset:function(){
+            $("#aduitDialogForm").form("clear");
+        }
+    };
+</script>

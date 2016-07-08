@@ -1,0 +1,138 @@
+<!--会员提成月结datagrid数据-->
+<table id="trebateMonthlysTable" class="easyui-datagrid"
+       data-options="remoteSort:false,striped:true,fit:false,  pagination : true, rownumbers:true" style="height:450px; width:100%">
+    <thead frozen="true">
+    <tr>
+        <th data-options="field:'ck',checkbox:true"></th>
+    </tr>
+    </thead>
+    <thead>
+    <tr>
+        <th data-options="field:'contractId',hidden:true"></th>
+        <th data-options="field:'userName'">会员</th>
+        <th data-options="field:'year',width:60">年份</th>
+        <th data-options="field:'month',width:60">月份</th>
+        <th data-options="field:'amount',width:80">提成总额（元）</th>
+        <th data-options="field:'realPayAmount',width:100">实付提成（元）</th>
+        <th data-options="field:'isPayOff',width:80,formatter:trebateMonthlysTable.isPayOff">是否付清提成</th>
+        <th data-options="field:'payDate',width:160">支付日期</th>
+        <th data-options="field:'createTime',width:160">结算日期</th>
+    </tr>
+    </thead>
+</table>
+<script type="text/javascript">
+    var trebateMonthlysTable = {
+        rootScope:{},//定义详情页传参对象
+        url:factory.url.trebateMonthlysTable,
+        params:{},
+        //初始化
+        init:function(url,params){
+            if(url !=undefined){
+                trebateMonthlysTable.url = url;
+            }
+            if(params && typeof params ==="object"){
+                $.extend(trebateMonthlysTable.params, params);
+            }
+            trebateMonthlysTable.render();
+        },
+        //刷新
+        reload:function(){
+            $('#trebateMonthlysTable').datagrid("reload");
+        },
+        //渲染datagrid
+        render:function(){
+            $('#trebateMonthlysTable').datagrid({
+                singleSelect:true,
+                pagination : true,
+                nowrap : true,
+                fitColumns : true,
+                striped : true,
+                queryParams:trebateMonthlysTable.params,
+                toolbar:trebateMonthlysTable.toolbar,
+                url:trebateMonthlysTable.url,
+                method:'get'
+            });
+        },
+        //定义工具条
+        toolbar:[{
+            text:'查看',
+            iconCls:'icon-add',
+            handler:function(){
+                var  row = $('#trebateMonthlysTable').datagrid('getSelections');
+                if(row.length){
+                    if(row.length >1){
+                        MessageBox.info('只能勾选一条数据！');
+                        return;
+                    }
+                    for(var k in row[0]){
+                        trebateMonthlysTable.rootScope[k] = row[0][k];
+                    }
+                    mainTab.addTab('明细','html/p2p/financial/trebateMonthlysList.html');
+                    setTimeout(function(){
+                        trebateMonthlysList.init(trebateMonthlysList.url,{"trebateMonthlyId":trebateMonthlysTable.rootScope.rebateMonthlyId});
+                    },500);
+                }else{
+                    MessageBox.info('请勾选数据'+'<br><br>或者双击某行查看详情!');
+                }
+            }
+        },'-',{
+            text:'导出月结记录',
+            iconCls:'icon-add',
+            handler:function(){
+                var  len = $('#trebateMonthlysTable').datagrid('getSelections').length;
+                if(len){
+                    alert('开发中...');
+                }else{
+                    MessageBox.info('请勾选数据！');
+                }
+            }
+        },'-',{
+            text:'导出明细',
+            iconCls:'icon-add',
+            handler:function(){
+                var  len = $('#trebateMonthlysTable').datagrid('getSelections').length;
+                if(len){
+                    alert('开发中...');
+                }else{
+                    MessageBox.info('请勾选数据！');
+                }
+            }
+        }],
+        isPayOff:function(value,row,index){
+            if(row.isPayOff){
+                if(row.isPayOff==1){
+                    return "是";
+                }
+                else{
+                    return "否";
+                }
+            }
+        }
+    };
+
+    //双击查看详情
+    $('#trebateMonthlysTable').datagrid({
+        onDblClickRow: function(index,row){
+            $(this).datagrid('clearSelections');
+            $(this).datagrid('selectRow',index);
+            for(var k in row){
+                trebateMonthlysTable.rootScope[k] = row[k];
+            }
+            mainTab.addTab('明细','html/p2p/financial/trebateMonthlysList.html');
+            setTimeout(function(){
+                trebateMonthlysList.init(trebateMonthlysList.url,{"trebateMonthlyId":trebateMonthlysTable.rootScope.rebateMonthlyId});
+            },500);
+        }
+    });
+    $(function(){
+        //调用表格初始化函数
+        trebateMonthlysTable.init();
+        //解决jq/easyui异步加载组件
+        $.parser.parse("#trebateMonthlysTable");
+
+        factory.httpGet(trebateMonthlysTable.url,trebateMonthlysTable.params,function(data){
+            console.log("trebateMonthlysTable....");
+            console.log(data);
+        });
+    });
+</script>

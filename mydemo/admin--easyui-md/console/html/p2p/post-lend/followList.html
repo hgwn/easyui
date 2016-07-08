@@ -1,0 +1,88 @@
+<!--跟进----待收款的借款-->
+<table id="followList" class="easyui-datagrid"
+       data-options="remoteSort:false,striped:true,fit:false,  pagination : true, rownumbers:true" style="height:450px; width:100%">
+    <thead frozen="true">
+    <tr>
+        <th data-options="field:'ck',checkbox:true"></th>
+    </tr>
+    </thead>
+    <thead>
+    <tr>
+        <th data-options="field:'code',width:120">项目名称</th>
+        <th data-options="field:'content',width:60">还款期</th>
+        <th data-options="field:'createTime',width:120">应还款</th>
+        <th data-options="field:'createTime',width:60">实际还款</th>
+        <th data-options="field:'createTime',width:160">计划还款时间</th>
+        <th data-options="field:'createTime',width:60">是否还款</th>
+        <th data-options="field:'createTime',width:60">剩余还款</th>
+        <th data-options="field:'createTime',width:60">逾期罚息</th>
+        <th data-options="field:'createTime',width:60">是否逾期</th>
+        <th data-options="field:'createTime',width:60">逾期天数</th>
+        <th data-options="field:'createTime',width:60">还款人</th>
+        <th data-options="field:'createTime',width:100">用户名</th>
+    </tr>
+    </thead>
+</table>
+
+<script type="text/javascript">
+    var followList = {
+        rootScope:{},
+        url:"data/contract.json",
+        params:{},
+        //初始化
+        init:function(url,params){
+            if(url !=undefined){
+                followList.url = url;
+            }
+            if(params && typeof params ==="object"){
+                $.extend(followList.params, params);
+            }
+            followList.render();
+        },
+        //刷新
+        reload:function(){
+            $('#followList').datagrid("reload");
+        },
+        //渲染datagrid
+        render:function(){
+            $('#followList').datagrid({
+                // singleSelect:true,
+                pagination : true,
+                nowrap : true,
+                fitColumns : true,
+                striped : true,
+                queryParams:followList.params,
+                toolbar:followList.toolbar,
+                url:followList.url,
+                method:'post'
+            });
+        },
+        //定义工具条
+        toolbar:[{
+            text:'提醒还款',
+            iconCls:'icon-add',
+            handler:function(){
+                var result = $('#followList').datagrid('getSelections');
+                var data = {};
+                data.list = [];
+                if(result.length){
+                    for(var i=0; i<result.length; i++){
+                        data.list.push(result[i].contractId);
+                    }
+                    factory.httpPost("data/contract.json",data,function(data){
+                        MessageBox.info(data.msg+"...跟进数据提交..");
+                    });
+                }else{
+                    MessageBox.info("请勾选数据！");
+                }
+            }
+        }]
+    };
+
+    $(function(){
+        //调用表格初始化函数
+        followList.init();
+        //解决jq/easyui异步加载组件
+        $.parser.parse("#followList");
+    });
+</script>

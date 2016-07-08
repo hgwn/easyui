@@ -1,0 +1,15 @@
+<!--member.html会员可提成页面-->
+<!--start trebateRecords-->
+<div id="member">
+    <div class="form-search"></div>
+    <div class="form-table"></div>
+</div>
+<!--end trebateRecords-->
+<script type="text/javascript">
+    $(function(){
+        //异步加载div片段--查询条件
+        $("#member div.form-search").load("html/p2p/financial/memberForm.html");
+        $("#member div.form-table").load("html/p2p/financial/memberTable.html");
+        $.parser.parse("#member");
+    });
+</script>

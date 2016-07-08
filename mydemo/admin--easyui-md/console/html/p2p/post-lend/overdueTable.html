@@ -1,0 +1,131 @@
+<!--逾期借款-->
+<table id="overdueTable" class="easyui-datagrid"
+       data-options="remoteSort:false,striped:true, fit:false,  pagination : true, rownumbers:true" style="height:450px; width:100%">
+    <thead frozen="true">
+    <tr>
+        <th data-options="field:'ck',checkbox:true"></th>
+    </tr>
+    </thead>
+    <thead>
+    <tr>
+        <th data-options="field:'contractId',hidden:true"></th>
+        <th data-options="field:'name'">项目名称</th>
+        <th data-options="field:'content'">还款期</th>
+        <th data-options="field:'user'">应还款</th>
+        <th data-options="field:'content'">实际还款</th>
+        <th data-options="field:'content'">还款时间</th>
+        <th data-options="field:'content'">是否还款</th>
+        <th data-options="field:'content'">剩余还款</th>
+        <th data-options="field:'content'">逾期罚息</th>
+        <th data-options="field:'content'">逾期天数</th>
+        <th data-options="field:'dd'">还款人</th>
+        <th data-options="field:'cc'">用户名</th>
+        <th data-options="field:'createTime',width:50">垫付状态</th>
+    </tr>
+    </thead>
+</table>
+<div id="overdueDialog">详情页</div>
+<script type="text/javascript">
+    var overdueTable = {
+        rootScope:{},
+        url:"/projects",
+        params:{isLate:1},// isLate 0：未逾期 1：已逾期
+        //初始化
+        init:function(url,params){
+            if(url !=undefined){
+                overdueTable.url = url;
+            }
+            if(params && typeof params ==="object"){
+                $.extend(overdueTable.params, params);
+            }
+            overdueTable.render();
+        },
+        //刷新
+        reload:function(){
+            $('#overdueTable').datagrid("reload");
+        },
+        //渲染datagrid
+        render:function(){
+            $('#overdueTable').datagrid({
+                singleSelect:true,
+                fitColumns : true,
+                queryParams:overdueTable.params,
+                toolbar:overdueTable.toolbar,
+                url:overdueTable.url,
+                method:'post'
+            });
+        },
+        //定义工具条
+        toolbar:[{
+            text:'垫付详情',
+            iconCls:'icon-add',
+            handler:function(){
+               if($('#overdueTable').datagrid('getSelections').length){
+                   overdueTable.showDialog();
+               }else{
+                   MessageBox.info('请勾选数据'+'<br><br>或者双击某行查看详情!','info');
+               }
+            }
+        },'-',{
+            text:'逾期垫付',
+            iconCls:'icon-add',
+            handler:function(){
+                var len = $('#overdueTable').datagrid('getSelections').length;
+                if(len){
+                    if(len!=1){
+                        MessageBox.info("只能勾选一条数据！");
+                        return;
+                    }else{
+                        mainTab.addTab("垫付付款","html/p2p/post-lend/overdueList.html");
+                    }
+                }else{
+                    MessageBox.info("请勾选操作的数据!");
+                }
+            }
+        }],
+        state:function(value,row,index){
+            if(row.state){
+                switch (row.state){
+                    case "1":
+                        return "还款中";
+                    case "2":
+                        return "招标中";
+                    default :
+                        return "测试默认值"
+                }
+            }else{
+                return " ";
+            }
+        },
+        initDialog:function(){
+            //dialog
+            $('#overdueDialog').dialog({
+                title: '垫付详情',
+                width: 800,
+                height: 400,
+                closed: true,
+                cache: false,
+                href: 'html/p2p/post-lend/overdueDialog.html',
+                modal: true
+            });
+        },
+        showDialog:function(){
+            $('#overdueDialog').dialog({closed: false});
+        }
+    };
+
+    $(function(){
+        //调用表格初始化函数
+        overdueTable.init();
+        overdueTable.initDialog();
+        $('#overdueTable').datagrid({
+            //双击查看详情
+            onDblClickRow: function(index,row){
+                overdueTable.showDialog();
+            }
+        });
+        //解决jq/easyui异步加载组件
+        $.parser.parse("#overdueTable");
+
+    });
+</script>

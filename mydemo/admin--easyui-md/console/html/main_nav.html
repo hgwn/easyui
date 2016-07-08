@@ -1,0 +1,49 @@
+
+<div id="main_nav">
+	
+	 <span id="main_nav_tmpl" style="display:none;margin-right: 10px;" @value="$link">$name</span>
+	
+    	
+</div>
+<script>
+	  
+
+    var  mainNav={
+    	
+    	    
+    	    init:function(url,params){
+    	    	
+    	    	
+    	    	$.getJSON(url,params,function(data){
+    	       
+    	       	mainNav.render(data);
+    	       	    //$.simpleTab(); 
+    	       	});	
+    	       	
+    	    	
+    	    },  
+    	
+    	    render:function(data){
+    	    	 Utils.bindList("#main_nav","#main_nav_tmpl",data);
+                 
+    	    	  $("#main_nav > span") .click(function(item){
+                      debugger;
+                      mainNav.doclick($(this).attr("value"));
+                      
+                  });
+    	       	
+    	    },
+            doclick:function(data){
+                debugger;
+                if(data || data != ""){
+                    
+                   PorletLoader.loadPorlet("navbar",[{link:data}])  ;
+                    
+                }
+            }
+            
+            
+    	}
+   
+	
+	</script>

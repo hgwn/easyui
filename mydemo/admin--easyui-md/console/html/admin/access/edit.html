@@ -1,0 +1,112 @@
+<div class="padding-10">
+	<form action="" id="accessSaveForm">
+		<div id="access_ll" class="easyui-layout"
+			style="width: 450px; height: 450px;">
+			<div id="assetsChkTree" class="easyui-layout"
+				data-options="region:'west'" style="width: 300px;"></div>
+			<div id="permissionsChk" class="easyui-layout"
+				data-options="region:'east',title:'操作类型'" style="width: 150px;">
+				<div class="form-list form-w-30">
+					<div class="form-row">
+						<label class="form-label">可见：</label>
+						<div class="collection">
+							<input type="checkbox"  name="permissions_chk" value="01" />
+							<div class="form-tip" name="e-permissions_chk"></div>
+						</div>
+					</div>
+					<div class="form-row">
+						<label class="form-label">可操作：</label>
+						<div class="collection">
+							<input type="checkbox" name="permissions_chk" value="10" />
+							<div class="form-tip" name="e-permissions_chk"></div>
+						</div>
+					</div>
+					<div class="form-row">
+						<input type="hidden" id="id" name="id" /> <input type="hidden"
+							id="resources" name="resources" /> <input type="hidden"
+							id="roleId" name="role.id" />
+							<input type="hidden"
+							id="permissions" name="permissions" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+	$('#access_ll').layout();
+	var accessEditFrom = {
+		id : "#accessSaveForm",
+		url : "/admin/sdk/op/access/save?token=" + encodeURIComponent(op.data.token),
+		init : function() {
+			$(accessEditFrom.id).makeform({
+				url : accessEditFrom.url,
+				onsuccess : function(rsp) {
+					if (rsp.code == 0) {
+						$(accessEditFrom.id).trigger("submited", rsp);
+					} else {
+						MessageBox.warn(rsp.msg);
+					}
+				},
+				onError : function(msg, obj, errorlist) {
+					MessageBox.warn(msg);
+				}
+			});
+		},
+		bindEvent : function(event, handler, data) {
+			$(accessEditFrom.id).unbind(event);
+			$(accessEditFrom.id).bind(event, data, handler);
+		},
+		echo : function(data) {
+			accessEditFrom.reset();
+			$("#roleId").val(data.role.id);
+
+		},
+		submit : function(callback) {
+			var chk = assetsTree.getSelected();
+			if (chk.length < 1) {
+				MessageBox.warn("请至少选择一个菜单");
+				return;
+			}
+			var falg = 0*1; 
+			var pers = new Array();
+			$("input[name='permissions_chk']").each(function() {
+				if ($(this).prop("checked")) { 
+					pers[falg] = $(this).val();
+					falg += 1; 
+				} 
+			});
+			if (falg==0){
+				MessageBox.warn("请至少选择一个权限");
+				return;
+			}
+			var result = pers[0] | pers[1];
+			$("#permissions").val(result);
+			var str = "";
+			for ( var i in chk) {
+				str += chk[i].id + ",";
+			}
+			//去掉最后一个,
+			str = str.substring(0, str.length - 1);
+			$("#resources").val(str);
+			$(accessEditFrom.id).submit();
+
+		},
+		reset : function() {
+			//不会清掉hidden 属性 
+			$(accessEditFrom.id)[0].reset();
+			//$(roleEditFrom.id).find("[name='id']").val("");
+		},
+		treeReload : function() {
+			assetsTree.reload();
+		}
+	};
+
+	$(function() {
+		$("#assetsChkTree").load("html/admin/assets/tree.html",
+				function() {
+					assetsTree.init(true);
+				});
+		accessEditFrom.init();
+	});
+</script>

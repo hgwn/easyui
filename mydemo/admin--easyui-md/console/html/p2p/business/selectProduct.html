@@ -1,0 +1,35 @@
+<!--选择借款产品-->
+<table id="selectProduct" class="easyui-datagrid"
+       data-options="remoteSort:false,striped:true,fit:false,pagination : true" style="height:400px; width:100%">
+    <thead>
+    <tr>
+        <th data-options="field:'name'">产品名称</th>
+        <th data-options="field:'amountMin',width:50">最小额度</th>
+        <th data-options="field:'amountMax',width:50">最大额度</th>
+        <th data-options="field:'rateMin',width:60">最小年利率</th>
+        <th data-options="field:'rateMax',width:60">最大年利率</th>
+        <th data-options="field:'deadlineMin',width:60">最小期限</th>
+        <th data-options="field:'deadlineMax',width:60">最大期限</th>
+        <th data-options="field:'auditDaysMin',width:70">最小投标天数</th>
+        <th data-options="field:'auditDaysMax',width:70">最大投标天数</th>
+    </tr>
+    </thead>
+</table>
+<script type="text/javascript">
+    $(function () {
+        //调用初始化函数
+        selectProduct.init();
+        //对表格操作
+        $('#selectProduct').datagrid({
+            //单击行事件
+            onClickRow:function(index,row){
+                selectProduct.rootScope = row;
+                $('#addProjectForm').form('load',{productsLoanId:row.productsLoanId,productName:row.name});
+                $('#selectProductDialog').dialog('close');
+                console.log(selectProduct.rootScope.productsLoanId);
+                //Utils.bindData($("#addProjectTable"),selectProduct.rootScope);
+                addProjectForm.genCondition();
+            }
+        });
+    })
+</script>

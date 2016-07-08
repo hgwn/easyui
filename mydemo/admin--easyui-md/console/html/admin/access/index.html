@@ -1,0 +1,90 @@
+﻿<table id="dg_access" border="0"></table>
+<script type="text/javascript" src="html/admin/access/dialogs.js"></script>
+<script type="text/javascript">
+	var accesstable = {
+		id : "#dg_access",
+		url : {},
+		roleId : "0",
+		params : {
+			"token" : op.data.token
+		},
+		init : function(url, params) {
+			accesstable.url = url;
+			$.extend(accesstable.params, params);
+			accesstable.render();
+		},
+		reload : function() {
+			$('#dg_access').datagrid("reload");
+		},
+		render : function() {
+			$('#dg_access').datagrid({
+				url : accesstable.url,
+				queryParams : accesstable.params,
+				pagination : true,
+				nowrap : true,
+				fitColumns : true,
+				striped : true,
+				columns : [ [ {
+					field : 'id',
+					title : 'Item ID',
+					width : 40,
+					sortable : true,
+					hidden : true
+				}, {
+					field : 'assets',
+					title : '菜单',
+					width : 40,
+
+		        	formatter:function(value, row, index){
+		        		if(value!=""&&value!=null)
+		        			return value.resName;
+		        	}
+				}, {
+					field : 'permissions',
+					title : '权限',
+					width : 80,
+					align : 'center',
+					formatter:function(value, row, index){
+						var text = "";
+		        		var tmp = value & "01";
+		        		if(tmp=="01"){
+		        			text += "可见 ";
+		        		}
+		        		var tmp1 = value & "10";
+		        		if(tmp1=="10"){
+		        			text += " 可操作";
+		        		}
+		        		return text;
+		        	}
+				}] ]
+			});
+		},
+		remove:function(){
+			if(accesstable){
+				var rows = $(accesstable.id).datagrid("getSelections");
+                if (rows.length < 1) {
+                    MessageBox.info("请选定数据进行移除！");
+                } else {
+                		var ss = [];
+                		for(var i=0; i<rows.length; i++){
+                            var row = rows[i];
+                            ss.push(row.id);
+                        }
+                		if(accesstable.roleId!=0){
+            				var url = "/admin/sdk/op/role/"+accesstable.roleId+"/remove/access/" + ss + "?token="
+            					+ encodeURIComponent(op.data.token);
+            				MessageBox.confirm('是否删除', function() {
+            				$.post(url, function(data) {
+            					accesstable.reload();
+            				});
+            				});
+                		}
+                }
+
+			}
+		}
+	};
+</script>
+
+
+

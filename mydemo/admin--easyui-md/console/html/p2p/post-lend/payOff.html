@@ -1,0 +1,15 @@
+<!--已还清的借款页面-->
+<!--start payOff-->
+<div id="payOff">
+    <div class="form-search"></div>
+    <div class="form-table"></div>
+</div>
+<!--end payOff-->
+<script type="text/javascript">
+    $(function(){
+        //异步加载div片段--查询条件
+        $("#payOff div.form-search").load("html/post-lend/payOffForm.html");
+        $("#payOff div.form-table").load("html/post-lend/payOffTable.html");
+        $.parser.parse("#payOff");
+    });
+</script>

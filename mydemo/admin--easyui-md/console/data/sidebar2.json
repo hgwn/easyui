@@ -1,0 +1,8 @@
+[{
+        "id":11,
+        "groupname":"提成管理",
+        "list":[
+                {"name":"提成记录审核","url":"html/p2p/financial/trebateRecords.html"},
+                {"name":"会员提成月结记录","url":"html/p2p/financial/trebateMonthlys.html"}]
+    }
+]

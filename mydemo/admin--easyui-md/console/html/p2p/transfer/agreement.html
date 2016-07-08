@@ -1,0 +1,14 @@
+<!--start agreement-->
+<div id="agreement">
+    <div class="form-search"></div>
+    <div class="form-table"></div>
+</div>
+<!--end agreement-->
+<script type="text/javascript">
+    $(function(){
+        //异步加载div片段--查询条件
+        $("#agreement div.form-search").load("html/p2p/transfer/agreementForm.html");
+        $("#agreement div.form-table").load("html/p2p/transfer/agreementTable.html");
+        $.parser.parse("#agreement");
+    });
+</script>

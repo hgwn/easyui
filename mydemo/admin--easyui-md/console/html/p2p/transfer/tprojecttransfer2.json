@@ -1,0 +1,11 @@
+{
+  "code":0,
+  "msg":"获取成功",
+  "result":[{"auctionName":"詹丹result", "auctionPrice":1000.00, "auctionIsBid":1, "auctionTime":"2105-10-01 11:11"},
+    {"auctionName":"詹丹", "auctionPrice":1000.00, "auctionIsBid":1, "auctionTime":"2105-10-01 11:11"}],
+  "number":1,
+  "numberOfElements":1,
+  "size":1,
+  "totalPages":1,
+  "totalElements":22
+}

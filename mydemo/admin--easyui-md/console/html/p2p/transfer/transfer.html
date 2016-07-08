@@ -1,0 +1,14 @@
+<!--start transfer-->
+<div id="transfer">
+    <div class="form-search"></div>
+    <div class="form-table"></div>
+</div>
+<!--end transfer-->
+<script type="text/javascript">
+    $(function(){
+        //异步加载div片段--查询条件
+        $("#transfer div.form-search").load("html/p2p/transfer/transferForm.html");
+        $("#transfer div.form-table").load("html/p2p/transfer/transferTable.html");
+        $.parser.parse("#transfer");
+    });
+</script>

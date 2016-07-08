@@ -1,0 +1,116 @@
+<!--选择借款人-->
+<form action="#" class="h-form-search clearfloat" id="userSelectForm" style="padding: 15px 0;">
+    <!-- start h-search-box-->
+    <div class="h-search-box">
+        <ul class="form-search-row clearfloat" >
+            <li class="h-row-2">
+                <span class="label" style="width: 25%;">会员：</span>
+                <input type="text" name="user"  onkeypress="userSelectForm.enter(event);" class="easyui-textbox" style="height: 22px; width: 70%;" value=""/>
+            </li>
+            <li class="h-row-2">
+                <span class="label" style="width: 25%;">登录名：</span>
+                <input type="text" name="name"  class="easyui-textbox" style="height: 22px; width: 70%" value=""/>
+            </li>
+        </ul>
+    </div>
+    <!-- end h-search-box-->
+    <div class="h-search-btn" style="top:15px;">
+        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="userSelectForm.search();" style="width:80px">查询</a>
+    </div>
+</form>
+<!--选择借款会员-->
+<table id="userSelect" class="easyui-datagrid"
+       data-options="remoteSort:false,striped:true,fit:false,pagination : true" style="height:400px; width:100%">
+    <thead>
+    <tr>
+        <th data-options="field:'userName',width:50">登录名</th>
+        <th data-options="field:'realName',width:50">真实姓名</th>
+        <th data-options="field:'idCard',width:50">身份证</th>
+        <th data-options="field:'sex',width:60">性别</th>
+        <th data-options="field:'encryptflag',width:60">借出信用</th>
+        <th data-options="field:'subcompanyflag',width:60">借入信用</th>
+        <th data-options="field:'remark',width:60">状态（激活/锁定）</th>
+    </tr>
+    </thead>
+</table>
+<script type="text/javascript">
+    //datagrid操作对象
+    var userSelect = {
+        rootScope:{},
+        params:{queryParams:'{}'},
+        url:factory.url.userSelect,
+        //初始化
+        init:function(url,params){
+            if(url !=undefined){
+                userSelect.url = url;
+            }
+            if(params && typeof params ==="object"){
+                //$.extend(userSelect.params, params);
+                userSelect.params.queryParams=JSON.stringify(params);
+            }
+            userSelect.render();
+        },
+        reload:function(){
+            $('#userSelect').datagrid("reload");
+        },
+        render:function(){  //data-options 也可设置
+            $('#userSelect').datagrid({
+                rownumbers:true,
+                singleSelect:true,
+                fitColumns:true,//自动适应宽度
+                method:'get',//请求方式  get 或post
+                queryParams:userSelect.params, //请求参数  queryParams
+                url:userSelect.url,
+                loadFilter:function(data){
+                    for(var i =0; i<data.content.length; i++){
+                        data.content[i].userId = data.content[i].user.id;
+                        data.content[i].userName = data.content[i].user.name;
+                    }
+                    if(data.totalElements){
+                        data.total = data.totalElements;
+                    }
+                    if(data.content){
+                        data.rows = data.content;
+                    }
+                    return data;
+                }
+            });
+        }
+    };
+    //form操作对象
+    var userSelectForm = {
+        data:{},
+        search:function(){
+            userSelectForm.setNull(userSelectForm.data);
+            Utils.bindProps("#userSelectForm",userSelectForm.data,false);
+            userSelect.init(userSelect.url,userSelectForm.data);
+        },
+        setNull:function(obj){
+            for(var p in obj){
+                obj[p]=null;
+            }
+        },
+        enter:function(e){
+            var event = window.event ||e;
+            var keyCode = event.keyCode || event.which;
+            if(keyCode != 13) return;
+            userSelectForm.search();
+        }
+    };
+
+    $(function () {
+        //调用初始化函数
+        userSelect.init();
+        //对表格操作
+        $('#userSelect').datagrid({
+            //单击行事件
+            onClickRow:function(index,row){
+                userSelect.rootScope = row;
+                console.log(row.productname);
+                $('#addProjectForm').form('load',{userName:row.realName});
+                $('#userSelectDialog').dialog("close");
+            }
+        });
+
+    })
+</script>

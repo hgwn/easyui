@@ -1,0 +1,168 @@
+<form action="" id="opSaveForm">
+    <div class="form-row">
+        <label class="form-label"><em class="required">*</em>账号：</label>
+        <div class="collection">
+            <input type="text" class="easyui-validatebox textbox" id="name" name="name" 
+                   required="true" missingMessage="不能为空" data-options="validType:'length[3,20]'" />
+        </div>
+    </div>
+    <div class="form-row" id="div_pwd">
+        <label class="form-label" style="width: 82px;"><em
+                class="required">*</em>密码：</label>
+        <div class="collection">
+            <input type="password" class="easyui-validatebox textbox"  id="password"
+                   name="password" required="true" missingMessage="不能为空" data-options="validType:'length[6,18]'" />
+        </div>
+    </div>
+    <div class="form-row" id="div_confirmpwd">
+        <label class="form-label" style="width: 82px;"><em
+                class="required">*</em>确认密码：</label>
+        <div class="collection">
+            <input type="password" class="easyui-validatebox textbox"
+                   id="confirmPassword" name="confirmPassword" required="true" missingMessage="不能为空"
+                   validType="equalTo['#password']" invalidMessage="两次输入密码不一致"  />
+        </div>
+    </div>
+    <div class="form-row">
+        <label class="form-label"><em class="required">*</em>邮箱：</label>
+        <div class="collection">
+            <input type="text" class="easyui-validatebox textbox" id="email"
+                   name="email" required="true" missingMessage="不能为空" email="true" validType="email" invalidMessage="请填写正确的邮件格式"  />
+        </div>
+    </div>
+    <div class="form-row">
+        <label class="form-label"><em class="required">*</em>电话：</label>
+        <div class="collection">
+            <input type="text" class="easyui-validatebox textbox" id="mobile"
+                   name="mobile" required="true" missingMessage="不能为空" validType="mobile" />
+        </div>
+    </div>
+    <div class="form-row">
+        <label class="form-label">工号：</label>
+        <div class="collection">
+            <input type="text" class="easyui-validatebox textbox" id="workNumber"
+                   name="workNumber" />
+        </div>
+    </div>
+    <div class="form-row">
+        <label class="form-label">头像：</label>
+        <div class="collection">
+            <img src="" title="双击上传图片" id="opIcon" width="80" height="80" /> <input 
+                type="hidden" class="form-control w-250" id="photo" name="photo" />
+        </div>
+    </div>
+
+    <div class="form-row">
+        <input type="hidden" id="id" name="id" /> <input type="hidden"
+                                                         id="token" name="token" />
+        <input type="submit" value="提交"/>
+    </div>
+
+</form>
+
+<script type="text/javascript">
+    var opEditFrom = {
+        id: "#opSaveForm",
+        url: "/admin/sdk/op/save/",
+        init: function() {
+            $("#opIcon").one("click", function() {
+            	opEditFrom.upload("#opIcon", "photo");
+            });
+            $(opEditFrom.id).makeform({
+                url: opEditFrom.url,
+                onsuccess: function(rsp) {
+                    if (rsp.code == 0) {
+                        $(opEditFrom.id).trigger("submited", rsp);
+                    } else {
+                        MessageBox.warn(rsp.msg);
+                    }
+                },
+                onError: function(msg, obj, errorlist) {
+                    MessageBox.warn(msg);
+                }
+            });
+            $.parser.parse(opEditFrom.id);
+        },
+        bindEvent: function(event, handler, data) {
+            $(opEditFrom.id).unbind(event);
+            $(opEditFrom.id).bind(event, data, handler);
+        },
+        echo: function(data) {
+			//debugger;
+            if (data) {
+                //修改操作员不能修改密码
+                $("#div_pwd").hide();
+                $("#div_confirmpwd").hide();
+                $("#password").removeAttr("required");
+                $("#confirmPassword").removeAttr("required");
+                $("#name").attr("disabled", true);
+                opEditFrom.reset();
+                //debugger;
+                Utils.bindProps($(opEditFrom.id), data, true);
+              
+                var photoId = $("#photo").val();
+                if (photoId) {
+                    var imgUrl = commons.data.downloadUrl + "id=" + photoId
+                            + "&fullPath=";
+                    $("#opIcon").attr("src", imgUrl);
+                }
+            } else {
+                $("#div_pwd").show();
+                $("#div_confirmpwd").show();
+                $("#password").attr("required", true);
+                $("#confirmPassword").attr("required", true);
+                $("#name").attr("disabled", false);
+                opEditFrom.reset();
+            }
+            var token = op.data.token;
+            $("#token").val(token);
+        },
+        submit: function(callback) {
+        	if($(opEditFrom.id).form('validate')){
+        		$(opEditFrom.id).submit();
+        	}
+        },
+        reset: function() {
+
+            if ($("#name").prop("disabled")) {
+                var name = $("#name").val();
+                //不会清掉hidden 属性 
+                $(opEditFrom.id)[0].reset();
+
+                $("#name").val(name);
+            } else {
+                //不会清掉hidden 属性 
+                $(opEditFrom.id)[0].reset();
+
+            }
+        },
+        upload: function(ele, paramName) {
+
+            var ele = ele;
+            var uploadUrl = '/admin/sdk/common/image?token='
+                    + encodeURIComponent(op.data.token);
+            var updataUrl = null;
+            var paramName = paramName;
+
+            var ev = function(data) {
+                var imgUrl = commons.data.downloadUrl + "id=" + data.photo
+                        + "&fullPath=";
+                $("#opIcon").attr("src", imgUrl);
+                $("#photo").val(data.photo);
+            };
+
+            var param = {};
+
+            Utils.bindProps("#opSaveForm", param, false);
+
+            commons.upload(ele, uploadUrl, updataUrl, paramName, ev, null,
+                    param);
+
+        }
+    };
+
+    $(function() {
+    	opEditFrom.init();
+    	
+    });
+</script>

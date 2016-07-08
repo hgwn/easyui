@@ -1,0 +1,125 @@
+<table id="postListTable" class="easyui-datagrid"
+       data-options="remoteSort:false,striped:true,fitColumns:true, pagination : true, rownumbers:true" style="height:450px; width:100%;">
+    <thead frozen="true">
+    <tr>
+        <th data-options="field:'ck',checkbox:true"></th>
+    </tr>
+    </thead>
+    <thead>
+    <tr>
+        <th data-options="field:'userName',width:130">登录名</th>
+        <th data-options="field:'applicantName'">姓名</th>
+        <th data-options="field:'name',width:150">项目名称</th>
+        <th data-options="field:'state',width:40,formatter:postListTable.state">项目状态</th>
+        <th data-options="field:'loanReal'">实际借款金额</th>
+        <th data-options="field:'rate',width:40">利率(%)</th>
+        <th data-options="field:'loanReal'">实际总利息</th>
+        <th data-options="field:'deadline'">借款期限</th>
+        <th data-options="field:'user'">投标数</th>
+        <th data-options="field:'user',width:50">是否逾期</th>
+        <th data-options="field:'user',width:50">逾期天数</th>
+        <th data-options="field:'user'">违约金比率(%)</th>
+        <th data-options="field:'createTime'">已还违约金</th>
+        <th data-options="field:'createTime'">已还罚息</th>
+        <th data-options="field:'createTime'">应付罚息</th>
+    </tr>
+    </thead>
+</table>
+<script type="text/javascript">
+    var postListTable = {
+        rootScope:{},
+        url:"/p2p/projects",
+        params:{},
+        //初始化
+        init:function(url,params){
+            if(url !=undefined){
+                postListTable.url = url;
+            }
+            if(params && typeof params ==="object"){
+                $.extend(postListTable.params, params);
+            }
+            postListTable.render();
+        },
+        //刷新
+        reload:function(){
+            $('#postListTable').datagrid("reload");
+        },
+        //渲染datagrid
+        render:function(){
+            $('#postListTable').datagrid({
+                queryParams:postListTable.params,
+                toolbar:postListTable.toolbar,
+                url:postListTable.url,
+                method:'get',
+                onDblClickRow: function(index,row){
+                    $(this).datagrid('clearSelections');
+                    $(this).datagrid('selectRow',index);
+                    mainTab.addTab("待收款的借款","html/p2p/post-lend/followList.html",true);
+                }
+            });
+        },
+        //定义工具条
+        toolbar:[{
+            text:'查看详情',
+            iconCls:'icon-add',
+            handler:function(){
+                var row = $('#postListTable').datagrid('getSelections');
+                if(row.length){
+                    if(row.length!=1){
+                        $.messager.alert('提示','只能勾选一条数据进行审核!','info');
+                        return;
+                    }else{
+                        for(var k in row[0]){
+                            postListTable.rootScope[k] = row[0][k];
+                        }
+                        mainTab.addTab("项目详情","html/p2p/post-lend/postListDialog.html",true);
+                    }
+                }else{
+                    $.messager.alert('提示','请勾选数据进行操作','info');
+                }
+            }
+        },'-',{
+            text:'跟进',
+            iconCls:'icon-save',
+            handler:function(){
+                var result = $('#postListTable').datagrid('getSelections');
+                if(result.length){
+                    mainTab.addTab("待收款的借款","html/p2p/post-lend/followList.html",true);
+                }else{
+                    MessageBox.info("请勾选数据进行操作!");
+                }
+            }
+        },'-',{
+            text:'提醒还款',
+            iconCls:'icon-cut',
+            handler:function(){
+                var len = $('#postListTable').datagrid('getSelections').length;
+                if(len){
+                        var temdata = {'name':'李鸿文','age':28};
+                        factory.httpPost("data/contract.json",temdata,function(data){
+                            console.log(data);
+                            MessageBox.info(data.msg+"...httpPost");
+                        })
+                }else{
+                    MessageBox.info("请勾选数据进行操作!");
+                }
+            }
+        }],
+        state:function(value,row,index){
+            if(row.state){
+                var state = Number(row.state);
+                var stateName = ["新申请","平台初审通过","担保审核通过","招标中","满标","还款中","已还完","流标"];
+                return stateName[state-1];
+            }else{
+                return value;
+            }
+        }
+    };
+
+    $(function(){
+        //调用表格初始化函数
+        postListTable.init();
+        //解决jq/easyui异步加载组件
+        $.parser.parse("#postListTable");
+    });
+</script>

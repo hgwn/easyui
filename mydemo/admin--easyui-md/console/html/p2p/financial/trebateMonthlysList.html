@@ -1,0 +1,67 @@
+<!--会员提成月结datagrid数据---详细-->
+    <table id="trebateMonthlysList" class="easyui-datagrid"
+           data-options="remoteSort:false,striped:true,fit:false,  pagination : true, rownumbers:true" style="height:450px; width:100%">
+        <thead>
+        <tr>
+            <th data-options="field:'projectName'">提成来源项目</th>
+            <th data-options="field:'rebateType',width:60">提成类型</th>
+            <th data-options="field:'rebateRate',width:60">提成比例%</th>
+            <th data-options="field:'rebateAmount',width:80">提成总额(元)</th>
+            <th data-options="field:'srcUserName',width:100">提成来源用户名</th>
+            <th data-options="field:'userName',width:80">提成者</th>
+            <th data-options="field:'planPayDate',width:80">代理商</th>
+            <th data-options="field:'realPayRebate',width:80">提成者类型</th>
+            <th data-options="field:'isPayOff',width:80,formatter:trebateMonthlysList.isPayOff">是否已付清</th>
+            <th data-options="field:'auditRemark',width:80">审核意见</th>
+            <th data-options="field:'createTime',width:80">创建日期</th>
+        </tr>
+        </thead>
+    </table>
+
+<script type="text/javascript">
+    var trebateMonthlysList = {
+        rootScope:{},
+        url:"/trebateRecords/",
+        params:{},
+        //初始化
+        init:function(url,params){
+            if(url !=undefined){
+                trebateMonthlysList.url = url;
+            }
+            if(params && typeof params ==="object"){
+                $.extend(trebateMonthlysList.params, params);
+            }
+            trebateMonthlysList.render();
+            trebateMonthlysTable.rootScope.isload = true;
+        },
+        //刷新
+        reload:function(){
+            $('#trebateMonthlysList').datagrid("reload");
+        },
+        //渲染datagrid
+        render:function(){
+            $('#trebateMonthlysList').datagrid({
+               // singleSelect:true,
+                pagination : true,
+                nowrap : true,
+                fitColumns : true,
+                striped : true,
+                queryParams:trebateMonthlysList.params,
+                url:trebateMonthlysList.url,
+                method:'get'
+            });
+        },
+        isPayOff:function(value,row,index){
+            if(row.isPayOff==1){
+                return "是";
+            }else{
+                return "否";
+            }
+        }
+    };
+
+    $(function(){
+        //解决jq/easyui异步加载组件
+        $.parser.parse("#trebateMonthlysList");
+    });
+</script>

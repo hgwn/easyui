@@ -1,0 +1,98 @@
+<!-- start 标的认证-->
+<form action="" id="identification" >
+    <table class="table-detail" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+
+            <th width="15%">标的认证: <span class="required" style="color:red">*</span></th>
+            <td  width="35%">
+                <input id="tpyeid" name="type" value="" class="easyui-combobox"  required="true" missingMessage="不能为空" style="width: 90%;">
+            </td>
+            <th width="15%">借款利率(借入): </th>
+            <td width="35%"><input type="hidden" id="prateIn" readonly="readonly" name="prateIn"  value="14.000" style="width:240px !important" class="inputText"/><span>$rate</span>%</td>
+            <input type="hidden" id="prateOut" readonly="readonly" name="prateOut"  value="14.000">
+        </tr>
+        <tr>
+            <th>跟进业务员: </th>
+            <td >
+                <select id="combotree" class="easyui-combotree"  multiple style="width:90%;"></select>
+            </td>
+            <th width="15%">
+                <!--<span>担保审核：</span>-->
+            </th>
+            <td width="35%">
+               <!-- <input type="radio" id="pIsNeedGuarantee" name="pIsNeedGuarantee" value="1" checked/>
+                <span>需要</span>
+                <input type="radio" name="pIsNeedGuarantee" value="0" checked/>
+                <span>不需要</span>
+                (借款人意向：不需要)-->
+            </td>
+        </tr>
+        <tr><th colspan="4" style="text-align: center;">项目评估(说明：您的项目评估将显示在投资详情页面，对于项目的投标会起到重要的作用，请认真填写。)</th></tr>
+        <tr>
+            <td colspan="4" style="position: relative; padding: 8px;">
+
+                <textarea class="ckeditor" name="checkRemarksPlatform" id="pcheckRemarksPlatform"></textarea>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<!-- end 标的认证-->
+<script>
+
+    var identification={
+        url:factory.url.identification,
+        params:{},
+        data:{},
+        init:function(){
+            $('#pcheckRemarksPlatform').froalaEditor({enter: $.FroalaEditor.ENTER_P, placeholderText: null,language:'zh_cn'});
+            //初始化combobox---标的认证
+            $('#tpyeid').combobox({
+                url:'html/p2p/business/identification.json',
+                valueField:'id',
+                textField:'text'
+            });
+            //初始化combotree--跟进业务员
+            $('#combotree').combotree({
+                url: 'data/combotree.json',
+                required: true
+            });
+            //audit.echoObj
+        },
+        render:function(){
+
+        },
+        //输出 利率等
+        echo:function(obj){
+            identification.data = obj;
+            if(obj){
+                Utils.bindData($("#identification"),identification.data);
+            }
+        },
+        submit:function(){
+            if(!($('#identification').form('enableValidation').form('validate'))){
+                return ;
+            }
+            Utils.bindProps("#identification",identification.params,false);
+            if(identification.params.projectId !=""){ identification.params.projectId = audit.rootScope.result.project.projectId;}
+            factory.httpPut(identification.url,identification.params,function(data){
+                $('#identification').dialog("close");
+                if(data.code==0){
+                    MessageBox.info(data.msg);
+                }else{
+                    MessageBox.info("失败!");
+                }
+            });
+            //调用
+            audit.echo();
+        },
+        reset:function(){
+            $("#identification").form("clear");
+        }
+    };
+    $(function () {
+        identification.init();
+       // Utils.bindData($("#identification"),audit.echoObj);
+        $("#prateIn").next().text(audit.echoObj.rate);
+    })
+</script>

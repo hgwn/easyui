@@ -1,0 +1,18 @@
+﻿<div>
+	<div id="group_ll" class="easyui-layout"
+		style="width: 1000px; height: 600px;">
+		<div class="easyui-layout" data-options="region:'west',title:'分组列表'"
+			style="width: 200px;" id="leftGroupTree"></div>
+		<div class="easyui-layout" data-options="region:'east'"
+			style="width: 800px;" id="rightOpratorList"></div>
+	</div>
+</div>
+<script type="text/javascript">
+
+	$('#group_ll').layout();
+	$(function() {
+        PorletLoader.loadPorlet("leftGroupTree", [{link: "html/admin/group/tree.html"}]);
+        PorletLoader.loadPorlet("rightOpratorList", [{name:"groupOpTable",link: "html/admin/group/opTable.html"}]);
+    });
+	
+</script>

@@ -1,0 +1,82 @@
+<form id="postListForm" action="#" class="h-form-search clearfloat"  style="padding-bottom: 15px;">
+    <!-- start h-search-box-->
+    <div class="h-search-box">
+        <ul class="form-search-row clearfloat" >
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">登录名：</span>
+                <input type="text" name="user"  class="easyui-textbox" style="height: 22px; width: 70%;" value=""/>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">项目名称：</span>
+                <input type="text" name="name"  class="easyui-textbox" style="height: 22px; width: 70%" value=""/>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">是否还款：</span>
+                <select name="repayWay"  class="easyui-combobox" style="height: 22px; width: 70%;">
+                    <option value=""></option>
+                    <option value="1">是</option>
+                    <option value="0">否</option>
+                </select>
+
+            </li>
+        </ul>
+        <ul class="form-search-row clearfloat">
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">垫付状态：</span>
+                <select name="Q_advanceState_S" id="" class="easyui-combobox" style="height: 22px; width: 70%;">
+                    <option value=""></option>
+                    <option value="0">未垫付</option>
+                    <option value="1">已垫付</option>
+                    <option value="2">垫付中</option>
+                </select>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">是否我司垫付：</span>
+                <select name="Q_flag_S" id="Q_prIsDone_S" class="easyui-combobox" style="height: 22px; width: 70%;">
+                    <option value=""></option>
+                    <option value="1">是</option>
+                    <option value="0">否</option>
+                </select>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">最近三天：</span>
+                <select name="jsrdq" id="jsrdq" onchange="latelyDays(this)" class="easyui-combobox" style="height: 22px; width: 70%;">
+                    <option value=""></option>
+                    <option value="0">今日到期</option>
+                    <option value="1">昨天到期</option>
+                    <option value="2">前天到期</option>
+                    <option value="3">明天到期</option>
+                    <option value="4">后天到期</option>
+                </select>
+            </li>
+        </ul>
+    </div>
+    <!-- end h-search-box-->
+    <div class="h-search-btn">
+        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" name="submit" style="width:80px">查询</a>
+    </div>
+</form>
+<script>
+    var postListForm ={
+        id:"#postListForm",
+        init:function(){
+            $("#postListForm [name='submit']").click(function(){
+                postListForm.submit();
+            })
+        },
+        submit:function(){
+            var param = {};
+            Utils.bindProps($(postListForm.id),param,false);
+            postListTable.init(postListTable.url,param);
+        }
+    };
+    $(function () {
+        postListForm.init();
+        $.parser.parse(".h-form-search");
+        $('#Q_contractType_S').combobox({
+            url:'data/contract-combobox.json',
+            valueField:'id',
+            textField:'name'
+        });
+    })
+</script>

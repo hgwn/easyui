@@ -1,0 +1,77 @@
+<!--会员提成月结查询-->
+<form id="trebateMonthlysForm" action="#" class="h-form-search clearfloat"  style="padding-bottom: 15px;">
+    <!-- start h-search-box-->
+    <div class="h-search-box">
+        <ul class="form-search-row clearfloat" >
+            <li class="h-row-5">
+                <span class="label" style="width: 25%;">年份：</span>
+                <!--<input type="text" name="year"  class="easyui-textbox" style="height: 22px; width: 70%;" value=""/>-->
+                <select class="easyui-combobox" id="trebateMonthlysForm_year" name="year" style="height: 22px; width: 70%;" ></select>
+            </li>
+            <li class="h-row-5">
+                <span class="label" style="width: 25%;">月份：</span>
+                <!--<input type="text" name="month"  class="easyui-textbox" style="height: 22px; width: 70%;" value=""/>-->
+                <select class="easyui-combobox" name="month" style="height: 22px; width: 70%;" >
+                    <option value="">请选择</option>
+                    <option value="1">1</option>
+
+                    <option value="2">2</option>
+
+                    <option value="3">3</option>
+
+                    <option value="4">4</option>
+
+                    <option value="5">5</option>
+
+                    <option value="6">6</option>
+
+                    <option value="7">7</option>
+
+                    <option value="8">8</option>
+
+                    <option value="9">9</option>
+
+                    <option value="10">10</option>
+
+                    <option value="11">11</option>
+
+                    <option value="12">12</option>
+                </select>
+            </li>
+            <li class="h-row-4">
+                <span class="label" style="width: 25%;">结算日期：</span>
+                <input type="text" name="createTimeBegin"  class="easyui-datebox" style="height: 22px; width: 70%;" value=""/>
+            </li>
+            <li class="h-row-4">
+                <span class="label" style="width: 25%;">至：</span>
+                <input type="text" name="createTimeEnd"  class="easyui-datebox" style="height: 22px; width: 70%" value=""/>
+            </li>
+        </ul>
+    </div>
+    <!-- end h-search-box-->
+    <div class="h-search-btn">
+        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="trebateMonthlysForm.search();" style="width:80px">查询</a>
+    </div>
+</form>
+<script>
+    var trebateMonthlysForm ={
+        param:{},
+        search:function(){
+            //debugger;
+            trebateMonthlysForm.setNull(trebateMonthlysForm.param);
+            Utils.bindProps("#trebateMonthlysForm",trebateMonthlysForm.param,false);
+            trebateMonthlysTable.init(trebateMonthlysTable.url,trebateMonthlysForm.param);
+        },
+        setNull:function(obj){
+            if(typeof obj ==="object"){
+                for(var p in obj){
+                    obj[p]=null;
+                }
+            }
+        }
+    };
+    $(function () {
+        factory.selYear("trebateMonthlysForm_year",new Date().getFullYear());
+        $.parser.parse();
+    })
+</script>

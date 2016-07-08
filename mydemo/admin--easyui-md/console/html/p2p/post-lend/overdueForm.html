@@ -1,0 +1,60 @@
+<form id="overdueForm" action="#" class="h-form-search clearfloat"  style="padding-bottom: 15px;">
+    <!-- start h-search-box-->
+    <div class="h-search-box">
+        <ul class="form-search-row clearfloat">
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">是否还款：</span>
+                <input id="Q_contractType_S" name="Q_contractType_S" value="" class="easyui-combobox" style="height: 22px; width: 70%;">
+                <!--<select name="Q_contractType_S" id="Q_contractType_S" class="easyui-combobox" style="height: 22px; width: 70%;">
+                    <option value="">请选择</option>
+                    <option value="1">借款合同-借款人</option>
+                    <option value="2">借款合同-投资人</option>
+                    <option value="3">保留 </option>
+                    <option value="4">保留</option>
+                    <option value="5">保留</option>
+                    <option value="6">保留</option>
+                    <option value="7">债权转让协议</option>
+                </select>-->
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">垫付状态：</span>
+                <input id="Q_contractType" name="Q_contractType_S" value="" class="easyui-combobox" style="height: 22px; width: 70%;">
+            </li>
+
+        </ul>
+    </div>
+    <!-- end h-search-box-->
+    <div class="h-search-btn">
+        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" name="submit" style="width:80px">查询</a>
+    </div>
+</form>
+<script>
+    var overdueForm ={
+        id:"#overdueForm",
+        init:function(){
+            $("#overdueForm [name='submit']").click(function(){
+                overdueForm.submit();
+            })
+        },
+        submit:function(){
+            var param = {};
+            Utils.bindProps($(overdueForm.id),param,false);
+            overdueTable.init(overdueTable.url,param);
+        }
+    };
+
+    $(function () {
+        overdueForm.init();
+        $.parser.parse(".h-form-search");
+        $('#Q_contractType_S').combobox({
+            url:'data/contract-combobox.json',
+            valueField:'id',
+            textField:'name'
+        });
+        $('#Q_contractType').combobox({
+            url:'data/contract-combobox.json',
+            valueField:'id',
+            textField:'name'
+        });
+    })
+</script>

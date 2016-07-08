@@ -1,0 +1,59 @@
+<div class="header clearfloat">
+    <div class="logo fl"><img src="images/logo.png" alt="logo"/></div>
+    <div class="fl">
+        <ul class="header-nav" id="nav">
+            <li><a href="#" class="header-nav-link nav-active" onclick="navObject.loadHome();"> 首页</a></li>
+            <li class="navList" style="display:none;"><a href="#" class="header-nav-link" value="$url" click='clickBtn'> $name</a></li>
+        </ul>
+    </div>
+    <div class="login-out"><div class="fl" style="line-height: 28px; padding-right: 15px;">欢迎您，<span id="opName"></span></div>
+    <a href="javascript:void(0)" id="btnModityPwd" class="fl">修改密码</a><a href="javascript:void(0)" id="btnLogOut" class="fl">退出</a></div>
+</div>
+<script type="text/javascript">
+    var navObject = {
+        actions: {clickBtn: function(elem) {
+                //debugger;
+                var url = $(elem).attr("value");
+                PorletLoader.loadPorlet("sidebar", [{name: "sidenavObj", link: "html/sidebar.html", dataurl: url}]);
+                navObject.showWest();
+            }},
+        //初始化
+        init: function(url, params) {
+        	op.load();
+            /*if (op.data.token == null) {
+                Utils.gotoPage('login.html');
+            }*/
+            $("#btnModityPwd").click(function() {
+            	modifyPwdFormDlg.show("修改密码");
+            	return false;
+            });
+            $("#btnLogOut").click(function() {
+                $.get("/admin/sdk/op/logout/", function(data) {
+                   /* if (data.code == 0) {
+                        op.del();
+                        window.location.href = "login.html";
+                    }*/
+                });
+                return false;
+            });
+            $.getJSON(url, params, function(data) {
+                navObject.render(data);
+                changeClass("#nav a.header-nav-link","nav-active",1);
+            });
+        },
+        render: function(data) {
+            Utils.bindList("#nav", ".navList", data, navObject.actions);
+            $("#opName").text(op.data.name);
+            
+        },
+        //显示左侧导航
+        showWest: function() {
+            $("#layout").layout('show', "west");
+        },
+        loadHome: function () {
+            $("#layout").layout('hidden', "west");
+            mainTab.addTab("首页","html/home.html");
+        }
+    };
+</script>
+

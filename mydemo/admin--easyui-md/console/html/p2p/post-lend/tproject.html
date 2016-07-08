@@ -1,0 +1,15 @@
+<!--提前还款的借款页面-->
+<!--start tproject-->
+<div id="tproject">
+    <div class="form-search"></div>
+    <div class="form-table"></div>
+</div>
+<!--end tproject-->
+<script type="text/javascript">
+    $(function(){
+        //异步加载div片段--查询条件
+        $("#tproject div.form-search").load("html/post-lend/tprojectForm.html");
+        $("#tproject div.form-table").load("html/post-lend/tprojectTable.html");
+        $.parser.parse("#tproject");
+    });
+</script>

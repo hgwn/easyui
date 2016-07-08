@@ -1,0 +1,29 @@
+{
+  "total":250,
+  "code": 0,
+  "msg": "成功",
+  "rows": [
+    {
+      "transferId":111,
+      "lenderId":112,
+      "userId":22,
+      "auctionName": "夏利",
+      "auctionPrice": "100.00",
+      "auctionTime": "2016-04-18",
+      "fear": "10.00",
+      "auctionState": 3,
+      "authState": 1
+    },
+    {
+      "transferId":111,
+      "lenderId":112,
+      "userId":22,
+      "auctionName": "测定",
+      "auctionPrice": "100.00",
+      "auctionTime": "2016-04-18",
+      "fear": "10.00",
+      "auctionState": 3,
+      "authState": 0
+    }
+  ]
+}

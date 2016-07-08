@@ -1,0 +1,49 @@
+
+<style type="text/css">
+    #editor {
+        border: 1px solid #CCC;
+        width:100%;
+    }
+    #editor_toolbar_box {
+        background: #F0F0EE;
+        padding: 2px;
+    }
+    #editor_iframe_holder {
+        border-top: 1px solid #CCC;
+        border-bottom: 1px solid #CCC;
+    }
+</style>
+<!--style给定宽度可以影响编辑器的最终宽度-->
+<script type="text/plain" id="ueditor">
+</script>
+<script type="text/javascript">
+    UE.getEditor('ueditor',{
+        //这里可以选择自己需要的工具按钮名称,此处仅选择如下五个
+        toolbars:[['FullScreen', 'Source', 'Undo', 'Redo','Bold','test']],
+        //focus时自动清空初始化时的内容
+        autoClearinitialContent:true,
+        //关闭字数统计
+        wordCount:false,
+        //关闭elementPath
+        elementPathEnabled:false,
+        //默认的编辑区域高度
+        initialFrameHeight:150
+        //更多其他参数，请参考ueditor.config.js中的配置项
+        //serverUrl: '/server/ueditor/controller.php'
+    })
+
+    var ueditor = {
+        //纯文本内容
+        getPlainTxt:function(){
+            return UE.getEditor('ueditor').getPlainTxt();
+        },
+        //获得编辑器的内容
+        getContent:function(){
+            return UE.getEditor('ueditor').getContent();
+        },
+        reset:function(){
+            UE.getEditor('ueditor').reset();
+        }
+    };
+</script>
+

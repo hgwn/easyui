@@ -1,0 +1,280 @@
+<table id="transferTable" class="easyui-datagrid"
+       data-options="remoteSort:false,striped:true,fit:false, rownumbers:true" style="height:450px; width:100%">
+    <thead frozen="true">
+    <tr>
+        <th data-options="field:'ck',checkbox:true"></th>
+    </tr>
+    </thead>
+    <thead>
+    <tr>
+        <th data-options="field:'transferName',width:80">转让人</th>
+        <th data-options="field:'applyName',width:80">借款人</th>
+        <th data-options="field:'auctionWay',width:60,formatter:transferTable.auctionWay">竞拍方式</th>
+        <th data-options="field:'closeDate',width:120">结束时间</th>
+        <th data-options="field:'claimsSum',width:110">转让金额（元）</th>
+        <th data-options="field:'investAmount',width:80">投资金额（元）</th>
+        <th data-options="field:'upsetPrice',width:80">竞拍底价</th>
+        <th data-options="field:'remainTime',width:80">剩余时间</th>
+        <th data-options="field:'periods',width:80">债权期数（月）</th>
+        <th data-options="field:'state',width:80,formatter:transferTable.state">转让状态</th>
+        <th data-options="field:'isLate',width:60,formatter:transferTable.isLate">是否逾期</th>
+        <th data-options="field:'tprojectName',width:160">项目名称</th>
+        <th data-options="field:'rate',width:80">年利率（%）</th>
+        <th data-options="field:'isCancel',width:60,formatter:transferTable.isCancel">是否撤销</th>
+        <th data-options="field:'isNew',width:80">是否最新</th>
+    </tr>
+    </thead>
+</table>
+<div id="pp" style="background:#efefef;border:1px solid #ccc;"></div>
+<div id="transferDialog">转让撤销</div>
+<div id="tprojecttransferDialog">待放款审核</div>
+<div id="tprojecttransfer_link">
+    <!--<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-save'">退回未中标转账</a>
+    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-save'">中标转账</a>-->
+    <div style="width: 98%; border: 1px solid #ddd; height: 32px; margin: 0 auto; background:#ecf0f1;" class="audit-btn">
+        <a href="javascript:void(0)"  class="easyui-linkbutton l-btn l-btn-small" id="audit_ident_btn" onclick="audit.identification();">退回未中标转账</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton l-btn l-btn-small" id="audit_prelim_btn" onclick="audit.preliminaryAudit();">中标转账</a>
+    </div>
+</div>
+<script type="text/javascript">
+    var transferTable = {
+        rootScope:{},
+        transferIds:"",//定义批量撤销id集
+        url:factory.url.transferTable, //定义请求url
+        params:{}, // 定义请求参数对象
+        //初始化
+        init:function(url,params){
+            if(url !=undefined){
+                transferTable.url = url;
+            }
+            if(params && typeof params ==="object"){
+                $.extend(transferTable.params, params);
+            }
+            //撤销dialog
+            $('#transferDialog').dialog({
+                title: '撤销',
+                width: 450,
+                height: 200,
+                closed: true,
+                cache: false,
+                href: 'html/p2p/transfer/transferDialog.html',
+                modal: true,
+                buttons:[{text:'提交',iconCls:'icon-ok',
+                    handler:function(){
+                        transferDialog.submit();
+                    }},
+                    {text:'取消',iconCls:'icon-cancel',handler:function(){
+                        $('#transferDialog').dialog('close');
+                    }}
+                ]
+            });
+            //待放款审核dialog
+            $('#tprojecttransferDialog').dialog({
+                title: '待放款审核',
+                width: 860,
+                height: 500,
+                closed: true,
+                cache: false,
+                href: 'html/p2p/transfer/tprojecttransfer.html',
+                modal: true,
+                toolbar:'#tprojecttransfer_link'
+                /*toolbar:[{
+                    text:'中标转账',
+                    iconCls:'icon-save',
+                    handler:function(){
+                        var result = $('#tprojecttransfer').datagrid('getSelections');
+                        var tempData = {"name":"lihongwen","row":[1,2,3]};
+                        if(result.length){
+                            $.messager.confirm('提示', '确认放款操作?', function(r){
+                                if (r){
+                                    factory.httpPost("data/contract.json",tempData,function(data){
+                                        MessageBox.info("提交完成！");
+                                        console.log(data);
+                                    });
+                                }
+                            });
+                        }else{
+                            MessageBox.info("请勾选数据！");
+                        }
+                    }
+                },{
+                    text:'退回未中标转账',
+                    iconCls:'icon-save',
+                    handler:function(){
+                        var result = $('#tprojecttransfer').datagrid('getSelections');
+                        var tempData = {"name":"lihongwen","row":[1,2,3]};
+                        if(result.length){
+                            $.messager.confirm('提示', '确认退款操作?', function(r){
+                                if (r){
+                                    factory.httpPost("data/contract.json",tempData,function(data){
+                                        MessageBox.info("提交完成！");
+                                        console.log(data);
+                                    });
+                                }
+                            });
+                        }else{
+                            MessageBox.info("请勾选数据！");
+                        }
+                    }
+                }]*/
+            });
+            //datagrid
+            $('#transferTable').datagrid({
+                onDblClickRow: function(index,row){
+                    $(this).datagrid('clearSelections');
+                    $(this).datagrid('selectRow',index);
+                    $('#tprojecttransferDialog').dialog('open');
+                }
+            });
+            transferTable.render();
+        },
+        //刷新
+        reload:function(){
+            $('#transferTable').datagrid("reload");
+        },
+        //渲染datagrid
+        render:function(data){
+            $('#transferTable').datagrid({
+               // singleSelect:true,
+                pagination : true,
+                nowrap : true,
+                fitColumns : true,
+                striped : true,
+                toolbar:transferTable.toolbar,
+                queryParams:transferTable.params,
+                url:transferTable.url,
+                method:'get'
+            });
+        },
+        //定义工具条
+        toolbar:[{
+            text:'查看详情',
+            iconCls:'icon-add',
+            handler:function(){
+                var profitids = $('#transferTable').datagrid('getSelections');
+                if(profitids.length){
+                    if(profitids.length!=1){
+                        MessageBox.info('只能勾选一条数据进行审核!');
+                        return;
+                    }else{
+                        //debugger;
+                        alert("详情页待开发...");
+                        //mainTab.addTab("待收款的借款","html/p2p/post-lend/followList.html");
+                    }
+                }else{
+                    MessageBox.info('请勾选数据进行操作');
+                }
+            }
+        },'-',{
+            text:'成交',
+            iconCls:'icon-save',
+            handler:function(){
+                var result = $('#transferTable').datagrid('getSelections');
+                if(result.length){
+                    var param = [];
+                    var error = [];
+                    //state 0：转让中 1：中标 2：已撤销 3：已放款
+                    for(var i=0; i<result.length; i++){
+                        if(result[i].state ==0){
+                            param.push(result[i].transferId);
+                        }else{
+                            error.push(result[i]);
+                        }
+                    }
+                    //debugger;
+                    if(!param.length){MessageBox.info("当前没有符合成交数据"); return;}
+                    $.messager.confirm('提示', '当前符合成交的有：'+param.length+'<br>确定进行成交操作？', function(r){
+                        if (r){
+                            console.log(result);
+                            factory.httpPut(factory.url.transferDialog+param.join(",")+"/1",{},function(data){
+                                if(data.code==0){
+                                    MessageBox.info(data.msg);
+                                }else{
+                                    MessageBox.info("失败!");
+                                    console.log(data);
+                                }
+                                transferTable.reload();
+                            })
+                        }
+                    });
+                }else{
+                    MessageBox.info("请勾选数据进行操作!");
+                }
+            }
+        },'-',{
+            text:'撤销',
+            iconCls:'icon-cut',
+            handler:function(){
+                var result = $('#transferTable').datagrid('getSelections');
+                if(result.length){
+                    var temp = [];
+                    var error = [];
+                    for(var i=0; i<result.length; i++){
+                        if(result.state ==0 ){
+                            temp.push(result[i].transferId);
+                            transferTable.transferIds = temp.join(",");
+                        }else{
+                            error.push(result[i]);
+                            MessageBox.info("当前选择数据存在不符合撤销数据，请重新选择");
+                            return;
+                        }
+                    }
+                    if(temp.length){
+                        $('#transferDialog').dialog("open");
+                    }
+                }else{
+                    MessageBox.info("请勾选数据进行操作!");
+                }
+            }
+        },'-',{
+            text:'待放款审核',
+            iconCls:'icon-save',
+            handler:function(){
+                var result = $('#transferTable').datagrid('getSelections');
+                if(result.length){
+                    if(result.length!=1){
+                        MessageBox.info("只能勾选一条数据！");
+                    }else{
+
+                        $('#tprojecttransferDialog').dialog("open");
+                    }
+                }else{
+                    MessageBox.info("请勾选操作的数据!");
+                }
+            }
+        }],
+        state:function(value,row,index){
+            //0转让中 1：中标 2：已撤销 3：已放款
+            var stateName = ["转让中","中标","已撤销","已放款"];
+            return stateName[Number(row.state)];
+        },
+        isLate:function(value,row,index){
+            if(row.isLate ==1){
+                return "逾期";
+            }else{ return "无逾期"}
+        },
+        isCancel:function(value,row,index){
+            if(row.isLate ==1){
+                return "否";
+            }else{ return "是"}
+        },
+        auctionWay:function(value,row,index){
+            if(row.auctionWay){
+                if(row.auctionWay==1){
+                    return "明拍";
+                }else{
+                    return "暗拍";
+                }
+            }else{
+                return value;
+            }
+        }
+    };
+
+    $(function(){
+        //调用表格初始化函数
+        transferTable.init();
+        //解决jq/easyui异步加载组件
+        $.parser.parse("#transferTable");
+    });
+</script>

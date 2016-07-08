@@ -1,0 +1,65 @@
+<form id="trebateRecordsDialog_M">
+    <table class="table-detail" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+            <th width="100px;">年份:</th>
+            <td>
+                <select size="1" id="trebateRecordsDialog_M_year" name="year"  style="width: 70px;"></select>
+
+            </td>
+        </tr>
+        <tr>
+            <th width="100px;">月份:</th>
+            <td>
+                <select id="month" name="month" style="width: 70px;">
+
+                    <option value="1">1</option>
+
+                    <option value="2">2</option>
+
+                    <option value="3">3</option>
+
+                    <option value="4">4</option>
+
+                    <option value="5">5</option>
+
+                    <option value="6">6</option>
+
+                    <option value="7">7</option>
+
+                    <option value="8">8</option>
+
+                    <option value="9">9</option>
+
+                    <option value="10">10</option>
+
+                    <option value="11">11</option>
+
+                    <option value="12">12</option>
+
+                </select>
+
+            </td>
+        </tr>
+    </table>
+</form>
+<script type="text/javascript">
+   var trebateRecordsDialog_M = {
+       url:factory.url.trebateRecordsDialog_M,
+       params:{},
+       submit:function(){
+           Utils.bindProps("#trebateRecordsDialog_M",trebateRecordsDialog_M.params,false);
+           factory.httpPost(trebateRecordsDialog_M.url,trebateRecordsDialog_M.params,function(data){
+               if(data.code==0){
+                   $('#trebateRecordsDialog_M').dialog("close");
+                   factory.show(data);
+               }else{
+                   MessageBox.info(data.msg);
+               }
+           })
+       }
+   }
+    $(function(){
+        factory.selYear('trebateRecordsDialog_M_year',new Date().getFullYear());
+    });
+
+</script>

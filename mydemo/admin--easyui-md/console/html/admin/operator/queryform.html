@@ -1,0 +1,55 @@
+<form id="search_form">
+    <fieldset>
+        <legend>过滤条件</legend>
+        <table>
+            <tr>					
+                <td>名字</td>
+                <td><input type="text" name="name" class="easyui-textbox" /></td>
+                <td>邮箱</td>
+                <td><input type="text" name="email" class="easyui-textbox" /></td>
+                <td>电话</td>
+                <td><input type="text" name="mobile" class="easyui-textbox"  /></td>
+                <td><a href="javascript:void(0);" name="submit"
+                       class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a> <a
+                       href="javascript:void(0);" name="reset" class="easyui-linkbutton"
+                       data-options="iconCls:'icon-reload'">清空</a>
+
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+</form>
+
+<script type="text/javascript">
+
+    var opQuery = {
+        id: "#search_form",
+        init: function() {
+            $("#search_form [name='submit']").click(function() {
+                opQuery.submit();
+     
+            });
+
+            $("#search_form [name='reset']").click(function() {
+                opQuery.reset();
+
+            });
+            
+             $.parser.parse(opQuery.id);
+        },
+        submit: function() {
+            var props = {};
+            Utils.bindProps($(opQuery.id), props, false);
+            optable.init(optable.url, props);
+        },
+        reset: function() {
+            $("#search_form").form("clear");
+        }
+
+    };
+    $(function() {
+        opQuery.init();
+       
+    });
+</script>
+

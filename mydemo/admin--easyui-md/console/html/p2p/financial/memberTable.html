@@ -1,0 +1,70 @@
+<table id="memberTable" class="easyui-datagrid"
+       data-options="remoteSort:false,striped:true,fit:false,  pagination : true, rownumbers:true" style="height:450px; width:100%">
+    <thead>
+    <tr>
+        <th data-options="field:'contractId',hidden:true"></th>
+        <th data-options="field:'projectName'">提成来源项目</th>
+        <th data-options="field:'rebateType',width:60">提成类型</th>
+        <th data-options="field:'rebateRate',width:60">提成比例%</th>
+        <th data-options="field:'rebateAmount',width:80">提成总额(元)</th>
+        <th data-options="field:'srcUserName',width:100">提成来源用户名</th>
+        <th data-options="field:'userName',width:80">提成用户</th>
+        <th data-options="field:'auditState',width:80">审核状态</th>
+        <th data-options="field:'auditRemark',width:80">审核意见</th>
+        <th data-options="field:'createTime',width:80">创建时间</th>
+    </tr>
+    </thead>
+</table>
+<script type="text/javascript">
+    var memberTable = {
+        rootScope:{},
+        url:"html/p2p/financial/trebateRecords.json",
+        params:{},
+        //初始化
+        init:function(url,params){
+            if(url !=undefined){
+                memberTable.url = url;
+            }
+            if(params && typeof params ==="object"){
+                $.extend(memberTable.params, params);
+            }
+            memberTable.render();
+        },
+        //刷新
+        reload:function(){
+            $('#memberTable').datagrid("reload");
+        },
+        //渲染datagrid
+        render:function(){
+            $('#memberTable').datagrid({
+                pagination : true,
+                nowrap : true,
+                fitColumns : true,
+                striped : true,
+                queryParams:memberTable.params,
+                url:memberTable.url,
+                method:'post'
+            });
+        },
+        state:function(value,row,index){
+            if(row.state){
+                switch (row.state){
+                    case "1":
+                        return "还款中";
+                    case "2":
+                        return "招标中";
+                    default :
+                        return "测试默认值"
+                }
+            }else{
+                return " ";
+            }
+        }
+    };
+    $(function(){
+        //调用表格初始化函数
+        memberTable.init();
+        //解决jq/easyui异步加载组件
+        $.parser.parse("#memberTable");
+    });
+</script>

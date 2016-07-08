@@ -1,0 +1,82 @@
+﻿<table id="dg_group_op" border="0"></table>
+<script type="text/javascript">
+	var groupOpTable = {
+		id : "#dg_group_op",
+		url : {},
+		roleId : "0",
+		params : {
+			"token" : op.data.token
+		},
+		init : function(url, params) {
+			groupOpTable.url = url;
+			$.extend(groupOpTable.params, params);
+			groupOpTable.render();
+		},
+		reload : function() {
+			$('#dg_group_op').datagrid("reload");
+		},
+		render : function() {
+			$('#dg_group_op').datagrid({
+				url : groupOpTable.url,
+				queryParams : groupOpTable.params,
+				pagination : true,
+				nowrap : true,
+				fitColumns : true,
+				striped : true,
+				columns : [ [ {
+					field : 'id',
+					title : 'Item ID',
+					width : 40,
+					sortable : true,
+					hidden : true
+				}, {
+					field : 'name',
+					title : '管理员账号',
+					width : 40
+				}, {
+					field : 'email',
+					title : '邮件',
+					width : 80,
+					align : 'center'
+				}, {
+					field : 'mobile',
+					title : '电话',
+					width : 80,
+					align : 'center'
+				}, {
+					field : 'workNumber',
+					title : '工号',
+					width : 40,
+					align : 'center'
+				}] ],
+
+				toolbar : [ {
+					text : '删除',
+					iconCls : 'icon-remove',
+					handler : function() {
+						var rows = $(groupOpTable.id).datagrid("getSelections");
+		                if (rows.length < 1) {
+		                    MessageBox.info("请选定数据进行移除！");
+		                } else {
+		                		var ss = [];
+		                		for(var i=0; i<rows.length; i++){
+		                            var row = rows[i];
+		                            ss.push(row.id);
+		                        }
+		                		if(groupOpTable.roleId!=0){
+		                			var url = "/admin/sdk/group/"+groupOpTable.roleId+"/remove/operators/" + ss + "?token="
+	            					+ encodeURIComponent(op.data.token);
+	            					MessageBox.confirm('是否删除', function() {
+	            					$.post(url, function(data) {
+	            						groupOpTable.reload();
+	            					});
+	            					});
+		                		}
+		                }
+					}
+				}, '-']
+			});
+		}
+	};
+</script>
+

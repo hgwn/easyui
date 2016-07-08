@@ -1,0 +1,15 @@
+<div id="operators_query">
+
+</div>
+
+<div id="operators_list">
+
+</div>
+<script>
+
+    $(function() {
+        PorletLoader.loadPorlet("operators_query", [{link: "html/admin/operator/queryform.html"}]);
+        PorletLoader.loadPorlet("operators_list", [{name:"optable",link: "html/admin/operator/list.html",dataurl:"/admin/sdk/op/findAll"}]);
+    });
+
+</script>

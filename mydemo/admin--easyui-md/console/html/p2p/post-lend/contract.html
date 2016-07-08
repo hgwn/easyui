@@ -1,0 +1,14 @@
+<!--start contract-->
+<div id="contract">
+    <div class="form-search"></div>
+    <div class="form-table"></div>
+</div>
+<!--end contract-->
+<script type="text/javascript">
+    $(function(){
+        //异步加载div片段--查询条件
+        $("#contract div.form-search").load("html/p2p/post-lend/contractForm.html");
+        $("#contract div.form-table").load("html/p2p/post-lend/contractTable.html");
+        $.parser.parse("#contract");
+    });
+</script>

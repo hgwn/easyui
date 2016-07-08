@@ -1,0 +1,228 @@
+<table id="trebateRecordsTable" class="easyui-datagrid"
+       data-options="remoteSort:false,striped:true,fit:false,  pagination : true, rownumbers:true" style="height:450px; width:100%">
+    <thead frozen="true">
+    <tr>
+        <th data-options="field:'ck',checkbox:true"></th>
+    </tr>
+    </thead>
+    <thead>
+    <tr>
+        <!--<th data-options="field:'contractId',hidden:true"></th>-->
+        <th data-options="field:'projectName'">提成来源项目</th>
+        <th data-options="field:'rebateType',formatter:trebateRecordsTable.rebateType,width:60">提成类型</th>
+        <th data-options="field:'rebateRate',width:60">提成比例%</th>
+        <th data-options="field:'rebateAmount',width:80">提成总额(元)</th>
+        <th data-options="field:'srcUserName',width:100">提成来源用户名</th>
+        <th data-options="field:'userName',width:80">提成用户</th>
+        <th data-options="field:'auditState',width:80,formatter:trebateRecordsTable.auditState">审核状态</th>
+        <th data-options="field:'auditRemark',width:80">审核意见</th>
+        <th data-options="field:'planPayDate',width:80">计划发放日期</th>
+        <th data-options="field:'isPayOff',width:80,formatter:trebateRecordsTable.isPayOff">是否付清提成</th>
+        <th data-options="field:'realPayRebate',width:80">实付提成</th>
+        <th data-options="field:'payDate',width:160">实际支付日期</th>
+        <th data-options="field:'createTime',width:80">创建时间</th>
+    </tr>
+    </thead>
+</table>
+<div id="trebateRecordsDialog">提成审核</div>
+<div id="trebateRecordsDialog_M">月度结算</div>
+<script type="text/javascript">
+    var trebateRecordsTable = {
+        rootScope:{},
+        //url:"html/p2p/financial/trebateRecords.json",
+        url:"/trebateRecords/",
+        loadData:{}, //定义请求返回的json数据对象
+        params:{}, //定义请求参数对象
+        //初始化
+        init:function(url,params){
+            if(url !=undefined){
+                trebateRecordsTable.url = url;
+            }
+            if(params && typeof params ==="object"){
+                $.extend(trebateRecordsTable.params, params);
+            }
+            //trebateRecordsTable.render();
+            trebateRecordsTable.httpGet(trebateRecordsTable.url,trebateRecordsTable.params);
+        },
+        //刷新
+        reload:function(){
+            $('#trebateRecordsTable').datagrid("reload");
+        },
+        //渲染datagrid
+        render:function(data){
+            //debugger;
+            $('#trebateRecordsTable').datagrid({
+                singleSelect:true,
+                pagination : true,
+                nowrap : true,
+                fitColumns : true,
+                striped : true,
+                //queryParams:trebateRecordsTable.params,
+                toolbar:trebateRecordsTable.toolbar,
+                data:data
+            });
+        },
+        //通过ajax get 获取json数据
+        httpGet:function(url,params){
+
+            factory.httpGet(url,params,function(data){
+                for(var k in data){
+                    trebateRecordsTable.loadData[k] = data[k];
+                }
+                if(data.result.content){
+                    trebateRecordsTable.loadData.rows =  data.result.content;
+                }
+                if(data.result.totalElements){
+                    trebateRecordsTable.loadData.total =  data.result.totalElements;
+                }
+                trebateRecordsTable.render(trebateRecordsTable.loadData);
+            });
+        },
+        //定义工具条
+        toolbar:[{
+            text:'修改',
+            iconCls:'icon-add',
+            handler:function(){
+                var  len = $('#trebateRecordsTable').datagrid('getSelections').length;
+                if(len){
+                    trebateRecordsDialog('修改',false);
+                }else{
+                    MessageBox.info('请勾选数据！');
+                }
+            }
+        },'-',{
+            text:'审核',
+            iconCls:'icon-add',
+            handler:function(){
+                var  len = $('#trebateRecordsTable').datagrid('getSelections').length;
+                if(len){
+                    trebateRecordsDialog('审核',false);
+                }else{
+                    MessageBox.info('请勾选数据！');
+                }
+            }
+        },'-',{
+            text:'月度结算',
+            iconCls:'icon-add',
+            handler:function(){
+                var  len = $('#trebateRecordsTable').datagrid('getSelections').length;
+                if(len){
+                    $('#trebateRecordsDialog_M').dialog({closed:false});
+                }else{
+                    MessageBox.info('请勾选数据！');
+                }
+            }
+        }],
+        rebateType:function(value,row,index){
+            if(row.rebateType){
+                switch (row.rebateType){
+                    case 1:
+                        return "借款提成";
+                    case 2:
+                        return "投资提成";
+                    default :
+                        return " "
+                }
+            }else{
+                return " ";
+            }
+        },
+        auditState:function(value,row,index){
+            if(row.auditState){
+                switch (row.auditState){
+                    case 1:
+                        return "审核通过";
+                    case 2:
+                        return "审核不通过";
+                }
+            }else{
+                if(row.auditState ==0) return "未审核";
+                return row.auditState;
+            }
+        },
+        isPayOff:function(value,row,index){
+            if(row.isPayOff==1){
+                return "是";
+            }else{
+                return "否";
+            }
+        }
+    };
+    //对话框
+    function trebateRecordsDialog(title,flag){
+        if(title){
+            var title = title;
+        }else{
+            var title = '审核';
+        }
+        $('#trebateRecordsDialog').dialog({
+            title: title,
+            width: 500,
+            height: 250,
+            closed: flag,
+            cache: false,
+            href: 'html/p2p/financial/trebateRecordsDialog.html',
+            modal: true,
+            buttons:[{
+                text:'确定',
+                iconCls:'icon-ok',
+                handler:function(){
+                    if(title=='审核'){
+                        alert('开发中...审核');
+                    }else{
+                        alert('开发中...修改');
+                    }
+                }
+            },{
+                text:'取消',
+                iconCls:'icon-cancel',
+                handler:function(){
+                    $('#trebateRecordsDialog').dialog({closed:true});
+                }
+            }]
+        });
+    }
+    $('#trebateRecordsTable').datagrid({
+        //双击查看详情
+        onDblClickRow: function(index,row){
+            console.log(row);
+        }
+    });
+    $('#trebateRecordsDialog_M').dialog({
+        title: '月度结算',
+        width: 300,
+        height: 150,
+        closed: true,
+        cache: false,
+        href: 'html/p2p/financial/trebateRecordsDialog_M.html',
+        modal: true,
+        buttons:[{
+            text:'确定',
+            iconCls:'icon-ok',
+            handler:function(){
+                alert('开发中...');
+            }
+        },{
+            text:'取消',
+            iconCls:'icon-cancel',
+            handler:function(){
+                $('#trebateRecordsDialog_M').dialog({closed:true});
+            }
+        }]
+    });
+    $(function(){
+        //调用表格初始化函数
+        trebateRecordsTable.init();
+        //解决jq/easyui异步加载组件
+        $.parser.parse("#trebateRecordsTable");
+        //初始化dialog
+        trebateRecordsDialog(null,true);
+        /*factory.httpGet("/trebateRecords/",null,function(data){
+            console.log(data);
+            console.log("22getnull");
+        });*/
+        factory.httpGet("/projects",null,function(data){
+            console.log(data);
+        })
+    });
+</script>

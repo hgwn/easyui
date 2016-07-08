@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css"
+	href="/resources/css/iframe.src.css" />
+<link rel="stylesheet" type="text/css" href="/resources/css/style.css" />
+
+<script type="text/javascript" src="/resources/js/jquery.js"></script>
+<script type="text/javascript" src="/resources/js/placeholder.js"></script>
+<script type="text/javascript"
+	src="/resources/js/artdialog/jquery.artDialog.js?skin=default"></script>
+<script type="text/javascript"
+	src="/resources/js/artdialog/iframeTools.js"></script>
+<script src="/resources/js/validator/jquery.validate.min.js"
+	type="text/javascript" charset="UTF-8"></script>
+<script type="text/javascript" src="/resources/js/jquery.form.js"></script>
+<script type="text/javascript" src="/resources/js/deelon/utils.js"></script>
+<script type="text/javascript" src="/resources/global.js"></script>
+</head>
+<body>
+	<div class="padding-30">
+		<div class="form-list form-w-80">
+			<form action="" id="formSaveAssets">
+				<div class="form-row">
+					<label class="form-label"><em class="required">*</em>资源名称：</label>
+					<div class="collection">
+						<input type="text" class="easyui-validatebox textbox"
+							required="true" missingMessage="不能为空" id="resName" name="resName" />
+					</div>
+				</div>
+				<div class="form-row">
+					<label class="form-label" style="width: 82px;"><em
+						class="required">*</em>默认地址：</label>
+					<div class="collection">
+						<input type="text" class="easyui-validatebox textbox"
+							required="true" missingMessage="不能为空" id="alias" name="alias" />
+					</div>
+				</div>
+				<div class="form-row">
+					<label class="form-label">排序：</label>
+					<div class="collection">
+						<input type="text" class="easyui-validatebox textbox" id="orderId"
+							name="orderId" data-options="validType:'digits'"/>
+					</div>
+				</div>
+
+				<div class="form-row">
+					<input type="hidden" id="id" name="id" /> <input type="hidden"
+						id="superId" name="superId" />
+				</div>
+
+			</form>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var assetsEditFrom = {
+			id : "#formSaveAssets",
+			login_url : "/admin/sdk/assets/save?token="
+					+ encodeURIComponent(op.data.token),
+			init : function() {
+				$(assetsEditFrom.id).makeform({
+					url : assetsEditFrom.login_url,
+					onsuccess : function(rsp) {
+						$(assetsEditFrom.id).trigger("submited", rsp);
+					},
+					onError : function(msg, obj, errorlist) {
+						MessageBox.warn(msg);
+					}
+				});
+			},
+			bindEvent : function(event, handler, data) {
+
+				$(assetsEditFrom.id).unbind(event);
+				$(assetsEditFrom.id).bind(event, data, handler);
+			},
+			echo : function(data) {
+				if (data) {
+					assetsEditFrom.reset();
+					Utils.bindProps($(assetsEditFrom.id), data, true);
+				}
+				var token = op.data.token;
+				$("#token").val(token);
+
+			},
+			submit : function(callback) {
+				if ($(assetsEditFrom.id).form('validate')) {
+					$(assetsEditFrom.id).submit();
+				}
+			},
+			reset : function() {
+
+				if ($("#name").prop("disabled")) {
+					var name = $("#name").val();
+					//不会清掉hidden 属性 
+					$(assetsEditFrom.id)[0].reset();
+
+					$("#name").val(name);
+				} else {
+					//不会清掉hidden 属性 
+					$(assetsEditFrom.id)[0].reset();
+
+				}
+			}
+		};
+
+		$(function() {
+			assetsEditFrom.init();
+		});
+	</script>
+</body>
+</html>
+﻿﻿﻿

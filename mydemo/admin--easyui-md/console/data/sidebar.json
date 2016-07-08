@@ -1,0 +1,23 @@
+
+
+[{
+        "id":11,
+        "groupname":"借款管理",
+        "list":[
+                {"name":"所有借款","url":"html/p2p/business/list.html"}]
+    },{
+        "id":12,
+        "groupname":"贷后管理",
+        "list":[
+          {"name":"所有贷后","url":"html/p2p/post-lend/postList.html"},
+          {"name":"逾期借款","url":"html/p2p/post-lend/overdue.html"},
+          {"name":"借款合同","url":"html/p2p/post-lend/contract.html"}]
+          },{
+      "id":13,
+      "groupname":"债权转让管理",
+      "list":[
+        {"name":"所有债权转让","url":"html/p2p/transfer/transfer.html"},
+        {"name":"债权转让合同-协议","url":"html/p2p/transfer/agreement.html"}]
+}
+]
+

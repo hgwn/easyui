@@ -1,0 +1,36 @@
+<!--撤销-->
+<form id="transferDialog">
+    <table class="table-detail" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+            <th width="15%;">撤销意见:</th>
+            <td colspan="3" style="position: relative; padding: 5px;">
+                <input type="text" class="easyui-textbox" name="cancelRemark" data-options="multiline:true" required="true" missingMessage="不能为空"  style=" height: 60px; width: 100%;margin: auto;" placeholder="请填写撤销意见">
+            </td>
+        </tr>
+    </table>
+</form>
+<script>
+    var transferDialog = {
+        url:factory.url.transferDialog,
+        //ajax提交
+        submit:function(){
+            var cancelRemark = $('#transferDialog').find('input[name=cancelRemark]').val();
+            var isValid = $('#transferDialog').form('validate');
+            var pamra = {cancelRemark:cancelRemark,transferId:transferTable.rootScope.transferId};
+            if(isValid){
+                factory.httpPut(transferDialog.url+transferTable.transferIds+"/2",pamra,function(data){
+                    if(data.code==0){
+                        MessageBox.info(data.msg);
+                    }else{
+                        MessageBox.info("失败!");
+                        console.log(data);
+                    }
+                    transferDialog.reset();
+                });
+            }
+        },
+        reset:function(){
+            $('#transferDialog').form('clear');
+        }
+    };
+</script>

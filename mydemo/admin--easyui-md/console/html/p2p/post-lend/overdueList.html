@@ -1,0 +1,123 @@
+<div style="padding:10px;">
+    <p style="line-height: 30px;">垫付成功后，如果借款人还款，资金将转入你的支付账号。</p>
+<table class="table-detail"  cellpadding="0" cellspacing="0" border="0">
+    <tr>
+        <th style="width:15%;">项目名称: </th>
+        <td colspan="3">
+            借款投资提成天标
+        </td>
+        <th style="width:15%;">当前期数: </th>
+        <td >
+            <label>1</label>
+        </td>
+    </tr>
+    <tr>
+        <th style="width:15%;">应还本金: </th>
+        <td  style="width:20%;">
+            800.000
+        </td>
+        <th style="width:15%;">应还利息: </th>
+        <td  style="width:20%;">
+            2.180
+        </td>
+        <th style="width:15%;">应还投资者数量</th>
+        <td  style="width:15%;">
+            <label>2</label>
+        </td>
+    </tr>
+    <tr>
+        <th>已还金额: </th>
+        <td >
+            <label>0.000</label>
+        </td>
+        <th>垫付状态</th>
+        <td >
+            未垫付
+        </td>
+        <th>已还投资者数量</th>
+        <td >
+            <label>0</label>
+        </td>
+    </tr>
+</table>
+</div>
+    <table id="overdueList" class="easyui-datagrid"
+           data-options="remoteSort:false,striped:true,fit:false,  pagination : true, rownumbers:true" style="height:450px; width:100%">
+        <thead frozen="true">
+        <tr>
+            <th data-options="field:'ck',checkbox:true"></th>
+        </tr>
+        </thead>
+        <thead>
+        <tr>
+            <th data-options="field:'code',width:120">投资人</th>
+            <th data-options="field:'content',width:60">应还金额</th>
+            <th data-options="field:'createTime',width:120">垫付时间</th>
+            <th data-options="field:'createTime',width:60">是否还款</th>
+        </tr>
+        </thead>
+    </table>
+
+<script type="text/javascript">
+    var overdueList = {
+        rootScope:{},
+        url:"data/contract.json",
+        params:{},
+        //初始化
+        init:function(url,params){
+            if(url !=undefined){
+                overdueList.url = url;
+            }
+            if(params && typeof params ==="object"){
+                $.extend(overdueList.params, params);
+            }
+            overdueList.render();
+        },
+        //刷新
+        reload:function(){
+            $('#overdueList').datagrid("reload");
+        },
+        //渲染datagrid
+        render:function(){
+            $('#overdueList').datagrid({
+               // singleSelect:true,
+                pagination : true,
+                nowrap : true,
+                fitColumns : true,
+                striped : true,
+                queryParams:overdueList.params,
+                toolbar:overdueList.toolbar,
+                url:overdueList.url,
+                method:'post'
+            });
+        },
+        //定义工具条
+        toolbar:[{
+            text:'垫付付款',
+            iconCls:'icon-add',
+            handler:function(){
+                var result = $('#overdueList').datagrid('getSelections');
+                var tempData = {"name":"lihongwen","row":[1,2,3]};
+                if(result.length){
+                    $.messager.confirm('提示', '确定要垫付付款吗?', function(r){
+                        if (r){
+                            factory.httpPost("data/contract.json",tempData,function(data){
+                                MessageBox.info("提交完成！");
+                                console.log(data);
+                            });
+                        }
+                    });
+                }else{
+                    MessageBox.info("请勾选数据！");
+                }
+            }
+        }]
+    };
+
+    $(function(){
+        //调用表格初始化函数
+        overdueList.init();
+        //解决jq/easyui异步加载组件
+        $.parser.parse("#overdueList");
+    });
+</script>

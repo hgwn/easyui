@@ -1,0 +1,102 @@
+﻿<table id="dg_op" border="0"></table>
+<script type="text/javascript" src="html/admin/operator/dialogs.js"></script>
+<script type="text/javascript">
+    var optable = {
+        id: "#dg_op",
+        url: {},
+        params: {
+            "token": op.data.token
+        },
+        init: function(url, params) {
+            optable.url = url;
+            optable.resetParams();
+            $.extend(optable.params, params);
+            optable.render();
+        },
+        resetParams:function(){
+        	optable.params = {
+                "token": op.data.token
+            }
+        },
+        reload: function() {
+            $('#dg_op').datagrid("reload");
+        },
+        render: function() {
+            
+            $('#dg_op').datagrid({
+                title: '操作员列表',
+                url: optable.url,
+                queryParams: optable.params,
+                pagination: true,
+                nowrap: true,
+                fitColumns: true,
+                striped: true,
+                columns: [[{
+                            field: 'id',
+                            title: 'Item ID',
+                            width: 40,
+                            sortable: true,
+                            hidden: true
+                        }, {
+                            field: 'name',
+                            title: '管理员账号',
+                            width: 40
+                        }, {
+                            field: 'email',
+                            title: '邮件',
+                            width: 80,
+                            align: 'center'
+                        }, {
+                            field: 'ip',
+                            title: 'IP',
+                            width: 80,
+                            align: 'center'
+                        }, {
+                            field: 'mobile',
+                            title: '电话',
+                            width: 80,
+                            align: 'center'
+                        }, {
+                            field: 'createTime',
+                            title: '创建时间',
+                            width: 80,
+                            align: 'center'
+                        }, {
+                            field: 'lastLoginTime',
+                            title: '最后登陆时间',
+                            width: 80,
+                            align: 'center'
+                        }, {
+                            field: 'workNumber',
+                            title: '工号',
+                            width: 40,
+                            align: 'center'
+                        }, {
+                            field: 'loginCount',
+                            title: '登陆次数',
+                            width: 40,
+                            align: 'center'
+                        }]],
+                toolbar: [{
+                        text: '添加',
+                        iconCls: 'icon-add',
+                        handler: function() {
+                            opFormDlg.show("添加操作员");
+                        }
+                    }, '-', {
+                        text: '修改',
+                        iconCls: 'icon-edit',
+                        handler: function() {
+                            var rows = $(optable.id).datagrid("getSelections");
+                            if (rows.length != 1) {
+                                MessageBox.info("请选定一条数据进行修改，不能多选！");
+                            } else {
+                                opFormDlg.show("修改操作员", rows[0]);
+                            }
+
+                        }
+                    }, '-']
+            });
+        }
+    };
+</script>

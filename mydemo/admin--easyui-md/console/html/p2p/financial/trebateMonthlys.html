@@ -1,0 +1,15 @@
+<!--trebateMonthlys.html会员提成月结页面-->
+<!--start trebateMonthlys-->
+<div id="trebateMonthlys">
+    <div class="form-search"></div>
+    <div class="form-table"></div>
+</div>
+<!--end trebateMonthlys-->
+<script type="text/javascript">
+    $(function(){
+        //异步加载div片段--查询条件
+        $("#trebateMonthlys div.form-search").load("html/p2p/financial/trebateMonthlysForm.html");
+        $("#trebateMonthlys div.form-table").load("html/p2p/financial/trebateMonthlysTable.html");
+        $.parser.parse("#trebateMonthlys");
+    });
+</script>

@@ -1,0 +1,19 @@
+[{
+        "id":11,
+        "groupname":"用户和分组",
+        "list":[
+                {"name":"操作员管理","url":"html/admin/operator/operators.html"},
+                {"name":"分组管理","url":"html/admin/group/index.html"}
+                
+                ]
+    },
+    {
+        "id":11,
+        "groupname":"角色和权限",
+        "list":[
+       			{"name":"角色管理","url":"html/admin/role/index.html"},
+                {"name":"资源管理","url":"html/admin/assets/index.html"}
+                
+                ]
+    }
+]

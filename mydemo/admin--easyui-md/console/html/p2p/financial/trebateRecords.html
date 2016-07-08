@@ -1,0 +1,15 @@
+<!--trebateRecords.html提成记录审核页面-->
+<!--start trebateRecords-->
+<div id="trebateRecords">
+    <div class="form-search"></div>
+    <div class="form-table"></div>
+</div>
+<!--end trebateRecords-->
+<script type="text/javascript">
+    $(function(){
+        //异步加载div片段--查询条件
+        $("#trebateRecords div.form-search").load("html/p2p/financial/trebateRecordsForm.html");
+        $("#trebateRecords div.form-table").load("html/p2p/financial/trebateRecordsTable.html");
+        $.parser.parse("#trebateRecords");
+    });
+</script>

@@ -1,0 +1,40 @@
+<form id="tprojectForm" action="#" class="h-form-search clearfloat"  style="padding-bottom: 15px;">
+    <!-- start h-search-box-->
+    <div class="h-search-box">
+        <ul class="form-search-row clearfloat" >
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">登录名：</span>
+                <input type="text" name="user"  class="easyui-textbox" style="height: 22px; width: 70%;" value=""/>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">项目名称：</span>
+                <input type="text" name="name"  class="easyui-textbox" style="height: 22px; width: 70%;" value=""/>
+            </li>
+        </ul>
+    </div>
+    <!-- end h-search-box-->
+    <div class="h-search-btn">
+        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="tprojectForm.search();" style="width:80px">查询</a>
+    </div>
+</form>
+<script>
+    var tprojectForm ={
+        param:{},
+        search:function(){
+            //debugger;
+            tprojectForm.setNull(tprojectForm.param);
+            Utils.bindProps("#tprojectForm",tprojectForm.param,false);
+            tprojectTable.init(tprojectTable.url,tprojectForm.param);
+        },
+        setNull:function(obj){
+            if(typeof obj ==="object"){
+                for(var p in obj){
+                    obj[p]=null;
+                }
+            }
+        }
+    };
+    $(function () {
+        $.parser.parse(".h-form-search");
+    })
+</script>

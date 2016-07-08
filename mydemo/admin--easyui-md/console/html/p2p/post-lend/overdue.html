@@ -1,0 +1,15 @@
+<!--逾期的借款页面-->
+<!--start overdue-->
+<div id="overdue">
+    <div class="form-search"></div>
+    <div class="form-table"></div>
+</div>
+<!--end overdue-->
+<script type="text/javascript">
+    $(function(){
+        //异步加载div片段--查询条件
+        PorletLoader.loadPorlet("overdue .form-search", [{link: "html/p2p/post-lend/overdueForm.html"}]);
+        PorletLoader.loadPorlet("overdue .form-table", [{link: "html/p2p/post-lend/overdueTable.html"}]);
+        $.parser.parse("#overdue");
+    });
+</script>

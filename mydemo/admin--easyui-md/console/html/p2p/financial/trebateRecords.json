@@ -1,0 +1,39 @@
+{
+  "total":100000,
+  "code": 0,
+  "msg": "成功",
+  "rows": [
+    {
+      "rebateRecordId": "123",
+      "rebateMonthlyId": "123",
+      "userId": "123",
+      "projectId": "123",
+      "recordType": "123",
+      "amount": "1000.00",
+      "srcUserId": "123",
+      "auditState": "123",
+      "auditRemark": "abc",
+      "planPayDate": "2016-04-12 20:59",
+      "isPayOff": "123",
+      "realPayRebate": "1000.00",
+      "payDate": "2016-04-12 20:59",
+      "createTime": "2016-04-12 20:59"
+    },
+    {
+      "rebateRecordId": "123",
+      "rebateMonthlyId": "123",
+      "userId": "123",
+      "projectId": "123",
+      "recordType": "123",
+      "amount": "1000.00",
+      "srcUserId": "123",
+      "auditState": "123",
+      "auditRemark": "abc",
+      "planPayDate": "2016-04-12 20:59",
+      "isPayOff": "123",
+      "realPayRebate": "1000.00",
+      "payDate": "2016-04-12 20:59",
+      "createTime": "2016-04-12 20:59"
+    }
+  ]
+}

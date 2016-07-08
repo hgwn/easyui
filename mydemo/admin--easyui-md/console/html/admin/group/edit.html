@@ -1,0 +1,59 @@
+<div class="padding-30">
+    <div class="form-list form-w-80">
+        <div class="error"></div>
+        <form  id="group-edit-form">
+
+            <div class="form-row">
+                <label class="form-label"><em class="required">*</em>组名：</label>
+                <div class="collection">
+                    <input type="text"  id="name"
+                    name="name" class="easyui-validatebox textbox" required="true" missingMessage="不能为空" maxlength="50" />
+                    <div class="form-tip" name="e-name"></div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <input type="hidden" id="id" name="id" />
+                <input type="hidden" id="pid" name="pid" />
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var groupEditForm = {
+        id : "#group-edit-form",
+        url : "/admin/sdk/group",
+        init : function() {
+
+            $(groupEditForm.id).makeform({
+                url : groupEditForm.url + '?token=' + encodeURIComponent(op.data.token),
+                onsuccess : function(data) {
+
+                }
+            });
+
+        },
+        bindEvent : function(event, handler, data) {
+            $(groupEditForm.id).unbind(event);
+            $(groupEditForm.id).bind(event, data, handler);
+        },
+        submit : function(callback) {
+            if($(groupEditForm.id).form('validate')){
+        		$(groupEditForm.id).submit();
+        	}
+        },
+
+        reset : function() {
+            $(groupEditForm.id)[0].reset();
+        },
+
+        echo : function(data) {
+
+            Utils.bindProps(groupEditForm.id, data, true);
+        }
+    };
+
+</script>

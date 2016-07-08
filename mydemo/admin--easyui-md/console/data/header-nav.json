@@ -1,0 +1,21 @@
+[
+  {
+        "id":1,
+        "name":"业务管理",
+        "url":"./data/sidebar.json"
+    },{
+        "id":2,
+        "name":"财务管理",
+        "url":"./data/sidebar2.json"
+    },
+    {
+        "id":3,
+        "name":"操作员和权限",
+        "url":"html/admin/operator/nav.json"
+    },
+    {
+        "id":4,
+        "name":"系统管理",
+        "url":"./data/sidebar2.json"
+    }
+]

@@ -1,0 +1,129 @@
+﻿<ul id="tt_group" class="easyui-tree" ></ul>
+
+<div id="mm_group" class="easyui-menu" style="width:120px; display: none;">
+    <!-- <div  id="addTop"   data-options="iconCls:'icon-add'">
+    添加顶级组
+    </div> -->
+    <div  id="group_addChild" data-options="iconCls:'icon-add'">
+        添加组
+    </div>
+    <div  id="group_edit"   data-options="iconCls:'icon-edit'">
+        编辑组
+    </div>
+    <div  id="group_remove" data-options="iconCls:'icon-remove'" >
+        删除组
+    </div>
+    <div  id="group_addOperator" data-options="iconCls:'icon-add'" >
+        添加成员
+    </div>
+    <div class="menu-sep"></div>
+</div>
+
+<script type="text/javascript" src="html/admin/group/dialogs.js"></script>
+
+<script type="text/javascript">
+    var groupTree = {
+        data : [],
+        canShowCheck : false,
+        reload : function() {
+            this.init();
+            $('#tt_group').tree("reload");
+        },
+        getSelected : function() {
+            var node = $('#tt_group').tree('getSelected');
+            return {
+                groupId : node.id
+            };
+        },
+        getChecked : function() {
+            var nodes = $('#tt_group').tree('getChecked');
+            for (var node in nodes) {
+                var param = {
+                    groupId : nodes[node].id
+                };
+                this.data.push(param);
+            }
+            return this.data;
+
+        },
+        init : function(canShowCheck) {
+            $.parser.parse();
+            if (canShowCheck) {
+                this.canShowCheck = canShowCheck;
+            }
+
+            $('#tt_group').tree({
+                url : '/admin/sdk/group/tree?pid=2&token=' + encodeURIComponent(op.data.token),
+                method : "get",
+                lines : true,
+                animate : true,
+                onContextMenu : function(e, node) {
+                    e.preventDefault();
+                    $(this).tree('select', node.target);
+
+                    $('#mm_group').menu('show', {
+                        left : e.pageX,
+                        top : e.pageY
+                    });
+
+                },
+                formatter : function(node) {
+                    return node.name;
+                },
+                checkbox : this.canShowCheck,
+                onClick : function(node) {
+                	groupOpTable.roleId = node.id;
+                	groupOpTable.init("/admin/sdk/op/findAll?groupId=" + node.id);
+                }
+            });
+
+            $("#group_addOperator").bind('click', function() {
+                operatorTableDlg.show("添加成员");
+            });
+
+            $("#group_addChild").bind('click', function() {
+
+                var node = $("#tt_group").tree("getSelected");
+                var data = {
+                    pid : node.id
+                };
+
+                groupEditDlg.show("添加组", data);
+            });
+
+            $("#group_edit").bind('click', function() {
+                var node = $("#tt_group").tree("getSelected");
+                var data = {
+                    id : node.id,
+                    name : node.name,
+                    pid : node.pid
+                };
+
+                groupEditDlg.show("修改组", data);
+            });
+
+            $("#group_remove").bind('click', function() {
+
+                var node = $("#tt_group").tree("getSelected");
+                var data = {
+                    id : node.id
+                };
+
+                var url = "/admin/sdk/group/remove/" + data.id + "?token=" + encodeURIComponent(op.data.token);
+
+                MessageBox.confirm('是否删除', function() {
+                    $.post(url, function(data) {
+                        groupTree.init();
+
+                    });
+                });
+
+            });
+
+        }
+    };
+
+    $(function() {
+        groupTree.init();
+    }); 
+</script>

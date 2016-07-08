@@ -1,0 +1,73 @@
+<div class="padding-30">
+	<div class="form-list form-w-80">
+		<form action="" id="roleSaveForm">
+			<div class="form-row">
+				<label class="form-label"><em class="required">*</em>名称：</label>
+				<div class="collection">
+					<input type="text" class="easyui-validatebox textbox" required="true" missingMessage="不能为空" id="name" name="name"
+						maxlength="50" />
+					<div class="form-tip" name="e-name"></div>
+				</div>
+			</div>
+			<div class="form-row">
+				<label class="form-label">备注：</label>
+				<div class="collection">
+					<input type="text" class="easyui-validatebox textbox" id="remark"
+						name="remark" />
+					<div class="form-tip" name="e-remark"></div>
+				</div>
+			</div>
+			<div class="form-row">
+				<input type="hidden" id="id" name="id" />
+			</div>
+
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+	var roleEditFrom = {
+		id : "#roleSaveForm",
+		url : "/admin/sdk/op/role/save?token="+ encodeURIComponent(op.data.token),
+		init : function() {
+
+			$(roleEditFrom.id).makeform({
+				url : roleEditFrom.url,
+				onsuccess : function(rsp) {
+					if (rsp.code == 0) {
+						$(roleEditFrom.id).trigger("submited", rsp);
+					} else {
+						MessageBox.warn(rsp.msg);
+					}
+				},
+				onError : function(msg, obj, errorlist) {
+					MessageBox.warn(msg);
+				}
+			});
+		},
+		bindEvent : function(event, handler, data) {
+
+			$(roleEditFrom.id).unbind(event);
+			$(roleEditFrom.id).bind(event, data, handler);
+		},
+		echo : function(data) {
+			roleEditFrom.reset();
+			if (data) {
+				Utils.bindProps($(roleEditFrom.id), data, true);
+			}
+		},
+		submit : function(callback) {
+			if($(roleEditFrom.id).form('validate')){
+        		$(roleEditFrom.id).submit();
+        	}
+		},
+		reset : function() {
+			//不会清掉hidden 属性 
+			$(roleEditFrom.id)[0].reset();
+			//$(roleEditFrom.id).find("[name='id']").val("");   
+		}
+	};
+
+	$(function() {
+		roleEditFrom.init();
+	});
+</script>

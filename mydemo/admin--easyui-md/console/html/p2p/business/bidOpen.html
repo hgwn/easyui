@@ -1,0 +1,28 @@
+<form id="bidOpen">
+   <div style="padding: 10px;"> <input class="easyui-datetimebox" value="" id="dt" name="dtime" required="true" style="width:200px"></div>
+</form>
+<script>
+    var bidOpen={
+        url:factory.url.bidOpen,
+        //提交
+        submit:function(){
+            if(!($('#bidOpen').form('enableValidation').form('validate'))){
+                //$.messager.alert('提示','请设定开标时间!','info');
+                return ;
+            }
+            factory.httpPut(bidOpen.url,{openTime:$('#dt').datetimebox('getValue'),projectId:audit.rootScope.result.project.projectId},function(data){
+                $('#bidOpenDialog').dialog("close");
+                if(data.code==0){
+                    MessageBox.info(data.msg);
+                }else{
+                    MessageBox.info("失败!");
+                }
+                bidOpen.reset();
+                audit.echo();
+            });
+        },
+        reset:function(){
+            $('#dt').datetimebox('setValue', '');
+        }
+    };
+</script>
