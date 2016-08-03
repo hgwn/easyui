@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head id="top">
+        <meta charset="UTF-8">
+        <!-- reset css及公共样式-->
+        <link rel="stylesheet" type="text/css" href="/commons/css/easyui/default/easyui.css" />
+        <link rel="stylesheet" type="text/css" href="/commons/css/easyui/IconExtension.css" />
+        <link rel="stylesheet" type="text/css" href="/commons/css/easyui/icon.css" />
+        <link rel="stylesheet" type="text/css" href="css/base.css" />
+        <!-- 自定义css-->
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <title>运营后台管理</title>
+    </head>
+
+    <body class="easyui-layout panel-fit" id="layout">
+
+        <div id="header" region="north" border="false"  style="height:70px; border-bottom: 1px solid #4a8dd4;" ></div>
+
+        <div id="sidebar" region="west" split="false" border="false"  style="width:200px;padding:0px;"></div>
+
+        <div id="main" region="center" border="false" style="background: #fff; overflow-y:hidden">
+
+            <div id="breadcrumb_box" class="breadcrumb"  region="north" border="false"  style="height:35px; background: #eee; border-bottom: 1px solid #4a8dd4;" ></div>
+
+
+
+            <div id="main_box"  region="west" split="false" border="false" style="width:100%;height: 90%; overflow-y: auto;"></div>
+        </div>
+
+
+        <script src="/commons/lib/jquery-2.2.2.min.js"></script>
+        <script src="/commons/lib/easyui/jquery.easyui.min.js"></script>
+        <script src="/commons/lib/easyui/easyui-lang-zh_CN.js"></script>
+        <script src="/commons/lib/jquery.form.js"></script>
+        <script src="/commons/lib/jquery.cookie.js" ></script>
+        <!-- 富文本编辑器js -->
+        <script src="/commons/lib/ckeditor/ckeditor.js"></script>
+        <script src="/commons/lib/ckeditor/ckeditor_msg.js"></script>
+
+        <!-- 上传文件js -->
+        <script src="/commons/lib/plupload.full.min.js"></script>
+        <script src="/commons/lib/deelon.fileupload.js"></script>
+
+        <script type="text/javascript" src="/commons/utils.js"></script>
+        <script type="text/javascript" src="/commons/provider.js"></script>
+        <script type="text/javascript" src="/commons/router-2.0.js"></script>
+        <script type="text/javascript" src="/commons/zz-plugin.js"></script>
+        <script type="text/javascript" src="/commons/deelon-sdk.js"></script>
+
+        <script src="/commons/global.js"></script>
+        <script src="js/common.js" ></script>
+
+
+        <script src="js/mappings.js"></script>
+
+
+
+        <script type="text/javascript" >
+
+
+            function load_module_porlets(module) {
+                
+                //是否需要加载
+                if(module.hasPorlets === false){
+                    return;    
+                }
+                var url="";
+                if(module.inner){
+                     url = "/portal/console/html/" + module.name + "/porlets.js";
+                }else{
+                     url = "/" + module.name  + "/console/html/"+module.name +"/porlets.js";
+                }
+                DeelonService.ajaxAsync(url, "GET","script",{},function(res) {
+                     jQuery.globalEval(res);
+                     var porletsAdded = eval(module.name + "porlets");
+                     $.extend(porlets, porletsAdded);
+                 });
+
+            }
+
+            function loadMoudule(url) {
+                DeelonService.ajaxAsync(url, "GET", "json",{}, function(data) {
+                    for (var i = 0; i < data.length; i++) {
+                        mappings["index"][data[i].name] = {
+                            dynamic: {box: "#main_box"},
+                            porlets: {
+                                header: {box: "#header"},
+                                sidebar: {box: "#sidebar"}
+                            }
+                        };
+                        load_module_porlets(data[i]);
+
+                    }
+                });
+            }
+
+            $(function() {
+                op.load();
+                if (op.data.token == null) {
+                    Utils.gotoPage('login.html');
+                    return;
+                }
+                loadMoudule("./html/modules.json");
+
+                Router.init(mappings, porlets);
+
+                //判断是首页跳转
+                if(location.href.indexOf("page") == -1 || location.href.indexOf("page=main") > 0){
+                    //Utils.gotoPage("#page=main:home?bread=首页");
+                    Router.gotoPage({page: "index", vpage: "main", blk: "home",params:{bread:"首页"}})
+                }else{
+                    Router.gotoPage(Router.parseHash());
+                }
+                $("#breadcrumb_box").breadcrumb();
+
+            });
+
+        </script>
+    </body>
+</html>

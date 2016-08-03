@@ -1,0 +1,11 @@
+{"total":5,
+  "code":0,
+  "msg":"获取成功",
+  "rows":[
+  {"projectId":"1","loginName":"huang003","pname":"定版测试流程","papplicant":"李鸿文","pstatusId":1,"createTime":"2016-04-12"},
+  {"projectId":"2","loginName":"huang009","pname":"定版测试流程","papplicant":"李鸿文","pstatusId":0,"createTime":"2016-04-12"},
+  {"projectId":"3","loginName":"huang003","pname":"定版测试流程","papplicant":"李鸿文","pstatusId":1,"createTime":"2016-04-12"},
+  {"projectId":"4","loginName":"huang003","pname":"定版测试流程","papplicant":"李鸿文","pstatusId":1,"createTime":"2016-04-12"},
+  {"projectId":"5","loginName":"huang003","pname":"定版测试流程","papplicant":"李鸿文","pstatusId":1,"createTime":"2016-04-12"}
+]}
+

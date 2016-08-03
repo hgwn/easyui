@@ -1,0 +1,195 @@
+<form action="#" class="h-form-search clearfloat" id="query_pay_form">
+    <!-- start h-search-box-->
+    <div class="h-search-box clearfloat">
+        <ul class="form-search-row clearfloat" >
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">渠道代码：</span>
+                <input type="text" name="code"  class="easyui-textbox" style="height: 22px; width: 70%" value=""/>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">渠道名称：</span>
+                <input type="text" name="name"  class="easyui-textbox" style="height: 22px; width: 70%" value=""/>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">状态：</span>
+                <select name="enabled"   class="easyui-combobox" style="height: 22px; width: 100px;" data-options="panelHeight:'auto',editable:false">
+                    <option value="">全部</option>
+                    <option value="0">未启用</option>
+                    <option value="1">已启用</option>
+                </select>
+            </li>
+        </ul>
+        <div class="h-search-btn">
+            <a href="javascript:void(0); " class="easyui-linkbutton" data-options="iconCls:'icon-search'"  name="submit"  style="width:80px">查询</a>
+        </div>
+    </div>
+</form>
+
+<table id="pay_table" class="easyui-datagrid" style="height:450px; width:100%"
+       data-options="remoteSort:false,striped:true,nowrap:true,pagination:true,collapsible:true, rownumbers:true">
+
+    <thead>
+        <tr>  
+            <th data-options="field:'id',checkbox:true"></th>
+            <th data-options="field:'code',fixed:true,width:160,align:'center',halign:'center'">渠道代码</th>
+            <th data-options="field:'name',fixed:true,width:160,align:'center',halign:'center'">渠道名称</th>
+            <th data-options="field:'catalog',fixed:true,width:160,align:'center',halign:'center',formatter:payTable.formatCatalog">类型</th>
+            <th data-options="field:'logo',fixed:true,width:160,align:'center',halign:'center'">LOGO</th>
+            <th data-options="field:'enabled',fixed:true,width:160,align:'center',halign:'center',formatter:payTable.formatEnabled">是否启用</th>
+            <th data-options="field:'createTime',fixed:true,width:160,align:'center',halign:'center'">加入时间</th>
+            <th data-options="field:'descp',fixed:true,width:160,align:'center',halign:'center'">描述</th>
+            <th data-options="field:'conf',width:260,align:'center',halign:'center'">配置信息</th>
+    </thead>
+</table>
+<script src="js/formDialog.js"></script>
+<script>
+    var queryPayForm ={
+        id:"#query_pay_form",
+        init:function(){
+            $("#query_pay_form [name='submit']").click(function(){
+                queryPayForm.submit();
+            })
+        },
+        submit:function(){
+            var param = {};
+            Utils.bindProps($(queryPayForm.id),param,false);
+            payTable.init(payTable.url,param);
+        }
+    };
+    var payTable = {
+        url: "./html/admin/settings/channel.json",
+       
+        init: function(url, params) {
+            payTable.url = url;
+            payTable.params = params;
+
+            payTable.render();
+        },
+        render: function(data) {
+            $('#pay_table').datagrid({
+                fitColumns: true,
+                queryParams: payTable.params,
+                toolbar: payTable.toolbar,
+                url: payTable.url,
+                method: 'get'
+
+            });
+
+        },
+        reload: function() {
+            $('#pay_table').datagrid("reload");
+        },
+        toolbar: [{
+                text: '添加',
+                iconCls: 'icon-add',
+                handler:function(){
+                    payTable.addDlg.show();
+                }
+
+            }, '-', {
+                text: '修改',
+                iconCls: 'icon-edit',
+                handler:function(){
+                    var row = $('#pay_table').datagrid("getSelections");
+                    if(!row){
+                        MessageBox.info("请选择需要修改的数据");
+                        return;
+                    }else if(row.length > 1){
+                        MessageBox.info("只能选择一条数据");
+                        return;
+                    }
+                    var editDlg  = new FormDialog({
+                        title:"修改支付渠道",
+                        formName:"payForm",
+                        width:600,
+                        height:450,
+                        formurl:"html/admin/settings/paychannel_editor.html",
+                        data:row[0]
+                    });
+                    editDlg.show();
+                }
+
+            },
+            '-', {
+                text: '启用',
+                iconCls: 'icon-lock-001',
+                handler:function(){
+                    var row = $('#pay_table').datagrid("getSelections");
+                    if(!row){
+                        MessageBox.info("请选择需要启用的数据");
+                        return;
+                    }
+                    var tempArr = [];
+                    for(var i=0; i< row.length; i++){
+                        tempArr.push(row[i].id);
+                    }
+                    factory.httpPost("./html/admin/settings/resutl.json",tempArr.join(","),function(rsp){
+                        if(rsp.code == 0){
+                            MessageBox.info("启用成功");
+                            payTable.reload();
+                        }else{
+                            MessageBox.info(rsp.msg);
+                        }
+                    });
+                }
+            }, '-', {
+                text: '停用',
+                iconCls: 'icon-unlock-001',
+                handler:function(){
+                    var row = $('#pay_table').datagrid("getSelections");
+                    if(!row){
+                        MessageBox.info("请选择需要停用的数据");
+                        return;
+                    }
+                    var tempArr = [];
+                    for(var i=0; i< row.length; i++){
+                        tempArr.push(row[i].id);
+                    }
+                    factory.httpPost("./html/admin/settings/resutl.json",tempArr.join(","),function(rsp){
+                        if(rsp.code == 0){
+                            MessageBox.info("停用成功");
+                            payTable.reload();
+                        }else{
+                            MessageBox.info(rsp.msg);
+                        }
+                    });
+                }
+            }
+
+        ],
+         addDlg:new FormDialog({title:"添加支付渠道",
+                               formName:"payForm",
+                               width:600,height:450,
+                               formurl:"html/admin/settings/paychannel_editor.html"}),
+        formatEnabled:function(value,row,index){
+            if(value == 1){
+                return "已启用";
+            }else{
+                return "未启用"
+            }
+        },
+        formatCatalog:function(value,row,index){
+            switch(value){
+                case 1:
+                    return "网关";
+                    break;
+                case 2:
+                    return "托管";
+                    break;
+                case 3:
+                    return "银行存管"
+                    break;
+                default: return value;
+            }
+        }
+    };
+
+    $(function() {
+        //debugger;
+        payTable.init(payTable.url);
+        queryPayForm.init();
+        $.parser.parse("#pay_table");
+        $.parser.parse("#query_pay_form");
+    });
+
+</script>

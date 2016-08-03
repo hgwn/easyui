@@ -1,0 +1,37 @@
+[
+    {
+        "id": 3,
+        "name": "操作员和权限",
+        "url": "html/admin/operator/nav.json"
+    },
+    {
+        "id": 6,
+        "name": "会员管理",
+        "url": "html/admin/member/nav.json"
+    },
+    {
+        "id": 4,
+        "name": "系统管理",
+        "url": "html/system/settings/nav.json"
+    },
+    {
+        "id": 9,
+        "name": "消息管理",
+        "url": "html/message/settings/nav.json"
+    },
+    {
+        "id": 13,
+        "name": "财务管理",
+        "url": "html/finance/settings/nav.json"
+    },
+    {
+        "id": 12,
+        "name": "报表统计",
+        "url": "html/report/nav.json"
+    },
+    {
+        "id": 14,
+        "name": "积分商城",
+        "url": "html/market/settings/nav.json"
+    }
+]
