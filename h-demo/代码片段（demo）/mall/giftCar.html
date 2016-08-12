@@ -1,0 +1,348 @@
+<link rel="stylesheet" href="css/giftcar.css" />
+<!-- <script src="../mall/addressrec.js" charset="utf-8"></script> -->
+
+<!--  页面布局  -->
+<div class="contain_main">
+    <!--  头部 链接 -->
+    <p class="header_links">
+        <a href="#page=giftlist"> 积分商城</a><span class="symbol">&gt;</span><a style="color:#333;">购物车</a>
+    </p>
+
+    <!--  有购物信息  -->
+    <div id="shopInfo">
+        <!--  购物车标题 -->
+        <p class="shopCar_title">购物车信息</p>
+        <table class='giftInfo'>
+            
+            <tr>
+                <th style='width:458px;' class='txt_left'>
+                  <span class='first_th_td'>
+                    <input type='checkbox' checked />&nbsp;&nbsp;全选</span>
+                  <span style='margin-left:168px;'>礼品名称</span></th>
+                <th style='width:180px;'>单件积分</th>
+                <th style='width:179px;'>兑换数量</th>
+                <th style='width:179px;'>所需积分</th>
+                <th>操作</th>
+            </tr>
+            <!-- <tr>
+                <td class='txt_left'>
+                    <span class='first_tr_td'><input type='checkbox' /></span>
+                    <div class='giftName'><img src='' />
+                        <span class='giftName_title'></span>
+                    </div>
+                </td>
+                <td class='needPointAmount'></td>
+                <td>
+                    <div class='exchangeNum'>
+                        <a class='reduce'>-</a>
+                        <input type='text' readonly='readonly' class='num_value' value=$quantity />
+                        <a class='add'>+</a>
+                    </div>
+                </td>
+                <td class='totalPointAmount'></td>
+                <td>
+                    <a class='operation'>删除</a>
+                </td>
+            </tr> -->
+            
+        </table>
+        <p id='sub_empty'><input type='button' value='立即兑换'/><a>清空购物车</a></p>
+    </div>
+
+    <!--  无购物信息  -->
+    <div id="noShopInfo">
+        <!-- 无购物信息主体部分 -->
+        <div class="noShop_main">
+            <p>您的购物车还是空的，去看看心仪的礼品吧~</p>
+            <a href="index.html#page=giftlist">去兑换></a>
+        </div>
+    </div>
+</div>
+<script>
+    var giftCar = {
+        url:"/dlsys/market/shoppingCar",
+        arr:'',
+        data:{},
+        init:function(){
+            DeelonService.get(giftCar.url,"",function(data){
+                if( data.result ){
+                    //返回code值不为0时,
+                    giftCar.render(data.result);
+                    $('#noShopInfo').hide();
+                    $('#shopInfo').show();
+
+                }else{
+                    //返回code值为0时,
+                    // giftCar.showDiv();
+                    $('#noShopInfo').show();
+                    $('#shopInfo').hide();
+                }
+            })
+        },
+        render:function(data){
+
+            giftCar.arr = data;
+
+            $.each(data,function(index,val){
+                //图片地址设置
+                val.gift.giftPhotoJson = val.gift.giftPhotoJson == "" || val.gift.giftPhotoJson == undefined || val.gift.giftPhotoJson == null ? val.gift.giftPhotoJson = 'images/mall/182.182.jpg' : val.gift.giftPhotoJson;
+                //图片地址设置
+                
+                giftCar.templ(index,val.giftId,val.gift.giftPhotoJson,val.gift.giftName,val.gift.needPointAmount,val.quantity);
+            });
+
+            giftCar.event();
+        },
+        //模板
+        templ:function(index,idname,photo,giftname,needPointAmount,quantity){
+            var template = "<tr index ='"+ index +"' idname='"+ idname +"'><td class='txt_left'>";
+                template += "<span class='first_tr_td'>";
+                template += "<input type='checkbox' checked /></span>";
+                template += "<div class='giftName'><img src='"+ photo + "'/>";
+                template += "<p class='giftName_title' title='"+ giftname +"'>"+ giftname +"</p>";
+                template += "</div></td><td class='needPointAmount'>"+ needPointAmount +"</td>";
+                template += "<td><div class='exchangeNum'>";
+                template += "<a class='reduce'>-</a>";
+                template += "<input type='text' readonly='readonly' class='num_value' value='"+ quantity +"' />";
+                template += "<a class='add'>+</a></div></td>";
+                template += "<td class='totalPointAmount'>"+ needPointAmount*quantity +"</td>";
+                template +="<td><a class='operation'>删除</a></td></tr>";
+
+                $('.giftInfo').append(template);
+
+         
+        },  
+        showDiv:function(){
+            $('#noShopInfo').show();
+            $('#shopInfo').hide();
+        },
+        // submitValidata:function(num){
+        // 	var gainAmount = parseInt($("#gainAmount").attr("gainAmount"));//每次兑换限制
+        // 	var totalGainAmount = parseInt($("#totalGainAmount").attr("totalGainAmount"));//没人总共可以兑换限制
+        // 	var giftLeftAmount = giftDetal_box.rootScope.giftLeftAmount;//礼品库存量
+        // 	var alreadyExchange = giftDetal_box.alreadyExchange;//用户已经兑换了的数量
+        // 	if(gainAmount != -1 && num > gainAmount){
+        // 		jAlert.warn("兑换数量大于每次兑换限制,请重新选择数量！");
+	       //      return false;
+        // 	}
+        // 	if(giftLeftAmount != -1 && num > giftLeftAmount){
+        // 		if(giftLeftAmount == 0){
+	       //  		jAlert.warn("礼品已兑完！");
+        // 		}else{
+        // 			jAlert.warn("兑换数量不能大于库存数量,请重新选择数量！");
+        // 		}
+	       //      return false;
+        // 	}
+        // 	if(totalGainAmount != -1 && (num + alreadyExchange > totalGainAmount)){
+        // 		jAlert.warn("兑换数量大于每人兑换限制,请重新选择数量！");
+	       //      return false;
+        // 	}
+	       //  return true;
+        // },
+        //事件
+        event:function(){
+
+            var allInput = $("input[type='checkbox']");//所有选择框
+
+            //checkbox点击事件
+            allInput.on('click',function(){
+                var index = allInput.index($(this));//获取当前input在所有input选择框中的索引
+                var that = $(this);
+
+                if(that.prop('checked')){
+                    //选中
+                    if(index == 0){
+                        allInput.each(function(){
+                            $(this).prop('checked',true);
+                        })
+                    }else{
+                        //除全选选择框除外
+                        allInput.not('.first_th_td input').each(function(){
+                            if(!$(this).prop('checked')){
+                                allInput.eq(0).prop('checked',false);
+                                return false;
+                            }else{
+                                $('.first_th_td input').prop('checked',true);
+                            }
+                        })
+                        
+
+
+                    }
+                }else{
+                    //没有选中
+                    if(index == 0){
+                        allInput.each(function(){
+                            $(this).prop('checked',false);
+                        })
+                    }else{
+                        allInput.eq(0).prop('checked',false);
+                    }
+                }
+
+            });
+
+            //每个元素的删除
+            $('.operation').on('click',function(){
+                var parent = $(this).parent().parent();//父级$对象
+                var idname = parent.attr('idname');
+
+                var url = '/dlsys/market/shoppingCar/delGift/' + idname;
+
+                DeelonService.del(url,{giftId:idname},function(data){
+                    if(data.code == 0){
+                        parent.remove();//删除当前节点
+                        if($('.giftInfo tr').length <= 1){//如果当前tr数组成员小于等于1
+                            $('#noShopInfo').show();
+                            $('#shopInfo').hide();
+                        }
+                    }
+                })
+
+            });
+
+            //减法运算
+            $('.reduce').on('click',function(){
+                var that = $(this);
+                var single = parseInt(that.parent().parent().siblings('.needPointAmount').text());//单件积分
+                var numVal = $(this).siblings('.num_value').val();//当前数量值
+                var idname = $(this).parent().parent().parent().attr('idname');
+                var reduceUrl = '/dlsys/market/shoppingCar/decreaseGift/' + idname;
+                if( numVal >= 2 ){
+                    numVal --;
+                    DeelonService.post(reduceUrl,{giftId:idname},function(data){
+                        if( data.code == 0 ){
+                            that.siblings('.num_value').val(numVal);
+                            that.parent().parent().siblings('.totalPointAmount').text(single * numVal);
+
+                        }else{
+                            jAlert.error('系统出现异常');
+                        }
+                    })
+                }else{
+                    numVal = 1;
+                    jAlert.info('最低兑换一件')
+                } 
+            });
+
+            //加法运算
+            $('.add').on('click',function(){
+                var that = $(this);
+                var single = parseInt(that.parent().parent().siblings('.needPointAmount').text());//单件积分
+                var indexVal = $(this).parent().parent().parent().attr('index');
+                var idname = $(this).parent().parent().parent().attr('idname');
+                var addUrl = '/dlsys/market/shoppingCar/increaseGift/'+idname;
+                var numVal = parseInt($(this).siblings('.num_value').val());//当前数量值
+                numVal ++;
+                var obj = giftCar.arr[indexVal];//当前对象父级所有的信息
+                console.log(obj);
+                var gainAmount = obj.gift.gainAmount;//每次可兑换数量
+                var totalGainAmount = obj.gift.totalGainAmount;//最多可兑换数量，-1表示无限制
+                var giftLeftAmount = obj.gift.giftLeftAmount;//库存剩余数量
+                // $(this).siblings('.num_value').val(numVal);
+                var giftExAmount = obj.gift.giftExAmount;//用户已兑换的数量
+                
+                if( totalGainAmount == -1 && numVal > gainAmount){
+                    //最多可兑换数量为无限制且当前兑换值大于每次可兑换值
+                    jAlert.warn("兑换数量已超过上限！");
+                    $(this).siblings('.num_value').val( numVal - 1 );
+                    return false;
+                }else if( totalGainAmount != -1 && numVal > gainAmount ){
+                    //礼品剩余数量不是无限制的 且 当前值大于每次可兑换的数量
+                    jAlert.warn('兑换数量已超过上限！');
+                    $(this).siblings('.num_value').val( numVal - 1 );
+                    return false;
+                }else if( totalGainAmount != -1 && (numVal + giftExAmount > totalGainAmount) )//礼品数量不是无限制 且当前数量+已兑换数量大于礼品数量
+                {
+                    
+                    jAlert.warn('兑换数量大于每人兑换限制');
+                    $(this).siblings('.num_value').val( numVal - 1 );
+                    return false;
+                }else {
+                    //礼品数量不是无限制 且当前数量+已兑换数量 小于礼品数量
+                    $(this).siblings('.num_value').val( numVal);
+                    
+                }
+
+                DeelonService.post(addUrl,{giftId:idname},function(data){
+                    if(data.code == 0){
+                        that.parent().parent().siblings('.totalPointAmount').text(single * numVal);
+                    }
+                })
+
+            });
+
+            //清空数组
+            $('#sub_empty a').on('click',function(){
+                var delUrl = '/dlsys/market/shoppingCar/clearShoppingCar';
+                DeelonService.del(delUrl,"",function(data){
+                    if(data.code == 0){
+                        $('#noShopInfo').show();
+                        $('#shopInfo').hide();
+                    }
+                })
+            });
+
+            //立即兑换
+            $('#sub_empty input').on('click',function(){
+                var arr = '';
+
+                var numArr = '';
+
+                var exUrl = '/dlsys/market/mallOrder/confirmOrder'
+                //获取所有准备兑换的idname值
+                
+				var allInput = $("input[type='checkbox']");//所有选择框
+
+                allInput.each(function(index){
+                    if(index == 0 && $(this).prop('checked') ){
+                        //全选checkbox
+                            allInput.each(function(index){
+                                //读取所有的input的数量和单件积分
+                                if(index > 0){
+                                    var parent = $(this).parent().parent().parent();
+                                    arr += parent.attr('idname') + ',';
+                                    numArr += parent.find('.num_value').val() + ',';
+                                }
+                            })
+                      return false;
+                      
+                    }else{
+                        //非全选
+                        if($(this).prop('checked')){
+                            //如果当前的checkbox是选中的
+                            var parent = $(this).parent().parent().parent();
+                            arr += parent.attr('idname')  + ',';
+                            numArr += parent.find('.num_value').val() + ',';
+                        }
+                    }
+
+                });
+
+                if( numArr == '' || arr == '' ){
+                    jAlert.error('您还没有选中商品')
+                    return false;
+                }
+
+                if(user.data.id == undefined){
+                    jAlert.error('您还有登录，请登录');
+                }else{
+                    DeelonService.post(exUrl,{giftId:arr,quantitie:numArr,userId:user.data.id},function(data){
+                        giftCar.data = data;
+                        if(data.code == 0){
+                            giftCar.data = data.result;
+                            window.location.href = 'index.html#page=giftcomfirm?idname='+ arr + '&num=' + numArr;
+                        }else{
+                            jAlert.error('系统错误');
+                        }
+                    });
+                }
+                
+            });
+        },
+    }
+
+    $(function(){
+        giftCar.init();
+    })
+</script>

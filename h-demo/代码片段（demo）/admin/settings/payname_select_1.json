@@ -1,0 +1,13 @@
+{"code":0,
+  "msg":"获取成功",
+  "result":[{
+    "payid":11,
+    "payname":"支付宝1"
+  },{
+    "payid":12,
+    "payname":"易宝1"
+  },{
+    "payid":13,
+    "payname":"汇付天下"
+    }]
+  }

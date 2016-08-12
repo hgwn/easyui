@@ -1,0 +1,132 @@
+<form id="pay_form">
+    <table class="table-detail" cellpadding="0" cellspacing="0" border="0" style="table-layout: fixed;">
+
+        <tr>
+            <th width="130">渠道编码（缩写）：<span class="required" style="color: red;">*</span></th>
+            <td><input type="text" class="easyui-validatebox textbox"
+                       name="code" required="true" missingMessage="不能为空" maxlength="20"  style="width: 80%;"/></td>
+
+        </tr>
+        <tr>
+            <th>渠道名称：<span class="required" style="color: red;">*</span></th>
+            <td><input type="text" class="easyui-validatebox textbox"
+                       name="name" required="true" missingMessage="不能为空" maxlength="20"  style="width: 80%;"/></td>
+        </tr>
+        <tr>
+            <th>通道类型：<span class="required" style="color: red;">*</span></th>
+            <td>
+                <label class="h-label"><input type="radio" name="type" checked="checked"  value="1" /> 网关</label>
+                <label class="h-label"><input type="radio" name="type" value="2" /> 托管</label>
+                <label class="h-label not_allowed" ><input type="radio" name="type" value="3" disabled="disabled" /> 银行存管<span class="font_999">（暂不支持）</span></label>
+            </td>
+        </tr>
+        <tr>
+            <th>是否启用</th>
+            <td>
+                <label class="h-label"><input type="radio"  name="enabled" value="1" checked="checked" /> 是</label>
+                <label class="h-label"><input type="radio" name="enabled" value="0" /> 否</label>
+            </td>
+        </tr>
+        <tr>
+            <th>渠道配置 <span class="required" style="color: red;">*</span></th>
+            <td style="padding: 5px;">
+                <input type="text" class="easyui-textbox" name="config" required="true" missingMessage="不能为空" maxlength="100"   data-options="multiline:true" style=" height: 60px; width: 100%;margin: auto;">
+        </tr>
+        <tr>
+            <th>描述 <span class="required" style="color: red;">*</span></th>
+            <td style="padding: 5px;">
+                <input type="text" class="easyui-textbox" name="descp" required="true" missingMessage="不能为空"  maxlength="100"  data-options="multiline:true" style=" height: 60px; width: 100%;margin: auto;">
+        </tr>
+        <tr>
+            <th width="130">LOGO：</th>
+            <td style="padding: 5px;">
+                <img src="images/upload.jpg" title="双击上传图片" id="paychannelIcon" style="width: 80px;height: 50px; cursor: pointer;" ondblclick="payForm.uploadInit();" />
+                <p style="color: #999;">(双击图片上传，最佳尺寸：宽200像素，高50像素 )</p>
+                <input type="hidden" class="form-control w-250" id="paychannelLogoId" name="logo">
+               
+            </td>
+        </tr>
+        <input type="hidden" id="pay_id" name="id">
+    </table>
+</form>
+<script>
+    var payForm = {
+        id : "#pay_form",
+        url : "/dlsys/portal/paychannel",
+        init: function() {
+        },
+        
+        echo: function(data) {
+            //Utils.bindProps($("#pay_form"), data, true);
+            $("#pay_form").form("load",data);
+            var photoId = $("#pay_form [name='logo']").val();
+            if (photoId) {
+                var imgUrl = commons.data.downloadUrl + "id=" + photoId
+                        + "&fullPath=";
+                $("#paychannelIcon").attr("src", imgUrl).css({"width":"250px","height":"50px"});
+            }
+        },
+        
+        submit: function() {
+            //$("#module_form").trigger("submited");
+            var pay_id = $("#pay_id").val();
+            if ($(payForm.id).form('validate')) {
+                var param = $(payForm.id).serialize();
+                if(pay_id){
+                    factory.httpPut(payForm.url,param,function(rsp){
+                        if(rsp.code==0){
+                            payTable.addDlg.close();
+                            MessageBox.info("修改成功");
+                            payTable.reload();
+                        }else{
+                            MessageBox.error(rsp.msg);
+                        }
+                    });
+                }else{
+                    factory.httpPost(payForm.url,param,function(rsp){
+                        if(rsp.code==0){
+                            payTable.addDlg.close();
+                            MessageBox.info("添加成功");
+                            payTable.reload();
+                        }else{
+                            MessageBox.error(rsp.msg);
+                        }
+                    });
+                }
+            }
+        },
+        
+        reset: function() {
+             $("#pay_form").form("reset");
+   
+        },
+        
+        bindEvent: function(event, handler, data) {
+            $("#module_form").unbind(event);
+            $("#module_form").bind(event, data, handler);
+        },
+        uploadInit: function(){
+            //调用上传图方法
+            payForm.upload("#paychannelIcon", "photo");
+        },
+        upload: function(ele, paramName) {
+            //上传产品图操作
+            var ele = ele;
+            var uploadUrl = "/dlsys/admin/sdk/common/image?Token="+ encodeURIComponent(op.data.token);
+            var updataUrl = null;
+            var paramName = paramName;
+
+            var ev = function(data) {
+            	var imgUrl = commons.data.downloadUrl + "id=" + data.photo
+				+ "&fullPath=";
+                $("#paychannelIcon").attr("src", imgUrl).css({"width":"250px","height":"50px"});
+                $("#paychannelLogoId").val(data.photo);
+            };
+            var param = {};
+            uploadFile.upload(ele, uploadUrl, updataUrl, paramName, ev, null,
+                    param,'jpg,jpeg,gif,png');
+
+        }
+
+    };
+</script>

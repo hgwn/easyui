@@ -1,0 +1,470 @@
+<link rel="stylesheet" href="css/giftcard.css" />
+<style>
+   .giftcard .btn_inter{
+        width:90px;
+        height:35px;
+        position:absolute;
+        bottom:20px;
+        right:180px;
+        background-color:#ff5e53;
+    }
+
+</style>
+<div id="mask"></div>
+<div class='giftcard' id='giftCards'>
+    <img id='filter' src='images/mall/filter.png' />
+	<p class='card_title'>
+		您可以使用以下代金券或加息卡进行投标<span></span>
+	</p>
+	<p class='other_info'>
+		<span class='info'>投资金额：<span class='bidCount'></span></span>
+        <span class='info'>代券金额：<span class='bidCount'>0</span></span>
+        <span class='info'>实支金额：<span class='bidCount'></span></span>
+        <span class='info'>代金券限投金额：<span class='bidCount'></span></span>
+        <span class="info">年利率：<span class="bidCount" id='years'>0</span>%</span>
+	</p>
+    <div class='show_filter' id='show_filter_box'>
+        <!-- <span id="show_filter_list">
+            <span><input type='checkbox' />&nbsp;&nbsp;体验券</span>
+        </span> -->
+        <!-- <span><input type='checkbox' />&nbsp;&nbsp;体验券</span>
+        <span><input type='checkbox' />&nbsp;&nbsp;加息卡</span> -->
+    </div>
+	<div class='choose'>
+		<span class='nochoose'>未选择代金券或加息卡</span>
+	</div>
+	<table class='choose_card_table look_card_table'>
+		<tr>
+			<th style='width: 69px;'>选择</th>
+			<th style='width: 169px;'>代金券名称</th>
+			<th style='width: 146px;'>金额（元）</th>
+			<th style='width: 169px'>使用限制</th>
+			<th>截止有效期</th>
+		</tr>
+		<tbody id="giftUse_box"></tbody>
+		<tr id="giftUse_list" style="display: none;">
+			<td><input type='checkbox' idname=$id /></td>
+			<td>$giftName</td>
+			<td id="giftValue">$giftValue</td>
+			<td id="minInvest">$minInvest</td>
+			<td>$validTimeEnd</td>
+		</tr>
+	</table>
+
+	<!-- 分页 S-->
+	<div id="giftUse_page" class="pagination"><!-- 这里显示分页 --></div>
+	<!-- 分页 E-->
+	<p class='tips'>温馨提示：</p>
+	<p class='mainInfo'>1、确认使用优惠后，未完成支付前，优惠券将被冻结； 2、若15分钟后还未支付成功，则自动解冻。
+		3、每次投资最多使用6张优惠券</p>
+    <button class='btn_inter'>查看加息卡</button>
+    <button class='btn_use'>使用</button>
+    <button class='btn_nouse' id="hide">不使用</button>
+</div>
+
+<div id="interest">
+    <p class='card_title'>
+        您可以使用以下代金券或加息卡进行投标<span id='close-span'></span>
+    </p>
+    <table class="query-info">
+        <tr>
+            <th style="width: 69px;">选择</th>
+            <th style="width: 169px;">加息卡名称</th>
+            <th style="width: 146px;">年利率</th>
+            <th style="width: 169px">使用限制</th>
+            <th>截止有效期</th>
+        </tr>
+        <tbody id='query-info-body'>
+
+        </tbody>
+    </table>
+    <button class='btn_submit'>确定</button>
+</div>
+</div>
+<script>
+	var pagination = {
+		init : function(url, params) {
+			DeelonService.get(url, params, function(data) {
+				giftUse.render(data);
+				$("#giftUse_page").pagination(data.result.totalElements, {
+					prev_text : "前一页",
+					next_text : "后一页",
+					num_edge_entries : 2,
+					num_display_entries : 4,
+					callback : giftUse.pageselectCallback,
+					items_per_page : 5
+				});
+			});
+            giftUse.filter();
+		}
+	};
+	
+    var giftUse = {
+    	url : "/dlsys/market/userGift/user",//获取我的礼品
+    	arr : [],//保存选择的优惠券
+        flag : 0,//状态
+        smaArr:null,
+        names:[],
+        total:[],
+    	params:{pageNum:1,pageSize:5,giftType:2,giftModule:1},
+        init:function(){
+            user.load();
+            giftUse.params.Token = user.data.token;
+            giftUse.params.userId = user.data.id;
+            DeelonService.get(giftUse.url,giftUse.params,function(data){
+                    giftUse.render(data);
+                    console.log(data);
+                })
+                $("#hide,.card_title span").click(function(){
+                    giftUse.hide();
+                });
+
+            
+        },
+        hide:function(){
+        	$(".giftcard,#mask").hide();
+        },
+        render:function(data){
+
+            $("#giftUse_box").empty();
+            Utils.bindList($("#giftUse_box"),$("#giftUse_list"),data.result.content,null,function(item,data){
+            	
+                if(-1 == minInvest){
+                	item.find("#minInvest").html("无限制");
+                }
+
+            });
+
+           
+
+            //查看加息卡
+            $('.btn_inter').unbind('click').on('click',function(){
+                $('#giftCards').hide();//当前窗口隐藏
+                $('#interest').show();//查看窗口展示
+            })
+           
+
+            
+
+            //判断数组中的值与input的idname值是否相同  相同则选中 
+            $('.choose_card_table input').each(function(){
+            	var that = $(this);
+            	var idname = that.attr('idname');
+            	$.each(giftUse.arr,function(index,val){
+            		if( idname == val ){
+            			that.prop('checked',true);
+            		}
+            	})
+            })
+
+            //input点击事件
+            $('.choose_card_table input').on('click',function(){
+            	var that = $(this);
+            	var idname = $(this).attr('idname');
+                var labelname = $(this).parent().parent().find('td').eq(1).text();
+                var money = $(this).parent().parent().find('td').eq(2).text();
+                
+                
+            	//红包标签
+            	var btn = "<a idname='"+ idname +"' class='packets'><span class='span_giftName'>"+ labelname +"</span><span class='img'></span></a>";
+
+
+            	//选中状态下
+            	var flag = $(this).prop('checked');
+
+            	if(flag){
+            		//判断数组中不存在idname值 添加入数组中 并创建红包标签
+            		if(giftUse.arr.length >= 0 && giftUse.arr.length <= 5){
+            			$('.choose').append(btn).find('.nochoose').hide();
+            			giftUse.arr.push(idname);
+                        $('.bidCount:eq(1)').text(parseInt(money) + parseInt($('.bidCount:eq(1)').text()));
+            		}else{
+            			jAlert.error("您最多可以使用6张优惠券");
+            			that.prop('checked',false);
+            		}
+
+            		
+            	}else{
+            		//非选中状态 ->取消选中 则删除节点红包
+                    
+
+            		$('.packets').each(function(){
+            			if($(this).attr('idname') == idname){
+            				$(this).remove();//删除当前节点
+                            $('.bidCount:eq(1)').text(parseInt($('.bidCount:eq(1)').text()) - parseInt(money) );
+
+            				$.each(giftUse.arr,function(index,val){
+            					if( val == idname ){
+            						giftUse.arr.splice(index,1);//删除数组中的这个值
+            						console.log(giftUse.arr);
+            						return false;
+            					}
+
+            					//判断当前红包标签盒子是否存在红包标签
+            					if( $('.packets').length <= 0 && giftUse.names == 0 ){
+            						$('.nochoose').show().siblings().remove();
+            					}
+            				})
+            			}
+            		})
+
+            		//检查是否存在红包标签
+        			if( giftUse.arr.length == 0 && giftUse.names == 0 ){
+        				$('.nochoose').show().siblings().remove();
+        			}
+            	}
+
+            	giftUse.imgClick();
+            });
+
+            
+
+        },
+        pageselectCallback:function(index,jq){
+        	giftUse.params.pageNum = index + 1;
+        	giftUse.init(giftUse.url,giftUse.params);
+            return false;
+        },
+        filter:function(){
+
+            $('#filter').unbind('click').click(function(){
+                giftUse.flag = giftUse.flag == 1 ? giftUse.flag = 0 : giftUse.flag = 1;
+                if( giftUse.flag ){
+                    $('.show_filter').show();
+                    
+                }else{
+                    $('.show_filter').hide();
+                }
+
+                spanClick.init();
+            });
+
+            var spanClick = {
+                url:'/dlsys/market/gift/sysDic?itemKey=giftType',
+                init:function(){
+                    DeelonService.get(spanClick.url,'',function(data){
+                        
+                        $('#show_filter_box').empty();
+                        for( var i=0;i<data.result.length;i++ ){
+                            var obj = data.result[i];
+                            if( obj.alias != '精致礼品' && obj.alias != '加息卡' ){
+                                
+                                var input = "<span><input itemValue='"+ obj.itemValue +"' type='checkbox' />  "+ obj.alias +"</span>"
+                                $('#show_filter_box').append(input);
+                            }
+                        } 
+
+                        $('.show_filter input').each(function(index){
+                            if(giftUse.smaArr == index){
+                                $(this).prop('checked',true).parent().siblings().find('input').prop('disabled','disabled');
+                            }
+                        })
+
+                        
+
+                        spanClick.click();
+                    });
+
+                    
+                    
+                },
+                click:function(){
+                    $('.show_filter input').unbind('click').click(function(){
+                        //赠送体验卷 2  赠送红包  6  加息卡 7
+                        var giftType = 0;
+                        var that = $(this);
+                        
+                        if(that.prop('checked')){
+
+                            //清空已选择的红包
+                            giftUse.arr.splice(0,giftUse.arr.length);
+                            //清空选择红包项
+                            $('.nochoose').show().siblings().remove();
+
+                            giftUse.smaArr = $('.show_filter input').index($(this));
+
+                            that.parent().siblings().find('input').prop('disabled','disabled');
+                            
+                            giftType = that.attr('itemvalue');
+                        
+                            
+
+                        }else{
+                            giftUse.smaArr = null;
+                            giftType = "";
+                            $('.show_filter input').prop('disabled',false);
+                        }
+
+                        setTimeout(function(){
+                            $('.show_filter').hide();
+                        },100)
+
+                        giftUse.params.giftType = giftType;
+
+
+                        giftUse.init();
+                        pagination.init(giftUse.url, giftUse.params);
+                    });
+
+                }
+            }
+        },
+
+        imgClick:function(){
+            $('.img').unbind('click').on('click',function(){
+                var idname = $(this).parent().remove().attr('idname');
+                
+                
+
+                //取消checkbox选中状态
+                $('.choose_card_table input').each(function(){
+                    if( $(this).attr('idname') == idname ){
+                        $(this).prop('checked',false);
+                    }
+                })
+
+                //数组删除idname值
+                $.each(giftUse.arr,function(index,val){
+                    if( val == idname ){
+                        giftUse.arr.splice(index,1);
+                        return false;
+                    }
+                })
+
+                //检查是否存在红包标签
+                if( giftUse.arr.length == 0 ){
+                    $('.nochoose').show().siblings().remove();
+                }
+            })
+        },
+        //加息卡
+        interest:function(){
+            
+        },
+    }
+
+    var query_info = {
+        ids:[],
+        labelnames:[],
+        total:0,
+        init:function(){ this.render() },
+        render:function(){
+            var interUrl = '/dlsys/market/userGift/giftType';
+            user.load();
+            DeelonService.get(interUrl,{
+                userId:user.data.id,
+                giftTypes:7,//加息卡
+                giftModule:1,
+            },function(data){
+                console.log(data);
+                if(data.code == 0){
+                    query_info.tpl(data.result.content);
+                }else{
+                    jAlert.error('系统异常，请联系管理员')
+                }
+            })
+        },
+        tpl:function(data){
+            $('#query-info-body').empty();
+
+            var html = '';
+
+            $.each(data,function(index,val){
+
+                var tr = "<tr><td><input type='checkbox' idname='"+ val.id +"' /></td>";
+                    tr += "<td class='commodity'>"+ val.giftName +"</td>";
+                    tr += "<td class='rate'>"+ val.giftValue +"</td>";
+                    tr += "<td class='conditions'>"+ val.minInvest +"</td>"
+                    tr += "<td class='lastData'>"+ val.validTimeEnd +"</td><tr>";
+                    html += tr;
+            });
+
+            $('#query-info-body').append(html);
+
+
+            query_info.event();
+        },
+        event:function(){
+            
+            var rest = 6 - $('.packets').length;//还能选中的红包标签个数
+
+            var record = 0;//记录选中的红包标签
+
+            var year_total = 0;//年利率
+            /*
+                注:rest与record的关系  rest >= record
+
+             */
+
+             $('#query-info-body input').unbind('click').on('click',function(){
+                //当前checkbox点击
+                var that = $(this);//当前$对象
+                var idname = that.attr('idname');//当前的idname值
+                var labelname = that.parent().siblings('.commodity').text();//获取当前加息卡名字
+                var years = parseInt(that.parent().siblings('.rate').text());//获取兄弟节点年利率值
+
+                if(that.prop('checked')){
+                    record ++;//自增
+                    if(record > rest){
+                        //如果当前记录的值大于剩余可添加的红包标签
+                        record --;
+                        jAlert.error('您选择的加息卡已超过限制')
+                        //取消当前选中状态
+                        that.prop('checked',false);
+                        //返回
+                        return false;
+                    }
+                    year_total += years;//年利率增加
+                    //把当前的idname值加入到数组当中
+                    query_info.ids.push(idname);
+                    console.log(query_info.ids);
+                    query_info.labelnames.push(labelname);//把当前
+                }else{
+                    record --;//自减
+                    $.each(query_info.ids,function(index,val){
+                        if(val == idname){
+                            //数组遍历值=idname值
+                            query_info.ids.splice(index,1);//数组中删除掉值
+                            query_info.labelnames.splice(index,1);
+                            return false;
+                        }
+                    })
+                    year_total -= years;//年利率相减
+                }
+
+
+                query_info.total = year_total;
+             })
+
+             //关闭窗口
+            $('#interest .card_title span').on('click',function(){
+                 $('#interest').hide();//当前窗口隐藏
+                 $('#giftCards').show();
+             })
+
+            $('.btn_submit').unbind('click').on('click',function(){
+                giftUse.arr = query_info.ids.concat(giftUse.arr);//合并数组
+                console.log(query_info.ids);
+                $.each(query_info.ids,function(index,val){
+                    var idname = val;
+                    var labelname = query_info.labelnames[index];
+                    //红包标签
+                    var btn = "<a idname='"+ idname +"' class='packets'><span class='span_giftName'>"+ labelname +"</span><span class='img'></span></a>";
+                    $('.choose').append(btn);
+                    giftUse.imgClick();
+                })
+                //设置总年利率
+                $('#years').text(query_info.total);
+                $('#interest').hide();//当前窗口隐藏
+                $('#giftCards').show();
+            })
+           
+        },
+    }
+	
+	$(function(){
+        giftUse.init();
+        pagination.init(giftUse.url, giftUse.params);
+        query_info.init();   
+    });
+</script>

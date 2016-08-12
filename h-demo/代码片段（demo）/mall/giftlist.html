@@ -1,0 +1,176 @@
+<script src="../mall/giftlist.js"></script>
+<div id="giftlist_top_bg">
+    <a href="#page=giftrule" title="积分规则" class="giftlist_tq"><img src="images/mall/tongj.png"></a>
+</div>
+<div id="giftlist_top">
+    <div class="giftlist_top_bar">
+        <!--<div id="time">下一轮秒杀 4月7日 14:00</div>-->
+        <a href="javascript:void(0);" class="giftlist_pre giftlist_top_bar-prev giftlist_md_bar-prev"></a>
+        <a href="javascript:void(0);" class="giftlist_pre giftlist_top_bar-next giftlist_md_bar-next"></a>
+        <!--start-->
+        <div id="giftlist_top_barLink">
+            <ul class="clearfix topList" id="giftlist_top_temp">
+                <li id="giftlist_top_li" style="display: none;">
+                    <img class="giftlist_top_img" src="$giftPhotoJson">
+                    <div class="giftlist_top_r">
+                        <div class="num">限量：<font class="num_temp1">$giftAmount</font>，剩余： <font class="num_temp2">$giftLeftAmount</font></div>
+                        <p title="$giftName"> $giftNameTem</p>
+                       <p>  <span class="font_999">所需积分：</span><span class="font_red">$needPointAmount</span></p>
+                        <p> <span class="font_999">每次兑换限制：</span> <span class="gainAmount">$gainAmount</span></p>
+                        <p> <span class="font_999">使用限制： </span>投标额满<span>$minInvest</span>元</p>
+                        <a href="#page=giftdetail?id=$id" class="giftlist_linkLook" style="margin-right: 15px;">查看详情</a>
+                        <a href="#page=giftdetail?id=$id" class="giftlist_linkAction">立即兑换</a>
+                    </div>
+                </li>
+                <!--<li class="over">
+                    <img class="giftlist_top_img" src="images/mall/gift_top_500.png">
+                    <div class="giftlist_top_r">
+                        <div class="num">限量<span>100</span>个，剩余 <span>56</span>个</div>
+                        <p> 200元秒杀红包</p>
+                        <p>  所需积分：0</p>
+                        <p>每人兑换限制： 1 件</p>
+                        <p>使用限制： 投标额满1000元</p>
+                        <a href="#page=giftdetail" class="giftlist_linkLook" style="margin-right: 15px;">查看详情</a>
+                    </div>
+                </li>-->
+
+            </ul>
+        </div>
+        <!--end-->
+
+
+    </div>
+
+</div>
+
+<div class="giftlist_wrap" style="margin-bottom: 30px;">
+
+  <div id="giftlist_temp">
+      <dl class="giftlist_wrap_dl" style="display: none;" id="giftlist_dl_temp">
+          <dt class="title"><span class="gift_title">$giftTypeName</span>
+              <a href="javascript:void(0);" class="giftlist_pre giftlist_md_bar-prev"></a>
+              <a href="javascript:void(0);" class="giftlist_pre giftlist_md_bar-next"></a>
+          </dt>
+          <dd class="clearfix">
+              <ul class="clearfix gift_temp_ul">
+                  <li class="list" name="giftlist_li_1"  style="display: none;">
+                      <img class="m1" src="$giftPhotoJson" alt="">
+                      <p title="$giftName"> $giftNameTem</p>
+                      <p><span class="font_999">所需积分：</span><span class="font_red">$needPointAmount</span></p>
+                      <p class="p_limin"><span class="font_999">每次兑换限制：</span> <span class="gainAmount">$gainAmount</span></p>
+                      <p class="minInvest_$giftModule"><span class="font_999">使用限制：</span> <span class="minInvest">$minInvest</span></p>
+                      <div class="linkbtn">
+                          <a href="#page=giftdetail?id=$id" class="giftlist_linkLook" style="margin-right: 15px;">查看详情</a>
+                          <a href="#page=giftdetail?id=$id" class="giftlist_linkAction">立即兑换</a>
+                      </div>
+                  </li>
+              </ul>
+          </dd>
+      </dl>
+  </div>
+
+
+</div>
+
+<script>
+
+
+    //秒杀红包
+    var giftlist_ad_box = {
+        url:"/dlsys/market/gift/giftType",
+        init:function(){
+            DeelonService.get(giftlist_ad_box.url,{"giftType":1},function(data){
+                for(var i = 0; i< data.result[0].giftList.length; i++){
+                    data.result[0].giftList[i].giftNameTem = data.result[0].giftList[i].giftName;
+                    if(data.result[0].giftList[i].giftName.length > 18){
+                        data.result[0].giftList[i].giftNameTem = data.result[0].giftList[i].giftName.substring(0,18)+"...";
+                    }
+                }
+                Utils.bindList("#giftlist_top_temp","#giftlist_top_li",data.result[0].giftList,null,function(item,data){
+                    if(data.giftAmount ==  -1){
+                        item.find(".num_temp1").text("无限制");
+                    }else{
+                        item.find(".num_temp1").text(data.giftAmount+"个");
+                    }
+
+                    if(data.giftLeftAmount ==  -1){
+                        item.find(".num_temp2").text("无限制");
+                    }else{
+                        item.find(".num_temp2").text(data.giftLeftAmount+"个");
+                    }
+
+                    if(data.giftLeftAmount==0){
+                        item.addClass("over");
+                        item.find(".giftlist_linkAction").remove();
+                    }
+                    if(data.gainAmount == -1){
+                        item.find(".gainAmount").text("无限制");
+                    }else{
+                        item.find(".gainAmount").text(data.gainAmount+"件");
+                    }
+                    if(data.giftPhotoJson == undefined || data.giftPhotoJson == ""){
+                        item.find(".giftlist_top_img").attr("src","images/mall/182.182.jpg")
+                    }
+                                       
+                });
+                giftlist_ad_box.render();
+                $(".minInvest_2").css("visibility","hidden");//实物的礼品不显示使用限制 
+            });
+        },
+        render:function(){
+            // giftlist_top_f();
+            $('.giftlist_top_bar').giftlist_turns();
+        }
+    };
+
+    var giftList ={
+        init:function(){
+            DeelonService.get("/dlsys/market/gift/giftType",{},function(data){
+              
+              for( var i = 0;i<data.result.length ;i++ ){
+                if( data.result[i].giftTypeValue == 1 ){
+                  data.result.splice(i,1);//去除秒杀红包
+                }
+              }
+
+               Utils.bindList("#giftlist_temp","#giftlist_dl_temp",data.result,null,function(item,data){
+
+                   for(var i = 0; i< data.giftList.length; i++){
+                       data.giftList[i].giftNameTem = data.giftList[i].giftName;
+                       if(data.giftList[i].giftName.length > 18){
+                           data.giftList[i].giftNameTem = data.giftList[i].giftName.substring(0,18)+"...";
+                       }
+                   }
+                   Utils.bindList($(item).find(".gift_temp_ul"),".list",data.giftList,null,function(item,data){
+                       if(data.gainAmount == -1){
+                           item.find(".gainAmount").text("无限制");
+                       }else{
+                           item.find(".gainAmount").text(data.gainAmount+"件");
+                       }
+                       if(data.minInvest == -1){
+                           item.find(".minInvest").text("无限制");
+                       }else{
+                           item.find(".minInvest").text("投标额满"+data.minInvest+"元");
+                       }
+                       if(data.giftPhotoJson == undefined || data.giftPhotoJson == ""){
+                           item.find(".m1").attr("src","images/mall/246.168.jpg")
+                       }
+                   });
+
+
+
+               });
+                $(".giftlist_wrap_dl").giftlist_turns();
+            });
+        }
+    };
+
+    $(function(){
+        giftlist_ad_box.init();
+
+        giftList.init();
+    })
+</script>
+
+
+

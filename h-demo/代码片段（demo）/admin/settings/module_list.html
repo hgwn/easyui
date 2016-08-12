@@ -1,0 +1,197 @@
+<form action="#" class="h-form-search clearfloat" id="query_module_form">
+    <!-- start h-search-box-->
+    <div class="h-search-box clearfloat">
+        <ul class="form-search-row clearfloat" >
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">模块名称：</span>
+                <input type="text" name="name"  class="easyui-textbox" style="height: 22px; width: 70%" value=""/>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">模块标题：</span>
+                <input type="text" name="title"  class="easyui-textbox" style="height: 22px; width: 70%" value=""/>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">激活状态：</span>
+                <select name="enabled"   class="easyui-combobox" style="height: 22px; width: 100px;" data-options="panelHeight:'auto',editable:false">
+                    <option value="">全部</option>
+                    <option value="1">已激活</option>
+                    <option value="0">未激活</option>
+                </select>
+            </li>
+        </ul>
+        <div class="h-search-btn">
+            <a href="javascript:void(0); " class="easyui-linkbutton" data-options="iconCls:'icon-search'"  name="submit" style="width:80px">查询</a>
+        </div>
+    </div>
+</form>
+
+<table id="module_table" class="easyui-datagrid"
+       data-options="remoteSort:false, striped:true, pagination:true, collapsible:true, rownumbers:false" style="height:450px;width:auto;">
+
+    <thead>
+        <tr>  
+            <th data-options="field:'id',checkbox:true"></th>
+            <th data-options="field:'name',fixed:true,width:160,align:'center',halign:'center'">模块名称</th>
+            <th data-options="field:'title',fixed:true,width:160,align:'center',halign:'center'">模块标题</th>
+            <th data-options="field:'hasPorlets',fixed:true,width:160,align:'center',halign:'center',formatter:moduleTable.formatHasPorlets">是否加载管理组件</th>
+            <th data-options="field:'isInner',fixed:true,width:160,formatter:moduleTable.formatInner,align:'center',halign:'center'">是否内部模块</th>
+            <th data-options="field:'enabled',fixed:true,width:160,align:'center',halign:'center',formatter:moduleTable.formatIsEnable">是否激活</th>
+            <th data-options="field:'createTime',fixed:true,width:160,align:'center',halign:'center',formatter:dataGridChangeTime">创建时间</th>
+            <th data-options="field:'descp',width:200,align:'center',halign:'center'">描述</th>
+    </thead>
+</table>
+<script src="js/formDialog.js"></script>
+<script>
+    var queryModuleForm ={
+        id:"#query_module_form",
+        init:function(){
+            $("#query_module_form [name='submit']").click(function(){
+                queryModuleForm.submit();
+            })
+        },
+        submit:function(){
+            var param = {};
+            Utils.bindProps($(queryModuleForm.id),param,false);
+            moduleTable.init(moduleTable.url,param);
+        }
+    };
+    var moduleTable = {
+        url: "/dlsys/portal/bizmodules/list",
+       
+        init: function(url, params) {
+            moduleTable.url = url;
+            moduleTable.params = params;
+            moduleTable.render();
+        },
+        render: function(data) {
+            $('#module_table').datagrid({
+            	pagination : true,
+				nowrap : true,
+				fit : true,
+				fitColumns : true,
+				striped : true,
+                queryParams: moduleTable.params,
+                toolbar: moduleTable.toolbar,
+                url: moduleTable.url,
+                method: 'get'
+
+            });
+
+        },
+        reload: function() {
+            $('#module_table').datagrid("reload");
+        },
+        toolbar: [{
+                text: '添加',
+                iconCls: 'icon-add',
+                handler:function(){
+                    moduleTable.addDlg.show();
+                }
+
+            }, '-', {
+                text: '修改',
+                iconCls: 'icon-edit',
+                handler:function(){
+                    var row = $('#module_table').datagrid("getSelections");
+                    if(!row){
+                        MessageBox.info("请选择需要修改的数据");
+                        return;
+                    }else if(row.length > 1){
+                        MessageBox.info("只能选择一条数据");
+                        return;
+                    }
+                    var editDlg  = new FormDialog({
+                        title:"修改业务模块",
+                        formName:"moduleForm",
+                        formurl:"html/admin/settings/module_editor.html",
+                        height:400,
+                        width:780,
+                        data:row[0]
+                    });
+                    editDlg.show();
+                }
+
+            },
+            '-', {
+                text: '禁用',
+                iconCls: 'icon-lock-001',
+                handler:function(){
+                    var row = $('#module_table').datagrid("getSelections");
+                    if(!row){
+                        MessageBox.info("请选择需要禁用的数据");
+                        return;
+                    }
+                    var tempArr = [];
+                    for(var i=0; i< row.length; i++){
+                        tempArr.push(row[i].id);
+                    }
+                    factory.httpPut("/dlsys/portal/bizmodules/disable/"+tempArr.join(","),null,function(rsp){
+                        if(rsp.code == 0){
+                            MessageBox.info("禁用成功");
+                            moduleTable.reload();
+                        }else{
+                            MessageBox.info(rsp.msg);
+                        }
+                    });
+                }
+            }, '-', {
+                text: '激活',
+                iconCls: 'icon-unlock-001',
+                handler:function(){
+                    var row = $('#module_table').datagrid("getSelections");
+                    if(!row){
+                        MessageBox.info("请选择需要激活的数据");
+                        return;
+                    }
+                    var tempArr = [];
+                    for(var i=0; i< row.length; i++){
+                        tempArr.push(row[i].id);
+                    }
+                    factory.httpPut("/dlsys/portal/bizmodules/enabel/"+tempArr.join(","),null,function(rsp){
+                        if(rsp.code == 0){
+                            MessageBox.info("激活成功");
+                            moduleTable.reload();
+                        }else{
+                            MessageBox.info(rsp.msg);
+                        }
+                    });
+                }
+            }
+
+        ],
+         addDlg:new FormDialog({title:"添加业务模块",
+                               formName:"moduleForm",height:400,width:780,
+                               formurl:"html/admin/settings/module_editor.html"
+                                }),
+        formatInner:function(value,row,index){
+            if(value == 1){
+                return "是";
+            }else{
+                return "否";
+            }
+        },
+        formatHasPorlets:function(value,row,index){
+            if(value == 1){
+                return "是";
+            }else{
+                return "否";
+            }
+        },
+        formatIsEnable:function(value,row,index){
+        	if(value == 1){
+        		return "是";
+        	}else{
+        		return "否";
+        	}
+        }
+    };
+
+    $(function() {
+
+        moduleTable.init(moduleTable.url);
+        queryModuleForm.init();
+        $.parser.parse("#module_table");
+        $.parser.parse("#query_module_form");
+    });
+
+</script>
