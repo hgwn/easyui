@@ -1,0 +1,464 @@
+<!-- 收货地址管理 -->
+<link rel="stylesheet" href="/portal/desktop/css/common.css"/>
+<link rel="stylesheet" href="/portal/desktop/css/giftcar.css"/>
+<script src="/portal/desktop/html/mall/addressrec.js"></script>
+<script src="/portal/desktop/html/mall/car.js"></script>
+
+<div class="contain_main">
+    <div id="delete"></div>
+    <!--  头部 链接 -->
+    <p class="header_links">
+        <a href="#page=shop:giftlist"> 积分商城</a>
+        <span class="symbol">&gt;</span>
+        <a id='mall_orders'> 订单</a>
+        <span class="symbol">&gt;</span>
+        <a style="color:#333" href="#page=shop:addressrec"> 收货地址管理</a>
+    </p>
+
+    <!-- 收货地址管理 -->
+    <p class="rec_address">收货地址</p>
+
+    <!-- 添加收货地址 -->
+    <p class="add_address">
+        <input type="button" class="add_ress" value="添加收货地址"/>
+        <span class="address_tips">
+            您已创建<span class="alreadyNum">0</span>个收货地址，最多可创建<span class="totalNum">20</span>个
+        </span>
+    </p>
+
+    <!-- 收货地址详细信息 -->
+    <table class="info_details">
+        <tr>
+            <th style="width:148px;">收货人</th>
+            <th style="width:149px;">所在地区</th>
+            <th style="width:280px;">详细地址</th>
+            <th style="width:149px;">邮编</th>
+            <th style="width:148px;">手机</th>
+            <th style="width:149px;">操作</th>
+            <th>设为默认地址</th>
+        </tr>
+        <tbody id='tbody_tr'>
+        </tbody>
+    </table>
+</div>
+<script>
+    var defaultAddId = -1;
+    var delivery_address = {
+        id : "",
+        url : "/dlapi/uc/user/addr/list/"+user.data.id,//0907 查询用户收货地址列表 2.0
+        delUrl : "/dlapi/uc/user/addr/", //0927 删除用户收货地址2.0
+        toEditUrl : "/dlsys/market/",
+        setDefaultUrl : "/dlapi/uc//user/addr/set/", //0907  设置用户默认收货地址2.0
+        isDefault:0,
+        init : function(){
+            user.load();
+            DeelonService.get(delivery_address.url,{pageNum:1,pageSize:999999,userId:user.data.id,name:user.data.name},function(data){
+                if(data.content.length){
+                    for(var i=0;i<data.content.length;i++){
+                        if(data.content[i].isDefault.isDefault == 1){
+                            defaultAddId = data.content[i].id;
+                        }
+                    }
+                    delivery_address.render(data);
+                }
+            });
+
+            $('.add_address input.add_ress').each(function(){
+                $(this).unbind('click').on('click',function(){
+                    addWin.callback = address;
+                    addWin.format();
+                    addWin.init("add");
+                })
+            })
+
+            $('#mall_orders').on('click',function(e){
+                e.preventDefault();
+                history.go(-1);
+            })
+        },
+        render:function(data){
+            $("#tbody_tr").empty();
+            $.each(data.content,function(index,obj){
+                $(".alreadyNum").text(data.content.length);//已经创建的地址栏
+                var html = "";
+                html += '<tr idName='+ obj.id +'>';
+                html += '   <td class="td_name">'+obj.consignee +'</td>';
+                html += '   <td class="td_area"><span class="province" idname="'+ obj.province +'">'+obj.provinceName+'</span><span class="city" idname="'+ obj.city +'">'+obj.cityName+'</span></td>';
+                html += '   <td class="td_address"><p title="'+obj.detailAddr +'">'+obj.detailAddr +'</p></td>';
+                html += '   <td class="td_code">'+obj.postcode +'</td>';
+                html += '   <td class="td_tel">'+obj.mobile +'</td>';
+                html += '   <td class="td_opera" addrId="'+obj.id+'">';
+                html += '       <a class="td_del">删除</a><a class="td_edit">修改</a>';
+                html += '   </td>';
+                html += '   <td class="td_default">';
+                html += '       <button class="set_default" val='+ obj.isDefault +'>默认地址</button>';
+                html += '   </td>';
+                html += '</tr>';
+                $("#tbody_tr").append(html);
+            });
+
+            $("#tbody_tr").find("button[val='1']").addClass("set_normal");
+
+
+            delivery_address.delElement();//删除节点
+            delivery_address.setDefault();//设置默认
+            delivery_address.toEdit();//修改
+        },
+        toEdit : function(){
+            $('.td_edit').each(function(index){
+                var parent = $(this).parent().parent();//爷爷级$对象
+                $(this).on('click',function(){
+
+                    addWin.idName = parent.attr('idname');
+                    addWin.title = '编辑地址';
+                    addWin.provinceId = parent.find('.province').attr('idname');//省份id
+                    addWin.provinceName  = parent.find('.province').text();//省份名称
+                    addWin.cityId = parent.find('.city').attr('idname');//城市id
+                    addWin.cityName = parent.find('.city').text();//城市名称
+                    addWin.detailAddr = parent.find('.td_address').text();//详细地址
+                    addWin.postcode = parent.find('.td_code').text();//邮政编码
+                    addWin.consignee = parent.find('.td_name').text();//联系人
+                    addWin.phone = $.trim(parent.find('.td_tel').text())//手机号
+                    addWin.flag = $.trim(parent.find('.set_default').attr("val"));//状态
+                    addWin.callback = editress;
+                    addWin.init("edit");
+
+                })
+            })
+        },
+
+        //0907---管理收货地址页面-- 删除用户收货地址2.0
+        delElement:function(){
+            $(".td_del").each(function(){
+                var parent = $(this).parent().parent();
+                $(this).on("click",function(){
+                    var id = parent.attr("idName");
+                    jConfirmT('您确定要删除吗？','系统提示',function(r){
+                        if(r){
+                            DeelonService.del(delivery_address.delUrl+id,null,function(data){
+                                if(data.code == 0){
+                                    $('#delete').show();
+                                    setTimeout(function(){$('#delete').hide()},1000);
+                                    delivery_address.init();
+                                }else{
+                                    jAlert.error("异常错误");
+                                }
+                            })
+                        }
+                    })
+                });
+            })
+        },
+        //0907---管理收货地址页面--设置默认地址2.0
+        setDefault : function(){
+            $(".set_default").each(function(){
+                $(this).on("click",function(){
+                    var that = $(this);
+                    var id = $(this).parent().parent().attr("idname");
+                    var url = delivery_address.setDefaultUrl + id;
+                    DeelonService.put(url,id,function(data){
+                        if(data.code == 0){
+                            var siblings = that.parent().parent().siblings().find(".set_default");
+                            that.addClass("set_normal");
+                            siblings.removeClass("set_normal");
+                        }else{
+                            jAlert.error("系统错误");
+                        }
+                    });
+                })
+            });
+
+        }
+    }
+
+    var addWin = {
+        title:'添加地址',
+        provinceId:0,//省份id
+        provinceName:'',//省份名称
+        cityId:0,//城市id
+        cityName:'',//城市名称
+        detailAddr:'',//详细地址
+        postcode:'',//邮政编码
+        consignee:'',//联系人
+        isdefault:0,//默认地址
+        phone:'',//手机号
+        flag:0,//状态
+        idName:0,
+        format:function(){
+            addWin.title = '添加地址',
+            addWin.provinceId = 0;//省份id
+            addWin.provinceName = '';//省份名称
+            addWin.cityId = 0;//城市id
+            addWin.cityName = '';//城市名称
+            addWin.detailAddr = '';//详细地址
+            addWin.postcode = '';//邮政编码
+            addWin.consignee = '';//联系人
+            addWin.isdefault = 0;//默认地址
+            addWin.phone = '';//手机号
+            addWin.flag = 0;//状态
+        },
+        //初始化
+        init:function(type){
+            //判断是否大于20个地址
+            if(type == "add" && parseInt($(".alreadyNum").text()) > 19){
+                jAlert.warn("最多只可创建20个收货地址");
+                return false;
+            }
+            $('.alertBox,.bigDiv').show();
+            addWin.template(type);
+           // $('.all_area').focus();
+        },
+        //模板
+        template:function(type){
+            var bigDiv = "<div class='bigDiv'></div>";//遮罩层
+
+            var oDiv = "<div class='alertBox'>";
+            oDiv += "<p class='p_title'>"+ addWin.title +"<span class='span_close'>";
+            oDiv += "<span></span></span></p><div class='alertMain'>";
+            oDiv += "<p id='p_area' class='alert_p p_instance'>";
+            oDiv += "<label>所在地区<span>*</span>：</label>";
+            oDiv += "<input type='text' value='"+ addWin.provinceName + addWin.cityName +"' readonly='readonly'";
+            oDiv += "class='place input_place p_atten alertBox_province' placeholder='请选择省市'/>";
+            oDiv += "<img src='/portal/desktop/images/mall/input_place.png' /></p>";
+            oDiv += "<p class='alert_p p_instance'><label>详细地址<span>*</span>：";
+            oDiv += "</label><textarea maxlength='50' class='all_area p_atten alertBox_detailAddr' placeholder='请填写详细地址，字数不得超过50字'>"+ addWin.detailAddr +"</textarea></p>";
+            oDiv += "<p class='alert_p p_instance'><label>邮政编码<span>*</span>：";
+            oDiv += "</label><input type='text' maxlength='6' class='place code p_atten alertBox_postcode'";
+            oDiv += "placeholder='请输入六位的邮递区号，如：510000' value='"+ addWin.postcode +"' /></p>";
+            oDiv += "<p class='alert_p p_instance_less'><label>收货人姓名<span>*</span>：";
+            oDiv += "</label><input maxlength='20' type='text' value='"+ addWin.consignee +"' class='place name p_atten alertBox_consignee'";
+            oDiv += "placeholder='长度不超过20个字符'/></p>";
+            oDiv += "<p class='alert_p p_instance '><label>手机号码<span>*</span>：";
+            oDiv += "</label><input type='text' maxlength='11' value='"+ addWin.phone +"' class='place tel p_atten alertBox_phone'";
+            oDiv += "placeholder='请填写手机号码' /></p>";
+            oDiv += "<p class='alert_p p_instance_more'><label style='line-height:25px'>默认地址：";
+            if(addWin.flag == 1){
+                addWin.isdefault = 1;
+                oDiv += "</label><span class='switch switch_red'><span class='span_right'></span></span></p>";
+            }else{
+                oDiv += "</label><span class='switch switch_gray'><span class='span_left'></span></span></p>";
+                addWin.isdefault = 0;
+            }
+            if(type == "add"){
+                oDiv += "<button class='assign btn_bg assign_hover' onclick='address()'>确定</button>";
+            }else{
+                oDiv += "<button class='assign btn_bg assign_hover' onclick='editress()'>确定</button>";
+            }
+            oDiv += "<div id='showArea'></div>";
+            oDiv += "</div></div>";
+
+            $('body').prepend(bigDiv,oDiv);
+
+            addWin.event();
+        },
+        //事件
+        event:function(){
+            //输入框获得焦点时，删除输入框边框为红色的样式
+            $(".alertBox [class *= alertBox_]").focus(function(){
+                $(this).removeClass('border_color');
+            });
+            //关闭
+            $('.span_close').on('click',function(){
+                $('.alertBox,.bigDiv').remove();
+            });
+            //显示省份的盒子显示与隐藏
+            addWin.loadProvin();//加载城市
+
+            //所在地区选择
+            $('#p_area img').on('click',function(){
+                addWin.open ++;
+                addWin.open = addWin.open >= 2 ? addWin.open = 0 : addWin.open;
+                var showArea = $('#showArea');
+
+                if(showArea.css('display') == 'none'){
+                    showArea.show();
+                }else{
+                    showArea.hide();
+                }
+                if(addWin.cityId){
+                    addWin.loadProvin();
+                }
+
+            });
+
+            //默认地址
+            $('.switch ').on('click',function(){
+                if($(this).hasClass('switch_gray')){
+                    $(this).removeClass('switch_gray').addClass('switch_red');
+                    $(this).find('span').removeClass('span_left').addClass('span_right');
+                    addWin.isdefault = 1;
+                }else{
+                    $(this).removeClass('switch_red').addClass('switch_gray');
+                    $(this).find('span').removeClass('span_right').addClass('span_left');
+                    addWin.isdefault = 0;
+                }
+            });
+
+        },
+        validataAddr:function(){//提交地址表单时的校验
+            var str = /[^\u0000-\u00FF]/;//检测中文正则
+            var code = /^[1-9][0-9]{5}$/;//检测邮政编码正则
+            var tel = /^1[34578]\d{9}$/; //检测手机号码正则
+            var alertBox_province = $(".alertBox_province").val();
+            var alertBox_detailAddr = $(".alertBox_detailAddr").val();
+            var alertBox_postcode = $(".alertBox_postcode").val();
+            var alertBox_consignee = $(".alertBox_consignee").val();
+            var alertBox_phone = $(".alertBox_phone").val();
+            if(alertBox_province == "" ){
+                $(".alertBox_province").addClass('border_color');
+                return false;
+            }else{
+                $(".alertBox_province").removeClass('border_color');
+            }
+            //详细地址
+            if(alertBox_detailAddr == ""){
+                $(".alertBox_detailAddr").addClass('border_color');
+                return false;
+            }else{
+                $(".alertBox_detailAddr").removeClass('border_color');
+                addWin.detailAddr = alertBox_detailAddr;//详细地址
+            }
+
+            //判断邮政编码
+            if(alertBox_postcode =="" || !code.test(alertBox_postcode)){
+                $(".alertBox_postcode").addClass('border_color');
+                return false;
+            }else{
+                $(".alertBox_postcode").removeClass('border_color');
+                addWin.postcode = alertBox_postcode;//邮政编码
+            }
+
+            //判断联系人
+            if(alertBox_consignee == "" ){
+                $(".alertBox_consignee").addClass('border_color');//加上边框
+                return false;
+            }else{
+                $(".alertBox_consignee").removeClass('border_color');
+                addWin.consignee = alertBox_consignee;//联系人
+            }
+
+            //判断手机号
+            if(alertBox_phone == "" || !tel.test(alertBox_phone)){
+                $(".alertBox_phone").addClass('border_color');//加上边框
+                return false;
+            }else{
+                $(".alertBox_phone").removeClass('border_color');
+                addWin.phone = alertBox_phone;
+            }
+            if($(".switch").html().indexOf("span_right") > 0 ){
+                addWin.flag = 1;
+            }else{
+                addWin.flag = 0;
+            }
+            return true;
+        },
+        //加载省份
+        loadProvin:function(){
+            var provinceUrl = '/dlapi/cms/areas/listProvince?parent_id=&parent_path=/系统目录/地区/';
+            var html = '';
+            $('#showArea').empty();//清空盒子
+
+            DeelonService.get(provinceUrl,"",function(data){
+                $.each(data,function(index,val){
+                    html += "<a idname='"+ val.id +"'>"+ val.resName +"</a>";
+                });
+                $('#showArea').html(html);
+                //省份点击
+                $('#showArea a').on('click',function(){
+                    addWin.provinceId = $(this).attr('idname');
+                    addWin.provinceName = $(this).text();//省份名称
+                    //所在地区
+                    $('.input_place').val($(this).text());
+                    //加载城市
+                    addWin.loadCity(addWin.provinceId);
+                })
+            });
+
+        },
+        //加载城市
+        loadCity:function(id){
+            var cityUrl = '/dlapi/cms/areas/list/' + id;
+            var html = '';
+            $('#showArea').empty();//清空盒子
+
+            DeelonService.get(cityUrl,"",function(data){
+                $.each(data,function(index,val){
+                    html += "<a idname='"+ val.id +"'>"+ val.resName +"</a>";
+                });
+                $('#showArea').html(html);
+
+                $('#showArea a').on('click',function(){
+                    addWin.cityId = $(this).attr('idname');
+                    addWin.cityName = $(this).text();//城市名称
+                    //所在地区
+                    $('.input_place').val($('.input_place').val() + $(this).text());
+                    $('#showArea').hide();
+                })
+            })
+        },
+        //回调函数
+        callback:function(){
+
+        }
+    };
+
+    //更新用户地址
+    function editress(){
+        var flag = addWin.validataAddr();
+        if(!flag){
+            return false;
+        }
+        var putUrl = '/dlapi/uc/user/addr/'+addWin.idName;  //0907 更新用户收货地址信息 2.0
+        DeelonService.putjSON(putUrl,{
+            userId:user.data.id,
+            userName:user.data.name,
+            province:addWin.provinceId,
+            provinceName:addWin.provinceName,
+            city:addWin.cityId,
+            cityName:addWin.cityName,
+            detailAddr:addWin.detailAddr,
+            consignee:addWin.consignee,
+            postcode:addWin.postcode,
+            mobile:addWin.phone,
+            isDefault:addWin.isdefault
+        },function(data){
+            addWin.format();
+            if(data.code == 0){
+                delivery_address.init();
+            }
+            $('.alertBox,.bigDiv').remove();
+        });
+
+    }
+
+    //添加用户地址 0907OK
+    function address(){
+        var flag = addWin.validataAddr();
+        if(!flag){
+            return false;
+        }
+        var addUrl = '/dlapi/uc/user/addr';  //0907调用添加收货地址2.0
+        DeelonService.postjSON(addUrl,{
+            userId:user.data.id,
+            userName:user.data.name,
+            province:addWin.provinceId,
+            provinceName:addWin.provinceName,
+            city:addWin.cityId,
+            cityName:addWin.cityName,
+            detailAddr:addWin.detailAddr,
+            consignee:addWin.consignee,
+            postcode:addWin.postcode,
+            mobile:addWin.phone,
+            isDefault:addWin.isdefault
+        },function(data){
+            if(data.code == 0){
+                delivery_address.init();
+            }
+            $('.alertBox,.bigDiv').remove();
+        })
+
+    }
+    $(function(){
+        delivery_address.init();
+    });
+</script>
