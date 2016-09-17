@@ -1,0 +1,80 @@
+<link rel="stylesheet" href="/hbzc/desktop/css/hbzcPC_kevin.css">
+<link rel="stylesheet" type="text/css" href="/hbzc/desktop/css/project_main.css" />
+<!--main-->
+<div class="list-box wrap">
+    <div class="list">
+        <div class="main-list">
+            <span>众筹状态 ：</span>
+            <ul class="clearfix" id="state">
+                <li class="current" data-value="state"><a href="#">全部</a></li>
+                <li id="state_item" style="display: none;"><a>$resName</a></li>
+            </ul>
+            <input type="hidden" id="state_data" value="-1">
+        </div>
+        <div class="main-list">
+            <span>项目行业 ：</span>
+            <ul class="clearfix" id="type">
+                <li class="current" data-value="type"><a href="#">全部</a></li>
+                <li id="type_item" style="display: none;" value="$itemValue"><a>$resName</a></li>
+            </ul>
+            <input type="hidden" id="type_data" value="-1">
+        </div>
+        <div class="main-list">
+            <span>所在地区 ：</span>
+            <ul class="clearfix" id="city">
+                <li class="current" data-value="city"><a href="#">全部</a></li>
+                <li id="city_item" style="display: none;" value="$id"><a>$resName</a></li>
+            </ul>
+            <input type="hidden" id="city_data" value="-1">
+        </div>
+    </div>
+    <div class="main-list-bt clearfix">
+        <span class="first-sp">综合排序 ：</span>
+        <ul class="clearfix">
+            <li><a data-value="createTime">发布时间 <span class="span-bt"></span></a></li>
+            <li><a data-value="financing">融资金额 <span class="span-bt"></span></a></li>
+            <li><a data-value="pcomplete">完成进度 <span class="span-bt"></span></a></li>
+            <li><a data-value="invest">认投金额 <span class="span-bt"></span></a></li>
+        </ul>
+		<input type="hidden" id="createTime_sort" value="">
+		<input type="hidden" id="financing_sort" value="">
+		<input type="hidden" id="pcomplete_sort" value="">
+		<input type="hidden" id="invest_sort" value="">
+
+        <!-- 翻页 -->
+
+        <div class="flip">
+            <div class="left_pic fl">
+                <!--<img src="/hbzc/desktop/images/images_project/disable_left.jpg" class="imgLeft" />-->
+                <!--第一或者最后一页  加上 disabled-->
+                <span class="imgLeft"></span>
+            </div>
+            <div class="midll_num fl">
+                <span class="page_num" style="color: #ff5e53;">
+				<span id="pageNumShow">1</span></span>/<span><span id="pageSizeShow">1</span></span>
+            </div>
+            <div class="right_pic fr">
+                <!--<img src="/hbzc/desktop/images/images_project/normal_right.jpg" class="imgRight" />-->
+                <!--第一或者最后一页  加上 disabled-->
+                <span class="imgRight"></span>
+            </div>
+            <input id="pageNum" value="1" type="hidden">
+            <input id="pageSize" value="1" type="hidden">
+        </div>
+        <!-- 翻页 -->
+
+    </div>
+</div>
+<div class="main wrap" style="min-height: 400px;">
+	<div class="no_info" style="display: none;">暂无项目</div>
+    <ul id="repayContent" class="clearfix" style="display: none; min-height: 400px;"></ul>
+    <!-- 分页 S-->
+    <div id="pagination" class="pagination"></div>
+    <!-- 分页 E-->
+</div>
+
+<!--返回顶部-->
+<div class="project_go_top"></div>
+
+<script type="text/javascript" src="/hbzc/desktop/html/project/project_list.js"></script>
+
