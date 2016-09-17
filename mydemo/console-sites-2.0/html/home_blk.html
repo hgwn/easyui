@@ -1,0 +1,432 @@
+<link rel="stylesheet" type="text/css" href="css/home.css" />
+<div style="width: 98%;margin-left: 10px;margin-top: 10px;" id="homepageMain">
+
+	<h3 class="default-title"  style="clear: both; margin: 20px auto;">网站数据</h3>
+	<div class="statistical p2p_home_total" style="margin-top: 10px;">
+		<ul class="clearfix">
+			<li class="bg_color_red"><span id="userCount">100</span><p>总用户人数</p></li>
+			<li class="bg_color_blue"><span id="productCount">$productCount</span><p>总创收金额</p></li>
+			<li class="bg_color_yellow"><span id="financingAmount">$financingAmount</span><p>总筹资金额</p></li>
+		</ul>
+	</div>
+
+	<h3 class="default-title"  style="clear: both; margin: 20px auto;">个人信息</h3>
+	<div class="user-info">
+		<div class="user-header-img">
+			<div class="cover"></div>
+			<img src="images/people.png" width='90' height="90" />
+		</div>
+		<ul class="user-status clearfix">
+			<li>所属角色：<span id="name">超级管理员</span></li>
+			<li>上次登录时间：<span id="operator-login-time">2016-05-18 11:58</span></li>
+			<li class="last" style="display: block;">上次登录IP：<span id="operator-ip">192.168.16.11</span></li>
+		</ul>
+	</div>
+
+	<h3 class="default-title"  style="clear: both; margin: 20px auto;">待办事宜</h3>
+	<div class="hei300">
+		<div class="fl" id="user-audit-waiting" style="width:45%;height:100%; background: #fefefe; margin-right: 30px; ">&nbsp;</div>
+		<div class="fl" id="product-audit-waiting" style="width:45%;height:100%; background: #fefefe; ">&nbsp;</div>
+	</div>
+	
+	<h3 class="default-title"  style="clear: both; margin: 20px auto;">用户数据</h3>
+	<div class="clearfix" style="height: 450px;">
+		<div class="users bor-bottom" style="width: 45%;float: left; margin-right: 30px; ">
+		    <div class="users-btn">
+		        <a href="javascript:void(0)" class="action" onclick="createLineChart(1)">新增用户数</a>
+		        <!-- <span class="fr"><a href="/pcb/statistics/exportNewIncrease" target="_blank">导出excel报表</a></span> -->
+		    </div>
+		    <div style="height:390px;width: 100%" id="new-line">
+    			&nbsp;
+    		</div>
+    	</div>
+
+		<div class="pt20" style="position: relative; width: 45%; float: left; ">
+			<div class="users-btn">
+		        <a href="javascript:void(0)" class="action" onclick="createMapChart(1)">用户分布</a>
+		        <!-- <span class="fr"><a href="/pcb/statistics/exportDistribution" target="_blank">导出excel报表</a></span> -->
+		    </div>
+		    <div id="distribution-map" style="height:430px;">&nbsp;</div>
+		    <div class="bar">
+				<ul>
+					<li><span>1</span><font>广东</font><div><i class="blue"></i><div><b style="width:80%"></b></div></div><font>1500</font></li>
+					<li><span>2</span><font>贵州</font><div><i class="blue"></i><div><b style="width:80%"></b></div></div><font>1400</font></li>
+					<li><span>3</span><font>湖南</font><div><i class="blue"></i><div><b style="width:80%"></b></div></div><font>1300</font></li>
+					<li><span class="bg-gray">4</span><font>辽宁</font><div><i class="gray"></i><div><b class="bg-gray" style="width:80%"></b></div></div><font>1200</font></li>
+					<li><span class="bg-gray">5</span><font>浙江</font><div><i class="gray"></i><div><b class="bg-gray" style="width:80%"></b></div></div><font>1100</font></li>
+					<li><span class="bg-gray">6</span><font>云南</font><div><i class="gray"></i><div><b class="bg-gray" style="width:80%"></b></div></div><font>1000</font></li>
+					<li><span class="bg-gray">7</span><font>福建</font><div><i class="gray"></i><div><b class="bg-gray" style="width:80%"></b></div></div><font>900</font></li>
+					<li><span class="bg-gray">8</span><font>湖北</font><div><i class="gray"></i><div><b class="bg-gray" style="width:80%"></b></div></div><font>800</font></li>
+					<li><span class="bg-gray">9</span><font>河南</font><div><i class="gray"></i><div><b class="bg-gray" style="width:80%"></b></div></div><font>700</font></li>
+					<li><span class="bg-gray">10</span><font>甘肃</font><div><i class="gray"></i><div><b class="bg-gray" style="width:80%"></b></div></div><font>600</font></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="/commons/lib/echarts-2.2.7/build/dist/echarts.js"></script>
+<script type="text/javascript">
+ // 路径配置
+	require.config({
+		paths : {
+			echarts : '/commons/lib/echarts-2.2.7/build/dist/'
+		}
+	})
+	
+	//饼状图模板配置
+	var pieOptionTemp = {
+		tooltip : {
+			trigger : 'item',
+			formatter : "{a} <br/>{b} : {c} ({d}%)"
+		},
+		legend : {
+			orient : 'vertical',
+			x : 'right',
+			y : 'center',
+			data : [],
+			textStyle:{fontSize:14,fontFamily:'"微软雅黑",Helvetica,arial'},
+			formatter:function(itemName){
+				var option = this.getOption();//this._option;
+				var data = option.series[0].data;
+				for(var i in data){
+					if(data[i].name == itemName){
+						return itemName + "："+data[i].value;
+					}
+				}
+			}
+		},
+		toolbox : {
+			show : false,
+			feature : {
+				saveAsImage : {
+					show : true
+				}
+			}
+		},
+		calculable : true,
+		series : [ {
+			name : '',
+			type : 'pie',
+			radius : [ '50%', '70%' ],
+			itemStyle : {
+				normal : {
+					label : {
+						show : false
+					},
+					labelLine : {
+						show : false
+					}
+				},
+				emphasis : {
+					label : {
+						show : true,
+						position : 'center',
+						textStyle : {
+							fontSize : '24',
+							fontWeight : 'bold'
+						}
+					}
+				}
+			},
+			data : []
+		} ]
+	};
+	
+	require([ 'echarts', 'echarts/chart/pie' // 使用饼状图就加载bar模块，按需加载
+	], function(ec) {
+		// 基于准备好的dom，初始化echarts图表
+		var userAuditWaiting = ec.init(document.getElementById('user-audit-waiting'));
+		var productAuditWaiting = ec.init(document.getElementById('product-audit-waiting'));
+
+		var option1 = $.extend(true,{},pieOptionTemp);
+		var option2 = $.extend(true,{},pieOptionTemp);
+		
+		setTimeout(function(){
+			var data = [];
+			factory.httpGet("/dlbiz/p2p/projects/getConsoleHomeStatistic", null, function(dataStatistic){
+	            if(dataStatistic.code == 0){
+	            	data = dataStatistic.result;
+					var arry = [];
+					arry.push({value:data.applyProjectCount, name:'借款申请审核'});
+					arry.push({value:data.loanProjectCount, name:'借款放款审核'});
+					arry.push({value:data.repayMentProjectCount, name:'待收款的借款'});
+					arry.push({value:data.lateProjectCount, name:'已逾期的借款'});
+					option1.legend.data = [ {name:'借款申请审核', icon:'bar'}, {name:'借款放款审核', icon:'bar'}, {name:'待收款的借款', icon:'bar'}, {name:'已逾期的借款', icon:'bar'} ];
+					option1.series[0].name = '借款管理';
+					option1.series[0].data = arry;
+					userAuditWaiting.setOption(option1);
+					
+					var arry = [];
+					arry.push({value:data.transferingProjectCount, name:'竞拍中的债权转让'});
+					arry.push({value:data.successTransferCount, name:'已成交的债权转让'});
+					option2.legend.data = [{name:'竞拍中的债权转让', icon:'bar'},{name:'已成交的债权转让', icon:'bar'}];
+					option2.series[0].name = '债权转让管理';
+					option2.series[0].data = arry;
+					// 为echarts对象加载数据 
+					productAuditWaiting.setOption(option2);
+	            }
+	        });
+		}, 500 );
+		factory.httpGet("/dlbiz/p2p/project/dataStatistics", null, function(data){
+			if(data.code == 0){
+				Utils.bindData($("#productCount"),formatCurrency.formatCurrency(data.result.earnSum));
+				Utils.bindData($("#financingAmount"),formatCurrency.formatCurrency(data.result.investSum));
+			}
+		});
+		/* $get("/pcb/tfproject/getProjectUntreated",function(rsp){
+			if(rsp.code == 0){
+				var data = [5,8,0,1];
+				var arry = [];
+				arry.push({value:data[0],name:'产品发售审核'});
+				arry.push({value:data[3],name:'产品放款审核'});
+				arry.push({value:data[1],name:'产品支付审核'});
+				arry.push({value:data[2],name:'产品退款审核'});
+				option1.legend.data = [ {name:'产品发售审核',icon:'bar'}, {name:'产品放款审核',icon:'bar'}, {name:'产品支付审核',icon:'bar'}, {name:'产品退款审核',icon:'bar'} ];
+				option1.series[0].name = '产品审核';
+				option1.series[0].data = arry;
+				userAuditWaiting.setOption(option1);
+			}
+		}); */
+/* 		$get("/pcb/tfuser/getBuyerAndSellerUnauditedCount",function(rsp){
+			if(rsp.code == 0){
+				var data = rsp.result;
+				var arry = [];
+				arry.push({value:data[0],name:'竞拍中的债权转让'});
+				arry.push({value:data[1],name:'已成交的债权转让'});
+				option2.legend.data = [{name:'竞拍中的债权转让',icon:'bar'},{name:'已成交的债权转让',icon:'bar'}];
+				option2.series[0].name = '债权转让管理';
+				option2.series[0].data = arry;
+				// 为echarts对象加载数据 
+				productAuditWaiting.setOption(option2);
+			}
+		});	 */
+	});
+	
+ //线状图参数
+	var lineOptionTemp = {
+			tooltip : {
+				trigger : 'axis'
+			},
+			toolbox : {
+				show : true,
+				feature : {
+					saveAsImage : {
+						show : true
+					}
+				}
+			},
+			calculable : true,
+			xAxis : [ {
+				type : 'category',
+				boundaryGap : false,
+				data : []
+			} ],
+			yAxis : [ {
+				type : 'value'
+			} ],
+			series : [ {
+				name : '',
+				type : 'line',
+				smooth:false,
+	            itemStyle: {normal: {color:'#68c1fb',areaStyle: {type: 'default',color:'#e7f4fc'},lineStyle: {color:'#68c1fb'},nodeStyle:{color:'#fff',borderColor:'#68c1fb'}}},
+	            symbol:'emptyCircle',
+	            symbolSize:4,
+				data : [],
+				markPoint : {
+					data : [ {
+						type : 'max',
+						name : '最大值'
+					}, {
+						type : 'min',
+						name : '最小值'
+					} ]
+				},
+				markLine : {
+					data : [ {
+						type : 'average',
+						name : '平均值'
+					} ]
+				}
+			} ]
+	};
+	var newLine = null;
+	require([ 'echarts', 'echarts/chart/line' // 使用柱状图就加载bar模块，按需加载
+	], function(ec) {
+		// 基于准备好的dom，初始化echarts图表
+		newLine = ec.init(document.getElementById('new-line'));
+		createLineChart(1);
+	});
+	
+	function createLineChart(index){
+		var option = $.extend(true,{},lineOptionTemp);
+		
+		function generate(name,data){
+			var arry1 = [],arry2 = [];
+			
+			data.reverse();
+			for(var i in data){
+				arry1.push(data[i].total);			
+				arry2.push(data[i].date);
+			}
+			option.series[0].name = name;
+			option.series[0].data = arry1;
+			option.xAxis[0].data = arry2
+			// 为echarts对象加载数据 
+			newLine.setOption(option);
+		}
+		if(index == 1){
+			generate('新增用户',[{"date":"2016-05-18","total":0},{"date":"2016-05-17","total":0},{"date":"2016-05-16","total":0},{"date":"2016-05-15","total":0},{"date":"2016-05-14","total":0},{"date":"2016-05-13","total":0},{"date":"2016-05-12","total":0},{"date":"2016-05-11","total":0},{"date":"2016-05-10","total":0},{"date":"2016-05-09","total":0},{"date":"2016-05-08","total":0},{"date":"2016-05-07","total":0},{"date":"2016-05-06","total":3},{"date":"2016-05-05","total":2},{"date":"2016-05-04","total":0},{"date":"2016-05-03","total":0},{"date":"2016-05-02","total":0},{"date":"2016-05-01","total":0},{"date":"2016-04-30","total":0},{"date":"2016-04-29","total":0},{"date":"2016-04-28","total":0},{"date":"2016-04-27","total":0},{"date":"2016-04-26","total":0},{"date":"2016-04-25","total":0},{"date":"2016-04-24","total":0},{"date":"2016-04-23","total":0},{"date":"2016-04-22","total":0},{"date":"2016-04-21","total":0},{"date":"2016-04-20","total":0},{"date":"2016-04-19","total":0}])
+			//未做数据绑定
+			/* $get("/pcb/statistics/statisticsNewUsers",function(rsp){
+				if(rsp.code == 0){
+				}else{
+					console.log(rsp.msg);
+				}
+			}) */
+		}
+	}
+	
+	//地图模板参数
+	var mapOptionTemp = {
+			tooltip : {
+				trigger : 'item'
+			},
+			dataRange : {
+				min : 0,
+				max : 2500,
+				x : 'left',
+				y : 'bottom',
+				text : [ '多', '少' ], // 文本，默认为数值文本
+				calculable : false,
+			    itemGap:1,
+			    splitNumber:10
+			},
+			toolbox : {
+				show : true,
+				orient : 'vertical',
+				x : 'right',
+				y : 'center',
+				feature : {
+					saveAsImage : {
+						show : true
+					}
+				}
+			},
+			roamController : {
+				show : false,
+				x : 'right',
+				mapTypeControl : {
+					'china' : true
+				}
+			},
+			series : [ {
+				name : '',
+				type : 'map',
+				mapType : 'china',
+				roam : false,
+				itemStyle : {
+					normal : {
+						label : {
+							show : true
+						}
+					},
+					emphasis : {
+						label : {
+							show : true
+						}
+					}
+				},
+				data : []}]
+	};
+	
+	var mapChart = null;
+	require([ 'echarts', 'echarts/chart/map' // 使用柱状图就加载bar模块，按需加载
+	], function(ec) {
+		// 基于准备好的dom，初始化echarts图表
+		mapChart = ec.init(document.getElementById('distribution-map'));
+		// 为echarts对象加载数据 
+		createMapChart(1);
+	});
+	
+	var by = function(name){
+	    return function(o, p){
+	        var a, b;
+	        if (typeof o === "object" && typeof p === "object" && o && p) {
+	            a = o[name];
+	            b = p[name];
+	            if (a === b) {
+	                return 0;
+	            }
+	            if (typeof a === typeof b) {
+	                return a > b ? -1 : 1;
+	            }
+	            return typeof a > typeof b ? -1 : 1;
+	        }
+	        else {
+	            throw ("error");
+	        }
+	    }
+	}
+	
+	function createMapChart(index){
+		var option = $.extend(true,{},mapOptionTemp);
+		
+		function generate(name,data){
+			var max = 0;
+			var allMax = 0;
+			for(var i in data){
+				if(max < data[i].value){
+					max = data[i].value;
+				}
+			}
+			allMax = max;
+			if(max <= 10){
+				max = 10;
+			}else{
+				var len = new String(max - 1).length;
+				max = "1";
+				for(var i = 0 ;i < len; i++){
+					max +="0";
+				}
+				max = parseInt(max);
+			}
+			data.sort(by('value'));
+			var ul = $(".bar ul");
+			ul.empty();
+			for(var i=0;i<data.length;i++){
+				var percent = parseFloat(data[i].value * 100) / allMax;
+				var html=null;
+				if(i < 2){
+					html='<li><span>'+(i+1)+'</span><font>'+data[i].name+'</font><div><i class="blue"></i><div><b style="width:'+percent+'%"></b></div></div><font>'+data[i].value+'</font></li>';
+				}else{
+					html='<li><span class="bg-gray">'+(i+1)+'</span><font>'+data[i].name+'</font><div><i class="gray"></i><div><b style="width:'+percent+'%" class="bg-gray"></b></div></div><font>'+data[i].value+'</font></li>';
+				}
+				ul.append(html);
+				if(i==9){
+					break;
+				}
+			}
+			option.dataRange.max = max;
+			option.series[0].data = data;
+			option.series[0].name = name;
+			// 为echarts对象加载数据 
+			mapChart.setOption(option);
+		}
+		if(index == 1){
+			generate('用户分布',[{"name":"内蒙","value":1},{"name":"天津","value":1},{"name":"山西","value":1},{"name":"广东","value":8},{"name":"河北","value":2}])
+			//未做数据绑定
+			/* $get("/pcb/statistics/statisticsProductByArea",function(rsp){
+				if(rsp.code == 0){
+					generate('产品分布',rsp.result)
+				}else{
+					console.log(rsp.msg);
+				}
+			}) */
+		}
+	}
+	$(function(){
+		/*$("#name").text(op.data.name);
+		 $("#operator-login-time").text(op.data.lastLoginTime);
+		 $("#operator-ip").text(op.data.ip);*/
+	});
+</script>

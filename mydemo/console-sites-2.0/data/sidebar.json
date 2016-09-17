@@ -1,0 +1,51 @@
+[{
+        "id":11,
+        "groupname":"借款管理",
+        "list":[
+          {"name":"所有借款","url":"html/p2p/business/list.html"},
+          {"name":"发布体验标","url":"html/p2p/business/experienceAdd.html"}]
+    },{
+        "id":12,
+        "groupname":"贷后管理",
+        "list":[
+          {"name":"待收款借款","url":"html/p2p/post-lend/postList.html"},
+          {"name":"逾期借款","url":"html/p2p/post-lend/overdue.html"},
+          {"name":"已还借款","url":"html/p2p/post-lend/repayList.html"},
+          {"name":"借款合同-协议","url":"html/p2p/transfer/loanAgreement.html"}]
+    },{
+        "id":13,
+        "groupname":"债权转让管理",
+        "list":[
+          {"name":"所有债权转让","url":"html/p2p/transfer/transfer.html"},
+          {"name":"竞拍中的债权转让","url":"html/p2p/transfer/transferbidding.html?_transfer_state=0"},
+          {"name":"已成交的债权转让","url":"html/p2p/transfer/transferclinch.html?_transfer_state=3"},
+          {"name":"已撤销的债权转让","url":"html/p2p/transfer/transferwithdrawn.html?_transfer_state=2"},
+          {"name":"债权转让合同-协议","url":"html/p2p/transfer/agreement.html"},
+          {"name":"待退款竞拍","url":"html/p2p/transfer/refundedTransferList.html"}]
+    },{
+        "id":14,
+        "groupname":"借款产品管理 ",
+        "list":[
+          {"name":"所有借款产品","url":"html/p2p/product/products.html"} ]
+    },{
+        "id":15,
+        "groupname":"提成管理",
+        "list":[
+          {"name":"提成记录审核","url":"html/p2p/financial/trebateRecords.html"},
+          {"name":"会员提成月结","url":"html/p2p/financial/trebateMonthlys.html"}]
+    },{
+    	"id":16,
+        "groupname":"业务审核",
+        "list":[
+          {"name":"额度申请审核","url":"html/admin/member/memberLimitCheck.html"},
+          {"name":"认证资料审核","url":"html/p2p/product/userAuditmat.html"}]
+    },{
+    	"id":17,
+    	"groupname":"业务设置",
+    	"list":[
+    	    {"name":"认证资料设置","url":"html/p2p/product/auditmat.html"},
+    		{"name":"借款条件设置","url":"html/p2p/product/loanCondition.html"},
+            {"name":"担保方公司设置","url":"html/p2p/product/riskCompany.html"} ]
+    }
+]
+

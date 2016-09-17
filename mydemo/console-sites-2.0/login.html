@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta
+	content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"
+	name="viewport">
+<meta content="yes" name="apple-mobile-web-app-capable">
+<meta content="black" name="apple-mobile-web-app-status-bar-style">
+<meta content="telephone=no" name="format-detection">
+<meta content="email=no" name="format-detection">
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link rel="stylesheet" type="text/css" href="css/login.css" />
+<link rel="stylesheet" type="text/css"
+	href="/commons/css/easyui/default/easyui.css" />
+<link rel="stylesheet" type="text/css"
+	href="/commons/css/easyui/icon.css" />
+
+<title>P2P运营后台管理</title>
+</head>
+
+<body>
+	<div class="log_top"
+		style="background-image: url(images/login/logo01.png);">
+		<p class="tel">400-882-3186</p>
+	</div>
+	<form id="form-login"  method="post">
+		<input type="hidden" id="subType" name="subType"> <input
+			type="hidden" id="vcodeText" name="vcodeText">
+		<div class="log_body"
+			style="background-image: url(images/login/xia_01.jpg);">
+			<div class="log_body_mask">
+				<div class="log_box">
+					<p class="u_name">
+						<input type="text" name="name" id="name" style="height: 30px; width: 210px;"
+							class="easyui-textbox"  missingMessage=""
+							maxlength="20" placeholder="输入账号">
+					</p>
+					<p class="u_pw">
+						<input type="password" name="password" id="password" style="height: 30px; width: 210px;"
+							class="easyui-textbox"  missingMessage=""
+							maxlength="20" placeholder="输入密码">
+					</p>
+					<p class="u_yzm">
+						<input type="text" name="checkNum" id="checkNum" style="height: 30px; width: 140px;"
+							class="easyui-textbox"  missingMessage=""
+							max="4" placeholder="验证码"> <img id="p2p_login_validcode"
+							src="/dlsys/admin/sdk/common/validcode" class="u_input_yzm" title="看不清，点击换一张"/>
+					</p>
+					<p class="zhuangtai">
+						<input type="checkbox" id="remember" class="sub"
+							name="_spring_security_remember_me" value="1"><label
+							for="remember"> 记住登录状态</label>
+						<span id="p2p_login_tip" style="color:#ff0000; padding-left: 15px;"></span>
+					</p>
+					<div class="confirm">
+						<p class="btn">
+							<input type="hidden" name="returnUrl" id="returnUrl" /> <input
+								type="hidden" name="notifyUrl" id="notifyUrl" /> <input
+								type="submit" class="sub" id="p2p_login" value="登录">
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+	<div class="banquan" style="font-size: 12px;">帝隆科技 版权所有
+		粤ICP备:11044630号</div>
+	<script src="/commons/lib/jquery-2.2.2.min.js"></script>
+	<script src="/commons/lib/easyui/jquery.easyui.min.js"></script>
+	<script src="/commons/lib/easyui/easyui-lang-zh_CN.js"></script>
+	<script src="/commons/lib/jquery.form.js"></script>
+	<script src="/commons/jquery.cookie.js"></script>
+	<script src="/commons/provider.js"></script>
+	<script src="/commons/utils.js"></script>
+	<script src="/commons/global.js"></script>
+	<script src="js/common.js"></script>
+	<script type="text/javascript">
+		var loginform = {
+			id : "#form-login",
+			login_url : "/dlsys/admin/sdk/op/login/",
+			init : function() {
+				//获取returUrl和notifyUrl
+				var returnUrl = (Utils.getUrlParam("returnUrl") == undefined ? ''
+						: Utils.getUrlParam("returnUrl"));
+				var notifyUrl = (Utils.getUrlParam("notifyUrl") == undefined ? ''
+						: Utils.getUrlParam("notifyUrl"));
+				$("#returnUrl").val(returnUrl);
+				$("#notifyUrl").val(notifyUrl);
+				//click事件
+				$("#p2p_login").click(function(){
+					//debugger;
+					var name = $.trim($('#name').textbox('getValue'));
+					var password = $('#password').textbox('getValue');
+					var checkNum = $.trim($('#checkNum').textbox('getValue'));
+					if(!name) {
+						$("#p2p_login_tip").text("账号为空！");
+						$('#name').textbox({required:true});
+						return false;
+					}
+					if(!password) {
+						$("#p2p_login_tip").text("密码为空！");
+						$('#password').textbox({required:true});
+						return false;
+					}
+					if(!checkNum) {
+						$("#p2p_login_tip").text("验证码为空！");
+						$('#checkNum').textbox({required:true});
+						return false;
+					}
+					$(loginform.id).makeform({
+						url : loginform.login_url,
+						onsuccess : function(data) {
+							op.p2p_login(data);
+						},
+						error:function(data){
+							//console.log(data);
+							var responseText = data.responseText;
+							if( typeof responseText =="string"){
+								responseText=eval("("+responseText+")");
+							}
+							$("#p2p_login_tip").text(responseText.msg);
+							loginform.getvalidcode();
+						}
+					});
+				});
+				$("#p2p_login_validcode").click(function(){
+					loginform.getvalidcode();
+				});
+			},
+			getvalidcode:function(){
+				$("#p2p_login_validcode").attr("src","/dlsys/admin/sdk/common/validcode/?"+Math.random());
+			}
+		};
+		$(function() {
+			loginform.init();
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<link rel="stylesheet" href="css/giftcard.css"/>
+<div id="mask"></div>
+<div class="giftcard">
+	<!-- 查看代金券 -->
+	<div class="lookCard">
+		<!-- 标题 -->
+		<p class="card_title">我的代金劵<span></span></p>
+		<!-- 表格 -->
+		<table class="look_card_table">
+			<tr>
+				<th style='width:239px;'>代金券名称</th>
+				<th style='width:146px;'>金额（元）</th>
+				<th style='width:169px;'>使用限制</th>
+				<th>截止有效期</th>
+			</tr>
+			<tbody id="giftcard_box"></tbody>
+	        <tr id="giftcard_list" style="display: none;">
+	            <td>$giftName</td>
+	            <td>$giftValue</td>
+	            <td id="minInvest">$minInvest</td>
+	            <td>$validTimeEnd</td>
+	        </tr>
+		</table>
+		<!-- 分页 S-->
+	    <div id="giftcard_page" class="pagination"><!-- 这里显示分页 --></div>
+	    <!-- 分页 E-->
+		<button class="btn">确定</button>
+	</div>
+	<!-- 使用以下代金券投资 -->
+</div>
+<script>
+    var pagination = {
+        init : function(url, params) {
+            DeelonService.get(url, params, function(data) {
+                giftcard.render(data);
+                $("#giftcard_page").pagination(data.result.totalElements, {
+                    prev_text : "前一页",
+                    next_text : "后一页",
+                    num_edge_entries : 2,
+                    num_display_entries : 4,
+                    callback : giftcard.pageselectCallback,
+                    items_per_page : 10
+                });
+            });
+        }
+    };
+    
+    var giftcard = {
+        url : "/dlsys/market/userGift/user",//获取我的礼品
+        params:{pageNum:1,pageSize:10,giftType:2},
+        init:function(url,params){
+            user.load();
+            giftcard.params.userId = user.data.id;
+            giftcard.params.Token = user.data.token;
+            DeelonService.get(giftcard.url,giftcard.params,function(data){
+                giftcard.render(data);
+            })
+            $(".card_title span,.btn").click(function(){
+                giftcard.hide();
+            });
+        },
+        hide:function(){
+            $(".giftcard,#mask").hide();
+        },
+        render:function(data){
+            $("#giftcard_box").empty();
+            Utils.bindList($("#giftcard_box"),$("#giftcard_list"),data.result.content,null,function(item,data){
+                if(-1 == minInvest){
+                    item.find("#minInvest").html("无限制");
+                }
+            });
+        },
+        pageselectCallback:function(index,jq){
+            giftcard.params.pageNum = index + 1;
+            giftcard.init(giftcard.url,giftcard.params);
+            return false;
+        }
+    };
+    
+    $(function(){
+        giftcard.init();
+        pagination.init(giftcard.url, giftcard.params);
+    });
+</script>

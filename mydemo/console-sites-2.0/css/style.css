@@ -1,0 +1,381 @@
+
+.table-detail {
+	margin: auto;
+	width: 100%;
+	margin-top: 1px;
+	border: solid 1px #cacaca;
+}
+.table-detail th {
+	background-color: #ecf0f1;
+	border-bottom: 1px solid #c4ccce;
+	border-right: 1px solid #c4ccce;
+	font-size: 12px;
+	height: 32px;
+	padding-right: 6px;
+	text-align: right;
+}
+.head {
+	height: 32px;
+	text-align: right;
+	font-size: 13px;
+	padding-right: 5px;
+	background-color: #EBEBEB;
+}
+
+.table-detail textarea {
+	margin: 2px;
+	border: 1px solid #abc1d1;
+	padding: 2px;
+	width: 350px;
+}
+
+.table-detail td {
+	border-bottom: 1px solid #cacaca;
+	border-right: 1px solid #cacaca;
+	font-size: 12px;
+	padding-left: 6px;
+	text-align: left;
+}
+th a, th a:visited {
+	color: #0167FF;
+	font-weight: bold;
+	text-decoration: none;
+}
+th a:hover {
+	text-decoration: underline;
+}
+
+th.sorted a, th.sortable a {
+	background-position: right center;
+	color: #464646;
+	display: block;
+	font-size: 14px;
+	width: 100%;
+}
+th.sortable a {
+	background-repeat: no-repeat;
+}
+
+th.order1 a {
+	background-image: url(../images/displaytag/icon-sort-desc.gif);
+	background-repeat: no-repeat;
+	background-position: 80% 50%;
+}
+
+th.order2 a {
+	background-image: url(../images/displaytag/icon-sort-asc.gif);
+	background-repeat: no-repeat;
+	background-position: 80% 50%;
+}
+
+.table-grid td {
+	border-bottom: 1px solid #dadada;
+	border-right: 1px dashed #dadada;
+	height: 30px;
+	padding: 4px 4px 4px 5px;
+	word-break: break-all;
+	text-align: center;
+}
+
+.table-grid .button {
+	margin-top: 4px;
+	margin-left: 6px;
+}
+
+.even span, .odd span {
+	cursor: pointer;
+}
+
+.table-grid .even {
+	height: 22px;
+	background-color: #fff;
+}
+
+.table-grid .odd {
+	/* background: none repeat scroll 0 0 #f2f4e9; */
+	background-color: transparent;
+	height: 22px;
+}
+
+.table-grid .over {
+	/*background: url(../images/content_bg_hover.jpg);*/
+	/* background: #fdfdaf; */
+	background-color: transparent;
+}
+
+.area-export {
+	text-align: right;
+	clear: both;
+	margins: 0;
+	paddings: 0;
+	padding-top: 6px;
+	height: 23px;
+	border: 2px solid #dadada;
+	border-top: none;
+} /*z0902*/
+.area-export .exportlinks {
+	display: inline-table;
+	margin-right: 20px;
+	text-align: right;
+}
+
+.area-export input {
+	vertical-align: middle;
+}
+
+.area-export .exportlinks .export {
+	padding: 0 4px 1px 20px;
+	display: inline;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.exportlinks a {
+	text-decoration: none;
+}
+
+.area-export .exportlinks .excel {
+	background-image: url(../images/displaytag/ico_file_excel.png);
+	background-repeat: no-repeat;
+}
+
+.area-export .exportlinks .csv {
+	background-image: url(../images/displaytag/ico_file_csv.png);
+	background-repeat: no-repeat;
+}
+
+.area-export .exportlinks .xml {
+	background-image: url(../images/displaytag/ico_file_xml.png);
+	background-repeat: no-repeat;
+}
+
+.area-export .exportlinks .pdf {
+	background-image: url(../images/displaytag/ico_file_pdf.png);
+	background-repeat: no-repeat;
+}
+
+.area-export .exportlinks .rtf {
+	background-image: url(../images/displaytag/ico_file_rtf.png);
+	background-repeat: no-repeat;
+}
+
+.panel-norecord {
+	border: 1px solid #c0c0c0;
+	border-top: none;
+}
+
+.panel-page {
+	margin-bottom: 20px;
+	border: 1px solid #c0c0c0;
+	border-top: none;
+	/* background : #fff; */
+	/*background: url(../images/tool_bg.jpg) repeat-x; border: 3px solid #dddddd;*/
+}
+
+.l-bar-group-right {
+	float: left;
+}
+
+.l-panel-bbar-inner {
+	margin: 0;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	float: right;
+}
+
+.btn-go {
+	width: 43px;
+	height: 21px;
+	font-size: 15px;
+	font-family: Verdana, Geneva, sans-serif;
+	background: url(../images/trun_button2.jpg) no-repeat 0 1px;
+	border: none;
+	cursor: pointer;
+}
+
+.panel-page img {
+	cursor: pointer;
+}
+
+label.error {
+	background: url(../images/valid/unchecked.gif) no-repeat 0px 0px;
+	margin-left: 16px;
+	padding-left: 16px;
+	padding-bottom: 2px;
+	font-weight: bold;
+	color: #EA5200;
+}
+
+label.initerror {
+	color: red;
+	font-weight: bold;
+	font-size: 16px;
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+label.checked {
+	background: url(../images/businessManagement/checked.gif) no-repeat 0px
+		0px;
+}
+
+.inputText {
+	border: 1px solid #adadad;
+	padding: 2px;
+	width: 110px;
+	height: 20px;
+}
+
+span.red {
+	color: red;
+}
+
+span.green {
+	color: green;
+}
+
+span.brown {
+	color: brown;
+}
+
+span.brown {
+	color: #bb505d;
+}
+
+span.difcolor {
+	color: #000;
+}
+
+.panel-toolbar a.link {
+	/*  background:#4093d9 url("../images/other/bg.png") repeat-x scroll 0 -170px transparent !important; */
+	border: 1px solid #4093d9;
+	/* border-radius: 3px 3px 3px 3px; */
+	cursor: pointer;
+	line-height: 23px;
+	padding: 0 12px 3px 8px;
+	text-align: center;
+	color: #fff;
+}
+
+.panel-toolbar a.link span {
+	display: block;
+	float: left;
+	height: 20px;
+	margin-top: 3px;
+	width: 20px;
+}
+
+a.link.add, .panel-toolbar  a.link.add span {
+	margin-left: 5px;
+	background: #4093d9 url("../images/businessManagement/icons_add.png") no-repeat left 40%;
+	
+}
+
+/*资费说明*/
+.p2p_wrapper {
+	margin: 0 auto;
+	position: relative;
+	overflow-y: hidden;
+}
+
+.RatesList h3 {
+	font-size: 14px;
+}
+
+.RatesList text-left {
+	line-height: 20px;
+}
+
+.knockdown {
+	margin-bottom: 15px;
+	padding-bottom: 15px;
+	font-size: 14px;
+	padding-left: 10px;
+	border-bottom: 1px dashed #bebebe;
+}
+
+.knockdownleft {
+	width: 40%;
+	float: left;
+}
+
+.knockdownright {
+	width: 59%;
+	float: left;
+}
+
+.knockdownleft img {
+	vertical-align: middle;
+}
+
+.knockdownright span {
+	margin: 10px;
+	line-height: 20px;
+	font-size: 12px;
+}
+
+.thirdlyleft {
+	width: 40%;
+	float: left;
+}
+
+.thirdlyright {
+	width: 59%;
+	float: left;
+}
+
+.thirdly {
+	margin-bottom: 30px;
+	padding-bottom: 30px;
+	font-size: 14px;
+	padding-left: 10px;
+}
+
+.thirdly li span {
+	margin: 10px;
+	line-height: 20px;
+	font-size: 12px;
+}
+
+.RatesList p {
+	padding: 0px 20px 0px 20px;
+	font-size: 14px;
+	line-height: 20px;
+}
+
+.text-orange2 {
+	color: #0099ff;
+	font-weight: bold;
+}
+
+.text-orange12 {
+	color: #0099ff;
+	font-weight: bold;
+}
+
+.tagname {
+	font-size: 14px;
+	display: inline-block;
+	height: 25px;
+	line-height: 25px;
+	width: 120px;
+	padding-left: 10px;
+	margin: 10px 0px 10px 10px;
+}
+
+.background7 {
+	background: #0099ff;
+}
+
+.text-white {
+	color: #fff;
+	font-weight: bold;
+}
+
+/**/
+#btnTopMsg {
+	display: inline-block;
+	height: 25px;
+	background: url("../images/accout_server_msg.png")0px -75px no-repeat;
+	padding-left: 25px;
+}

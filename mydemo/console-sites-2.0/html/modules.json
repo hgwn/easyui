@@ -1,0 +1,42 @@
+[
+    {
+        "id": 13,
+        "name": "main",
+        "inner": true,
+        "hasPorlets": false,
+        "title": "首页"
+
+    },
+    {
+        "id": 13,
+        "name": "finance",
+        "inner": true,
+        "title": "财务管理"
+
+    },
+    {
+        "id": 12,
+        "name": "report",
+        "inner": true,
+        "title": "报表统计"
+
+    },
+    {
+        "id": 3,
+        "name": "admin",
+        "inner": true,
+        "title": "系统管理"
+    },
+    {
+        "id": 4,
+        "name": "market",
+        "inner": true,
+        "title": "积分商城"
+    },
+    {
+        "id": 5,
+        "name": "hbzc",
+        "title": "回报众筹"
+
+    }
+]

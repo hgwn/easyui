@@ -1,0 +1,66 @@
+<!--体验卷 S-->
+<dl class="giftlist_wrap_dl">
+    <dt class="title"><span class="gift_title">体验卷</span>
+        <a href="javascript:void(0);" class="giftlist_pre giftlist_md_bar-prev"></a>
+        <a href="javascript:void(0);" class="giftlist_pre giftlist_md_bar-next"></a>
+    </dt>
+    <dd class="clearfix">
+        <ul class="clearfix">
+            <li class="list" name="giftlist_li_1"  style="display: none;">
+                <img class="m1" src="$giftPhotoJson" alt="">
+                <p>$giftName</p>
+                <p><span class="font_999">所需积分：</span><span class="font_red">$needPointAmount</span></p>
+                <p class="p_limin"><span class="font_999">每人兑换限制：</span> <span class="gainAmount">$gainAmount</span></p>
+                <p><span class="font_999">使用限制：</span> <span class="minInvest">$minInvest</span></p>
+                <div class="linkbtn">
+                    <a href="#page=giftdetail?id=$id" class="giftlist_linkLook" style="margin-right: 15px;">查看详情</a>
+                    <a href="#page=giftdetail?id=$id" class="giftlist_linkAction">立即兑换</a>
+                </div>
+            </li>
+        </ul>
+    </dd>
+</dl>
+<!--体验卷 E-->
+
+<script>
+        function creatMinGift(elm,title,pamas){
+            //优惠券
+            $(elm).find("dt.title >span.gift_title").text(title);
+            var giftlist_dl_1_list={
+                url:"/dlsys/market/gift/giftType",
+                init:function(){
+                    DeelonService.get(giftlist_dl_1_list.url,pamas,function(data){
+                        if(data.result ==undefined){
+                            $(elm).hide();
+                            return;
+                        }
+                        Utils.bindList($(elm).find("ul.clearfix"),$(elm).find("[name='giftlist_li_1']"),data.result,null,function(item,data){
+                            if(data.gainAmount == -1){
+                                item.find(".gainAmount").text("无限制");
+                            }else{
+                                item.find(".gainAmount").text(data.gainAmount+"件");
+                            }
+                            if(data.minInvest == -1){
+                                item.find(".minInvest").text("无限制");
+                            }else{
+                                item.find(".minInvest").text("投标额满"+data.minInvest+"元");
+                            }
+                            if(data.giftPhotoJson == undefined){
+                                if(title =="体验卷"){
+                                    item.find(".m1").attr("src","images/mall/gift_j_100.png");
+                                }
+                                if(title =="积分红包"){
+                                    item.find(".m1").attr("src","images/mall/gift_m_100.png");
+                                }
+                                if(title =="精致礼品"){
+                                    item.find(".m1").attr("src","images/mall/temp/temp1.jpg");
+                                }
+                            }
+                        });
+                        $(elm).giftlist_turns();
+                    });
+                }
+            };
+            giftlist_dl_1_list.init();
+        };
+</script>

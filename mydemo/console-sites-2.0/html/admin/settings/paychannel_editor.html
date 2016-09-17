@@ -1,0 +1,120 @@
+<form id="pay_form">
+    <table class="table-detail" cellpadding="0" cellspacing="0" border="0" style="table-layout: fixed;">
+
+        <tr>
+            <th width="130">渠道编码（缩写）：<span class="required" style="color: red;">*</span></th>
+            <td><input type="text" class="easyui-validatebox textbox"
+                       name="code" required="true" missingMessage="不能为空" style="width: 80%;"/></td>
+
+        </tr>
+        <tr>
+            <th>渠道名称：<span class="required" style="color: red;">*</span></th>
+            <td><input type="text" class="easyui-validatebox textbox"
+                       name="name" required="true" missingMessage="不能为空" style="width: 80%;"/></td>
+        </tr>
+        <tr>
+            <th>类型：<span class="required" style="color: red;">*</span></th>
+            <td>
+                <label class="h-label"><input type="radio" name="catalog" checked="checked"  value="1" /> 网关</label>
+                <label class="h-label"><input type="radio" name="catalog" value="2" /> 托管</label>
+                <label class="h-label"><input type="radio" name="catalog" value="3" /> 银行存管</label>
+            </td>
+        </tr>
+        <tr>
+            <th>是否启用</th>
+            <td>
+                <label class="h-label"><input type="radio"  name="enabled" value="1" checked="checked" /> 是</label>
+                <label class="h-label"><input type="radio" name="enabled" value="0" /> 否</label>
+            </td>
+        </tr>
+        <tr>
+            <th>渠道配置 <span class="required" style="color: red;">*</span></th>
+            <td style="padding: 5px;">
+                <input type="text" class="easyui-textbox" name="conf" required="true" missingMessage="不能为空"  data-options="multiline:true" style=" height: 60px; width: 100%;margin: auto;">
+        </tr>
+        <tr>
+            <th>描述 <span class="required" style="color: red;">*</span></th>
+            <td style="padding: 5px;">
+                <input type="text" class="easyui-textbox" name="descp" required="true" missingMessage="不能为空"  data-options="multiline:true" style=" height: 60px; width: 100%;margin: auto;">
+        </tr>
+        <tr>
+            <th width="130">LOGO：</th>
+            <td style="padding: 5px;">
+                <img src="images/upload.jpg" title="双击上传图片" id="opIcon" width="80" height="80" ondblclick="payForm.uploadInit();" />
+                <span style="color: #999;">(双击图片上传)</span>
+                <input type="hidden" class="form-control w-250" id="giftPhotoFileId" name=giftPhotoFileId>
+                <input type="hidden" id="giftPhotoJson" name="giftPhotoJson">
+            </td>
+        </tr>
+        <input type="hidden" id="pay_id" name="id">
+    </table>
+</form>
+<script>
+    var payForm = {
+        id : "#pay_form",
+        url : "./html/admin/settings/resutl.json",
+        init: function() {
+        },
+        
+        echo: function(data) {
+            //Utils.bindProps($("#pay_form"), data, true);
+            $("#pay_form").form("load",data);
+        },
+        
+        submit: function() {
+            //$("#module_form").trigger("submited");
+            var pay_id = $("#pay_id").val();
+            if ($(payForm.id).form('validate')) {
+                var param = $(payForm.id).serialize();
+                factory.httpPost(payForm.url,param,function(rsp){
+                    if(rsp.code==0){
+                        if(pay_id){
+                            MessageBox.info("修改成功");
+                        }else{
+                            MessageBox.info("添加成功");
+                        }
+                        payTable.addDlg.close();
+                        payTable.reload();
+                    }else{
+                        MessageBox.error(rsp.msg);
+                    }
+                });
+            }
+        },
+        
+        reset: function() {
+             $("#module_form").form("reset");
+   
+        },
+        
+        bindEvent: function(event, handler, data) {
+            $("#module_form").unbind(event);
+            $("#module_form").bind(event, data, handler);
+        },
+        uploadInit: function(){
+            //调用上传图方法
+            payForm.upload("#opIcon", "photo");
+        },
+        upload: function(ele, paramName) {
+            debugger;
+            //上传产品图操作
+            var ele = ele;
+            var uploadUrl = "xxx/uploadFile/";
+            var updataUrl = null;
+            var paramName = paramName;
+
+            var ev = function(data) {
+                var imgUrl = data.phone;
+                $("#opIcon").attr("src", imgUrl);
+                $("#giftPhotoFileId").val(data.photo);
+                $("#giftPhotoJson").val(imgUrl);
+            };
+
+            var param = {};
+            uploadFile.upload(ele, uploadUrl, updataUrl, paramName, ev, null,
+                    param,'jpg,jpeg,gif,png');
+
+        }
+
+    };
+</script>

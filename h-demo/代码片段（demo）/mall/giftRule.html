@@ -1,0 +1,52 @@
+<link rel="stylesheet" href="../mall/animate.min.css">
+<div class="giftrule_w">
+    <div id="giftRule_wrap">
+        <div class="giftrule_top"><img src="images/mall/giftrule1.png"></div>
+        <div class="giftrule_m1">
+            <dl class="step1">
+                <dt class="title" >积分介绍</dt>
+                <!--<dd>
+                    <b>1.积分是什么？</b><br>
+                    积分是您在投资、注册、认证等操作时获得的通用积分，拥有积分后您可以在积分商城参与积分兑换等活动换取礼品。
+                </dd>
+                <dd>
+                    <b>2.如何得到积分？</b><br>
+                    · 注册后，完成各类资料及认证获得积分；
+                    · 投标并获得债权后获得积分，详情查看投标积分计算方法；
+                    · 借款并成功还款后获得积分，详情查看借款积分计算方法；
+                </dd>-->
+                <dd id="giftRule_temp"></dd>
+            </dl>
+            <dl class="step2">
+                <dt class="title">积分使用</dt>
+                <dd>
+                    进入积分商城礼品兑换区，选择在您积分范围内的礼品，进行礼品兑换。
+                    <img class="animated  bounce" src="images/mall/step2.png">
+                </dd>
+            </dl>
+            <dl class="step3">
+                <dt class="title">礼品展示</dt>
+                <dd>
+                    <div><img class="animated  bounce" src="images/mall/step3.jpg"></div>
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<script>
+    var giftRule_box = {
+        url:"/dlapi/cms/article?id=&fullPath="+encodeURIComponent("/内容管理/积分商城/积分规则/积分介绍"),
+        init:function(){
+            DeelonService.get(giftRule_box.url,function(data){
+                $("#giftRule_temp").html(data.content);
+                giftRule_box.render();
+            });
+        },
+        render:function(){
+            $('.title,.giftrule_m1  dd').addClass('animated swing');
+        }
+    };
+
+    giftRule_box.init();
+</script>

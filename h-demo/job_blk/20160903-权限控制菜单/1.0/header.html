@@ -1,0 +1,168 @@
+<div class="header clearfloat">
+    <div class="logo fl" style="margin-top: 10px;"><img src="images/logo02.png" alt="logo"/></div>
+    <div class="headaer_right">
+        <ul class="header-nav" id="nav">
+            <li><a href="#" class="header-nav-link nav-active" onclick="navObject.loadHome();"> 首页</a></li>
+            <li class="navList" style="display:none;"><a href="#" class="header-nav-link" value="$id" click='clickBtn'> $name</a></li>
+        </ul>
+    </div>
+    <div class="login-out">
+        <div class="fl" style="line-height: 28px; padding-right: 15px;">欢迎您，<span id="opName"></span></div>
+        <a href="javascript:void(0)" id="btnTopMsg" class="fl top_mysg" title="消息">
+        <span id="top_msg"  style="color: #fff; display: none;"></span></a>
+        <a href="javascript:void(0)" id="btnModityPwd" class="fl">修改密码</a>
+        <a href="javascript:void(0)" id="btnLogOut" class="fl">退出</a>
+    </div>
+    <a href="javascript:void(0);" title="前往上一个菜单" id="headerNav_prev"><img src="images/arr_prev2.png"></a>
+    <a href="javascript:void(0);" title="前往下一个菜单" id="headerNav_next"><img src="images/arr_next.png"></a>
+</div>
+<script type="text/javascript">
+    var navObject = {
+        actions: {clickBtn: function(elem) {
+                var id = $(elem).attr("value");               
+                PorletLoader.loadPorlet("sidebar", [{name: "sidenavObj", link: "html/sidebar.html", dataurl: assetControl.getNav(id)}]);
+                navObject.showWest();
+            }},
+        //初始化
+        init: function() {
+        	  	op.load();
+        	    if (op.data.token == null) {
+        	        Utils.gotoPage('login.html');
+                    return;
+        	    }
+    			if(op.data.realName!=null&&op.data.realName!=""){
+    			 	$("#opName").text(op.data.realName);
+    			}else{
+    			 	$("#opName").text(op.data.name);
+    			}
+        	    $("#btnModityPwd").click(function() {
+        	    	modifyPwdFormDlg.show("修改密码");
+        	    	return false;
+        	    });
+        	    $("#btnLogOut").click(function() {
+        	        $.get("/dlsys/admin/sdk/op/logout/", function(data) {
+        	            if (data.code == 0) {
+        	                op.del();
+        	                window.location.href = "login.html";
+        	            }
+        	        });
+        	        return false;
+        	    });
+
+               $("#btnTopMsg").click(function(){
+                   mainTab.addTab("通知消息","html/message/notice/notice_index.html");
+               });
+             navObject.unread();
+
+        	navObject.loadAsset();
+            //登录进入后立即加载首页页面提醒模块内容
+            navObject.loadHome();
+            if(location.href.indexOf("paySuccess.html")>0){
+                $("#layout").layout('hidden', "west");
+                mainTab.addTab("结果","html/result.html");
+            }else if(location.href.indexOf("payFail.html")>0){
+                $("#layout").layout('hidden', "west");
+                mainTab.addTab("结果","html/result.html");
+            }
+        },
+        unread:function(){
+            var url='/dlsys/portal/sdk/msg/unread/0/'+op.data.id+'/0/?token='+encodeURIComponent(op.data.token);
+            factory.httpGet(url,null, function(res) {
+                if(parseInt(res.result) >99){
+                    $("#top_msg").text("99+");
+                }else{
+                    $("#top_msg").text(res.result);
+                }
+                if(res.result){
+                    $("#top_msg").show();
+                }else{
+                    $("#top_msg").hide();
+                }
+            });
+        },
+        loadAsset:function(){
+        	var url = "/dlsys/admin/sdk/op/access/assets/owner?opId="+op.data.id+"&Token="+encodeURIComponent(op.data.token);
+    	    //var url = "data/test-nav.json";
+    	    //加载权限菜单数据
+    	    $.getJSON(url, function(data) {
+                navObject.navLength = data.length;
+    	    	 //渲染头部栏目菜单
+    	    	navObject.render(data);
+    	    });
+        },
+        render: function(data) {
+            navObject.localData = data;
+        	assetControl.asset_data = data;
+            Utils.bindList("#nav", ".navList", data, navObject.actions);
+            //切换菜单样式
+            changeClass("#nav a.header-nav-link","nav-active",1);
+            sideAutoWidth();
+            navScroll();
+        },
+        reload:function(data){
+            Utils.bindList("#nav", ".navList", data, navObject.actions);
+            changeClass("#nav a.header-nav-link","nav-active");
+            sideAutoWidth();
+        },
+        //显示左侧导航
+        showWest: function() {
+            $("#layout").layout('show', "west");
+        },
+        loadHome: function () {
+             $("#layout").layout('hidden', "west");
+             mainTab.addTab("首页","html/home.html");
+        }
+    };
+    navObject.init();
+
+    function sideAutoWidth(){
+        //debugger;
+        $("#headerNav_prev,#headerNav_next").show();
+        var bodyclientWidth = document.body.clientWidth; //网页可见区域宽
+        var navWidth = (navObject.navLength +1) * 120 ;  //实际需要宽度
+        var clickWidth = bodyclientWidth - 250 - 100; // 实际可见宽度  --减去logo宽
+        if(navWidth - clickWidth > 0){
+            navObject.num = Math.floor(clickWidth / 120);
+            clickWidth = navObject.num * 120;
+            $("#headerNav_prev,#headerNav_next").show();
+        }else{
+            $("#headerNav_prev,#headerNav_next").hide();
+        }
+        $("#header .headaer_right").width(clickWidth);
+
+    }
+
+    function navScroll(){
+        var shrink_page=0;
+        var ul = $("#nav");
+        var size=ul.find('li').size();
+        var width= ul.find('li').outerWidth(true);
+        $("#headerNav_prev").click(function(){
+            if (shrink_page>0) {
+                ul.stop(false,true).animate({"left":'+='+width+"px"},500);
+                shrink_page--;
+                $("#headerNav_next img").attr("src","images/arr_next.png");
+            }
+            if(shrink_page ==0){
+                $("#headerNav_prev img").attr("src","images/arr_prev2.png");
+            }
+        });
+        $("#headerNav_next").click(function(){
+            if (shrink_page<size-(navObject.num +1)) {
+                ul.stop(false,true).animate({"left":'-='+width+"px"},500);
+                shrink_page++;
+                $("#headerNav_prev img").attr("src","images/arr_prev.png");
+            }/*else{
+                $("#headerNav_next img").attr("src","images/arr_next2.png");
+            }*/
+            if(shrink_page + navObject.num >= size -1){
+                $("#headerNav_next img").attr("src","images/arr_next2.png");
+            }
+        });
+    }
+
+    $(window).resize(function(){
+        sideAutoWidth();
+    });
+</script>
+

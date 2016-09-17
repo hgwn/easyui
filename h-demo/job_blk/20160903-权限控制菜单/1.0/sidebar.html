@@ -1,0 +1,70 @@
+
+<div id="sidenav" class="easyui-accordion"
+	style="width: 100%; height: auto;"></div>
+
+<div @title="$name" id="sidenavTxl" style="display: none;">
+	<ul class="sidebar-box">
+		<li class="sidebar-list" style="display: none;"><a href="#"
+			class="sidebar-link" value="$url" title="$name" data="$id"
+			click="openTab">$name</a></li>
+	</ul>
+</div>
+<script>
+	var sidenavObj = {
+		//加载主体功能页面
+		action : {
+			openTab : function(elem) {
+				//console.log(elem);
+				var url = $(elem).attr("value");
+				var title = $(elem).attr("title");
+				var id = $(elem).attr("data");
+				assetControl.current_id = id;
+				assetControl.map.put(title,id);
+				//console.log("sidebar-assetControl.current_id="+assetControl.current_id);         
+				//$("#main div.content").load(url);
+				mainTab.addTab(title, url);
+			}
+		},
+		//初始化数据并填充数据
+		init : function(data) {
+			
+			Utils.bindList("#sidenav", "#sidenavTxl", data, null, function(
+					item, data) {
+				if (data.list != null) {
+					Utils.bindList($(item).find(".sidebar-box"),
+							".sidebar-list", data.list, sidenavObj.action);
+					//把菜单放进map
+					for ( var i in data.list) {
+						assetControl.map.put(data.list[i].name,
+								data.list[i].id);
+					}
+				}
+			});
+
+			//等待dom渲染完成之后调用
+			sidenavObj.render();
+
+		},
+		//打开二级菜单下第一个子链接
+		openFirstLink : function() {
+			if ($("#sidenav >div.panel").length) {
+				var li = $("ul.sidebar-box > li").eq(1);
+				var url = li.find("a").attr("value");
+				$("#main div.content").load(url);
+				li.find("a").addClass("active");
+			}
+		},
+		//完成绑定之后操作
+		render : function() {
+			$('#sidenav').accordion({
+				animate : true,
+				heightStyle : "auto"
+			});
+			var heightStyle = $("#sidenav").accordion("options", "heightStyle");
+			$('#sidenav div').css('height', 'auto');
+			changeClass("#sidebar .sidebar-list a", "active");
+			//sidenavObj.openFirstLink();
+		}
+	};
+</script>
+

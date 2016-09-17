@@ -1,0 +1,218 @@
+
+<div class="giftDetail_wrap clearfix">
+        <div class="breaknav"><a href="#page=giftlist">积分商城</a> &gt;查看详情</div>
+        <div class="giftDetail_img">
+            <img src="" alt="">
+        </div>
+        <div class="giftDetail_r" id="giftDetail_temp" style="display: none;">
+            <h1 title="$giftName">$giftNameTem</h1>
+            <div class="bg"><label class="lb">所需积分：</label><span class="font_red">$needPointAmount  </span></div>
+            <p class="p_minInvest" style="display: none;"><label class="lb">使用限制：</label><span class="giftDetail_bg" id="minInvest">投标额满 <span>$minInvest</span></span></p>
+            <p><label class="lb">每次兑换限制：</label><span id="gainAmount">$gainAmount</span></p>
+            <p><label class="lb">每人兑换限制：</label><span id="totalGainAmount">$totalGainAmount</span></p>
+            <!-- <p><label class="lb valid_days">有效天数：</label><span id="validDays">$validDays</span></p> -->
+            <p class="valid_time" style="display: none;"><label class="lb">使用期限：</label><span id="validTime">$validTimeBegin 至 $validTimeEnd</span></p>
+            <p class="giftDetail_pn"><label class="lb">兑换数量：</label>
+                <span id="giftDetail_num">
+                    <input class="giftDetail_input" type="text" value="1" maxlength="3" readonly="readonly" onkeyup="value=value.replace(/[^\d]/ig,'')"/>
+                    <span class="jia">+</span>
+                    <span class="jian">-</span>
+                </span>
+                <span class="num" id="giftLeftAmount" style="padding-left: 10px;"></span>
+            </p>
+            <p><label class="lb"></label><a href="javascript:void(0);" class="gitfDetail_buy">加入购物车</a><a href="javascript:void(0);" id="mallOrder"  class="gitfDetail_change">立即兑换</a></p>
+        </div>
+</div>
+
+<div id="giftDetail_bottom">
+    <dl>
+        <dt>
+            <div class="title">礼品描述</div>
+        </dt>
+        <dd class="content" id="giftdetail_content_box">
+
+        </dd>
+    </dl>
+
+</div>
+
+<script>
+
+    var giftDetal_box = {
+        rootScope:{},
+        alreadyExchange:0,
+        giftmodule:1,
+        url:"/dlsys/market/gift/"+Utils.getUrlParam("id"),
+        init:function(){
+            DeelonService.get(giftDetal_box.url,function(data){
+                giftDetal_box.rootScope = data.result;
+                giftDetal_box.giftmodule = data.result.giftModule;//礼品的类型
+				$("#minInvest").attr("minInvest",data.result.minInvest);
+                $("#gainAmount").attr("gainAmount",data.result.gainAmount);
+                $("#totalGainAmount").attr("totalGainAmount",data.result.totalGainAmount);
+                
+                if(data.result.minInvest == -1){
+                    data.result.minInvest ="无限制";
+                }else{
+                    data.result.minInvest = data.result.minInvest+" 元";
+                }
+                if(data.result.gainAmount == -1){
+                    data.result.gainAmount ="无限制";
+                }else{
+                    data.result.gainAmount = data.result.gainAmount + " 件";
+                }
+                if(data.result.totalGainAmount == -1){
+                    data.result.totalGainAmount ="无限制";
+                }else{
+                    data.result.totalGainAmount = data.result.totalGainAmount+" 件";
+                }
+                if(data.result.giftLeftAmount == -1){
+                    $("#giftLeftAmount").text("无限库存");
+                }else{
+                    $("#giftLeftAmount").text("礼品剩余数量:"+data.result.giftLeftAmount+"件");
+                }
+                data.result.validTimeBegin = dataChangeTime(data.result.validTimeBegin);
+                data.result.validTimeEnd = dataChangeTime(data.result.validTimeEnd);
+                data.result.giftNameTem = data.result.giftName;
+                if(data.result.giftNameTem && data.result.giftNameTem.length > 30){
+                    data.result.giftNameTem = data.result.giftNameTem.substring(0,30)+"...";
+                }
+                Utils.bindData($("#giftDetail_temp"),data.result);
+				if(data.result.giftModule == 1){
+					$(".p_minInvest").show();//虚拟物品显示使用限制
+					$(".valid_time").show();//虚拟物品显示有效时间
+				}
+                if(data.result.giftModule !=2){
+                    $("a.gitfDetail_buy").remove();
+                }
+                if(data.result.giftPhotoJson == undefined || data.result.giftPhotoJson == ""){   //设置默认图片
+                    $(".giftDetail_img img").attr("src","images/mall/330.330.jpg");
+                }else{
+                    $(".giftDetail_img img").attr("src",data.result.giftPhotoJson);
+                }
+                $("#giftDetail_temp").show();
+                if(data.result.giftDesc){
+                    $("#giftDetail_bottom .content").html(data.result.giftDesc);
+                }else {
+                    $("#giftDetail_bottom .content").text("暂无数据");
+                }
+                var giftId = Utils.getUrlParam("id");
+
+                //用户id不为空时 则取到用户购买礼品的所有信息
+                if(user.data.id != undefined){
+                    DeelonService.get("/dlsys/market/mallOrder/userGift",{userId:user.data.id,giftId:giftId},function(data){
+                        giftDetal_box.alreadyExchange = data.result;
+                    });
+                }
+
+                
+                giftDetal_box.render();
+            });
+        },
+        submitValidata:function(num){
+        	var gainAmount = parseInt($("#gainAmount").attr("gainAmount"));//每次兑换限制
+        	var totalGainAmount = parseInt($("#totalGainAmount").attr("totalGainAmount"));//没人总共可以兑换限制
+        	var giftLeftAmount = giftDetal_box.rootScope.giftLeftAmount;//礼品库存量
+        	var alreadyExchange = giftDetal_box.alreadyExchange;//用户已经兑换了的数量
+        	if(gainAmount != -1 && num > gainAmount){
+        		jAlert.warn("兑换数量大于每次兑换限制,请重新选择数量！");
+	            return false;
+        	}
+        	if(giftLeftAmount != -1 && num > giftLeftAmount){
+        		if(giftLeftAmount == 0){
+	        		jAlert.warn("礼品已兑完！");
+        		}else{
+        			jAlert.warn("兑换数量不能大于库存数量,请重新选择数量！");
+        		}
+	            return false;
+        	}
+        	if(totalGainAmount != -1 && (num + alreadyExchange > totalGainAmount)){
+        		jAlert.warn("兑换数量大于每人兑换限制,请重新选择数量！");
+	            return false;
+        	}
+	        return true;
+        },
+        render:function(){
+            $(".jia").click(function(){
+            	var flag = giftDetal_box.submitValidata(parseInt($(".giftDetail_input").val())+1);
+            	if(flag){
+            		$(".giftDetail_input").val(parseInt($(".giftDetail_input").val())+1)
+            	}
+            });
+            $(".jian").click(function(){
+                var _input = $(".giftDetail_input");
+                var num = parseInt(_input.val());
+                if(num >1){
+                    num -=1;
+                    _input.val(num);
+                }
+            });
+            $("#mallOrder").click(function(){
+                var giftId = Utils.getUrlParam("id");
+                var q = parseInt($(".giftDetail_input").val());
+                if(user.islogin()){
+                    var flag = giftDetal_box.submitValidata(q);
+                    if(flag){
+                        if(giftDetal_box.giftmodule == 1){
+                            //代金券
+                            DeelonService.post("/dlsys/market/mallOrder",{giftId:giftId,quantity:q,userId:user.data.id,userName:user.data.name,remark:giftDetal_box.rootScope},function(data){
+                            	if(data.code == "0"){
+                                    jAlert.success("兑换成功");
+                                    giftDetal_box.init();
+                                }else{
+                                    jAlert.warn("兑换失败");
+                                }
+                            });
+                        }else{
+                            //实物直接进入购物车
+                            /* var postCarUrl = '/dlsys/market/shoppingCar/addGiftToShoppingCar';
+                            var giftid = Utils.getUrlParam("id");
+                            var quantity = parseInt($('.giftDetail_input').val());
+                            DeelonService.post(postCarUrl,{giftId:giftid,quantity:quantity},function(data){
+                                if(data.code == 0){
+                                    window.location.href = 'index.html#page=giftcar'
+                                }
+                            })
+ 							*/
+ 							//直接进入确认订单页面
+                        	window.location.href = 'index.html#page=giftcomfirm?idname='+ giftId + '&num=' + q;
+                        }
+
+	                    
+                    }
+                }else{
+                    jAlert.warn('请您先登录',null,null,function(){
+                        Utils.gotoPage("index.html#page=login?urlReturn="+location.href);
+                    });
+                }
+                
+            });
+
+            $(".gitfDetail_buy").click(function(){
+
+                $('#throwCar').remove();
+
+                var jq = $('.p2p_tb_01');//购物车对象
+                var _left = jq.offset().left;//到左边框的距离
+                var _top = jq.offset().top;//到顶部的距离
+
+                var obj_left = $(this).offset().left;
+                var obj_top = $(this).offset().top;
+                var url = "/dlsys/market/shoppingCar",
+                    giftId = Utils.getUrlParam("id"),
+                    num = parseInt($(".giftDetail_input").val());
+                	$.post("/dlsys/market/shoppingCar/addGiftToShoppingCar",{giftId:giftId,quantity:num},function(data){
+                    if( data.code == 0 ){
+                        jAlert.success("恭喜您添加成功");
+                    }else{
+                        jAlert.error("数据超时，页面重载中");
+                        location.reload();
+                    }
+                },"json")
+            })
+        }
+    };
+    $(function(){
+        giftDetal_box.init();
+    })
+</script>

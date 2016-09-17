@@ -1,0 +1,157 @@
+<form id="module_form">
+    <table class="table-detail" cellpadding="0" cellspacing="0" border="0" >
+        <tr>
+            <th>Appkey：<span class="required" style="color: red;">*</span></th>
+            <td><span name="appKey">【系统自动生成】</span></td>
+            <th>模块名称：<span class="required" style="color: red;">*</span></th>
+            <td><input type="text" class="easyui-validatebox textbox" name="name" required="true" missingMessage="不能为空" maxlength="20" style="width: 95%;"/></td>
+        </tr>
+
+        <tr>
+            <th>模块标题：<span class="required" style="color: red;">*</span></th>
+            <td><input type="text" class="easyui-validatebox textbox"
+                       name="title" required="true" missingMessage="不能为空" style="width: 95%;" maxlength="20"/></td>
+            <th>加载模块组件：<span class="required" style="color: red;">*</span></th>
+            <td>
+                <label class="h-label"><input type="radio"  name="hasPorlets" value="1" /> 是</label>
+                <label class="h-label"><input type="radio" name="hasPorlets"  value="0" checked="checked" /> 否</label>
+            </td>
+        </tr>
+        <tr>
+            <th>内部模块：<span class="required" style="color: red;">*</span></th>
+            <td>
+                <label class="h-label"><input type="radio"  name="isInner" value="1" checked="checked" /> 是</label>
+                <label class="h-label"><input type="radio" name="isInner"  value="0" /> 否</label>
+            </td>
+            <th>是否激活：<span class="required" style="color: red;">*</span></th>
+            <td>
+                <label class="h-label"><input type="radio"  name="enabled" value="1" checked="checked" /> 激活</label>
+                <label class="h-label"><input type="radio" name="enabled"  value="0" /> 不激活</label>
+            </td>
+        </tr>
+        <tr>
+            <th>排序：<span class="required" style="color: red;">*</span></th>
+            <td>
+                <input type="text" class="easyui-numberbox textbox" name="orderId" required="true" missingMessage="不能为空" maxlength="2" style="width: 80px;"/>
+            <span class="font_999">(根据值从小到大进行排序)</span>
+            </td>
+            <th></th>
+            <td></td>
+        </tr>
+        <tr>
+            <th>支付类型：</th>
+            <td colspan="3" style="padding: 5px;" id="module_catalog_list">
+                <label class="h-label"><input type="radio" name="payType" checked="checked"  value="1" /> 网关</label>
+                <label class="h-label"><input type="radio" name="payType" value="2" /> 托管</label>
+                <label class="h-label not_allowed" ><input type="radio" name="payType" value="3" disabled="disabled" /> 银行存管</label>
+                <p class="font_999" style="padding: 4px;">网关模式：可以配置多个支付通道；托管模式：只能选择一种支付通道；银行存管：暂不支持</p>
+            </td>
+        </tr>
+        <tr>
+            <th>支付通道：</th>
+            <td colspan="3" style="padding: 5px;">
+                <div id="payname_select_0">
+
+                </div>
+
+                <div id="payname_select_1" style="display: none;">
+
+                </div>
+
+            </td>
+        </tr>
+        <tr>
+            <th>描述：</th>
+            <td colspan="3" style="padding: 5px;">
+                <input type="text" class="easyui-textbox" name="descp" data-options="multiline:true" maxlength="40" style=" height: 60px; width: 100%;margin: auto;">
+            </td>
+        </tr>
+    </table>
+     <input type="hidden" id="modules_id" name="id">
+</form>
+<script>
+    var moduleForm = {
+        id : "#module_form",
+        url : "/dlsys/portal/bizmodules",
+        init: function() {
+        },
+        
+        echo: function(data) {
+            if(data.payChannel && data.payChannel.indexOf(",") && typeof data.payChannel =="string"){
+                data.payChannel = data.payChannel.split(",");
+            }
+            moduleForm.payname_select_1();
+            moduleForm.payname_select_2();
+            $("#module_form").form("load",data);
+            $("#module_catalog_list  input[name='payType']").each(function(index){
+                $(this).click(function(){
+                    $("#payname_select_"+index).show().siblings().hide();
+                    //切换清空选中状态
+                    $("#payname_select_"+index).siblings().find("input").attr('checked' ,false);
+                });
+                if($(this).is(":checked")){
+                    $("#payname_select_"+index).show().siblings().hide();
+                }
+            });
+
+        },
+        payname_select_1:function(){
+            var pama ={"enabled":"1","type":"1"};
+            factory.axse("/dlsys/portal/paychannel/search",{"queryParams":JSON.stringify(pama),pageNum:1,pageSize:200},function(data){
+                var result = data.content;
+                for(var i=0;i<result.length;i++){
+                    $("#payname_select_0").append(" <label class='h-label'><input  name='payChannel' type='checkbox' value='"+result[i].code+"' />"+result[i].name+"</label>");
+                }
+            });
+        },
+        payname_select_2:function(){
+            var pama ={"enabled":"1","type":"2"};
+            factory.axse("/dlsys/portal/paychannel/search",{"queryParams":JSON.stringify(pama),pageNum:1,pageSize:200},function(data){
+                var result = data.content;
+                for(var i=0;i<result.length;i++){
+                    $("#payname_select_1").append(" <label class='h-label'><input  name='payChannel' type='radio' value='"+result[i].code+"' />"+result[i].name+"</label>");
+                }
+            });
+        },
+        submit: function() {
+            //$("#module_form").trigger("submited");
+            var modules_id = $("#modules_id").val();
+            //debugger;
+            if ($(moduleForm.id).form('validate')) {
+                var param = $(moduleForm.id).serialize();
+                if(modules_id){
+                	factory.httpPut(moduleForm.url+"/"+modules_id,param,function(rsp){
+                    	if(rsp.code==0){
+                           	MessageBox.info("修改成功");
+                           	moduleTable.addDlg.close();
+                           	moduleTable.reload();
+                        }else{
+                            MessageBox.error(rsp.msg);
+                        }
+                    });
+                }else{
+                	factory.httpPost(moduleForm.url,param,function(rsp){
+                    	if(rsp.code==0){
+                           	MessageBox.info("添加成功");
+                           	moduleTable.addDlg.close();
+                           	moduleTable.reload();
+                        }else{
+                            MessageBox.error(rsp.msg);
+                        }
+                    });
+                }                        
+            }
+        },
+        
+        reset: function() {
+             $("#module_form").form("reset");
+   
+        },
+        
+        bindEvent: function(event, handler, data) {
+            $("#module_form").unbind(event);
+            $("#module_form").bind(event, data, handler);
+        }
+
+    };
+</script>

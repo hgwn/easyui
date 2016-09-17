@@ -1,0 +1,170 @@
+<style>
+    #sidenav ul.dropdown{
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        text-align: left;
+        margin: 0;
+        border: 0;
+    }
+    #sidenav li.main{
+        background: #eee;
+        border-left: 5px solid #e5e5e5;
+        height: 36px;
+        line-height: 36px;
+        font-size: 12px;
+        color: #999;
+        position: relative;
+        cursor: pointer;
+        padding-left: 15px;
+        font-weight:bold;
+    }
+
+    #sidenav li.main:hover,#sidenav li.main.active{
+        border-left: 5px solid #ff9933;
+        background: #e5e5e5;
+    }
+    #sidenav li.dropdown_list{
+        position: relative;
+        background: #fff;
+        display: none;
+    }
+    #sidenav li.main.active li.dropdown_list{
+        display: block;
+    }
+    #sidenav li.dropdown_list a.sidebar-link{
+        color: #666;
+        text-decoration: none;
+        padding-left: 30px;
+        display: block;
+        height: 30px; line-height: 30px;
+    }
+    #sidenav li.dropdown_list a.sidebar-link:hover,#sidenav li.dropdown_list a.sidebar-link.on{
+        background: #ff9933;
+        color: #fff;
+    }
+    #sidenav .collapse, #sidenav .expand{
+        display: block;
+        position: absolute;
+        right: 5px;
+        top: 8px;
+        height: 16px;
+        width: 16px;
+        background: url('../../commons/css/easyui/default/images/accordion_arrows.png') no-repeat
+    }
+    #sidenav .collapse{
+        background-position: -16px 0;
+    }
+    #sidenav .expand{
+        background-position: 0 0;
+    }
+    #sidenav li.dropdown_list a.sidebar-link.on{
+        background-color: #ff9933;
+        color: #fff;
+    }
+
+</style>
+<div id="sidenav" class="easyui-accordion"  style="width:100%;height:auto;">
+
+
+</div>
+
+
+<ul class="dropdown" id="sidenavTxl" style="display: none;">
+    <li class="main">$groupname<span class="collapse"></span></li>
+    <li class="dropdown_list">
+        <div class="sidebar-div" style="display: none;"><a href="$link?bread=$name&fname=$name" class="sidebar-link"  title="$name"  name ="$name">$name</a></div>
+    </li>
+</ul>
+<script>
+
+    var sidenav = {
+        vpage:"",
+        init: function(url) {
+            $.getJSON(url, function(data) {
+                sidenav.render(data);
+            });
+        },
+        render: function(data) {
+
+            Utils.bindList("#sidenav", "#sidenavTxl", data, null, function(item, data) {
+                Utils.bindList($(item).find(".dropdown_list"), ".sidebar-div", data.list)
+            });
+
+            $("#sidenav li.main").click(function(){
+                $(this).next("li.dropdown_list").slideToggle("1500");
+                $(this).find(".collapse").toggleClass("expand");
+                $("#sidenav li.main").removeClass("active");
+                $(this).addClass("active");
+                if($(this).next("li.dropdown_list").is(":visible")){
+                    $(this).parent().siblings().find("li.dropdown_list").slideUp("1500");
+                    $(this).parent().siblings().find("li.main > span").removeClass("expand").addClass("collapse");
+                }
+            });
+
+
+            $("#sidenav  li.dropdown_list  a").click(function(){
+                $("#sidenav  li.dropdown_list  a").removeClass("on");
+                $(this).addClass("on");
+            });
+
+            //根据url是否含有fname参数，进行定位
+            var fname = Utils.getUrlParam("fname");
+            if(fname){
+                $("#sidenav").find("[name='"+fname+"']").addClass("on");
+                $("#sidenav").find("[name='"+fname+"']").parent().parent().prev().click();
+            }else{
+                $("#sidenav > ul").find("li.main ").eq(0).trigger("click");
+            }
+
+        },
+        
+        reset:function(){
+            $("#sidenav").empty();
+            
+        },
+        show: function() {
+
+            $("#layout").layout('show', "west");
+        },
+        hide: function() {
+            $("#layout").layout('hidden', "west");
+        }
+
+
+    };
+
+
+
+
+    $(function() {
+
+        var refreshSidebar = function() {
+            var params = Router.parseHash();
+            if(params.vpage == sidenav.vpage) return;
+            if ((!params.vpage) || (params.vpage === "main")) {
+                sidenav.vpage = params.vpage;
+                sidenav.hide();
+            } else {
+
+                if(params.vpage=="hbzc"){
+                    var menu = "/" + params.vpage + "/console/html/"+params.vpage+"/menu.json";
+                }else{
+                    var menu = "/portal/console/html/" + params.vpage + "/menu.json";
+                }
+                sidenav.reset();
+                sidenav.init(menu);
+                sidenav.show();
+                sidenav.vpage = params.vpage;
+                
+            }
+
+        }
+        refreshSidebar();
+        Router.addListener("sidebar", refreshSidebar);
+
+
+    });
+
+</script>
+

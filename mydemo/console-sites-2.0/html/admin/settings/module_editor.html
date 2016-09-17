@@ -1,0 +1,87 @@
+<form id="module_form">
+    <table class="table-detail" cellpadding="0" cellspacing="0" border="0" >
+        <tr>
+            <th>Appkey：<span class="required" style="color: red;">*</span></th>
+            <td>【系统自动生成】</td>
+            <th>模块名称：<span class="required" style="color: red;">*</span></th>
+            <td><input type="text" class="easyui-validatebox textbox"
+                       name="name" required="true" missingMessage="不能为空"/></td>
+        </tr>
+
+        <tr>
+            <th>模块标题：<span class="required" style="color: red;">*</span></th>
+            <td><input type="text" class="easyui-validatebox textbox"
+                       name="title" required="true" missingMessage="不能为空"
+                       /></td>
+            <th>加载模块组件：<span class="required" style="color: red;">*</span></th>
+            <td>
+                <label class="h-label"><input type="radio"  name="hasPorlets" value="1" /> 是</label>
+                <label class="h-label"><input type="radio" name="hasPorlets"  value="0" checked="checked" /> 否</label>
+            </td>
+        </tr>
+        <tr>
+            <th>内部模块：<span class="required" style="color: red;">*</span></th>
+            <td>
+                <label class="h-label"><input type="radio"  name="inner" value="1" checked="checked" /> 是</label>
+                <label class="h-label"><input type="radio" name="inner"  value="0" /> 否</label>
+            </td>
+            <th>是否激活：<span class="required" style="color: red;">*</span></th>
+            <td>
+                <label class="h-label"><input type="radio"  name="enabled" value="1" checked="checked" /> 激活</label>
+                <label class="h-label"><input type="radio" name="enabled"  value="0" /> 不激活</label>
+            </td>
+        </tr>
+        <tr>
+            <th>描述：</th>
+            <td colspan="3" style="padding: 5px;">
+                <input type="text" class="easyui-textbox" name="descp" data-options="multiline:true" style=" height: 60px; width: 100%;margin: auto;">
+            </td>
+        </tr>
+        <input type="hidden" id="modules_id" name="id">
+    </table>
+</form>
+<script>
+    var moduleForm = {
+        id : "#module_form",
+        url : "./html/admin/settings/resutl.json",
+        init: function() {
+        },
+        
+        echo: function(data) {
+            Utils.bindProps($("#module_form"), data, true);
+        },
+        
+        submit: function() {
+            //$("#module_form").trigger("submited");
+            var modules_id = $("#modules_id").val();
+            //debugger;
+            if ($(moduleForm.id).form('validate')) {
+                var param = $(moduleForm.id).serialize();
+                factory.httpPost(moduleForm.url,param,function(rsp){
+                    if(rsp.code==0){
+                        if(modules_id){
+                            MessageBox.info("修改成功");
+                        }else{
+                            MessageBox.info("添加成功");
+                        }
+                        moduleTable.addDlg.close();
+                        moduleTable.reload();
+                    }else{
+                        MessageBox.error(rsp.msg);
+                    }
+                });
+            }
+        },
+        
+        reset: function() {
+             $("#module_form").form("reset");
+   
+        },
+        
+        bindEvent: function(event, handler, data) {
+            $("#module_form").unbind(event);
+            $("#module_form").bind(event, data, handler);
+        }
+
+    };
+</script>

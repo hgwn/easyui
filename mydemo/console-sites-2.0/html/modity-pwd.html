@@ -1,0 +1,71 @@
+﻿<style type="text/css">
+    #newPwdForm{padding: 10px;}
+    #newPwdForm .form-row{ padding:  8px 0;}
+    #newPwdForm label.form-label{ width: 100px;text-align:right; line-height: 20px;}
+    #newPwdForm input.textbox{ width: 170px;height: 20px; padding-left: 3px; }
+    #newPwdForm em.required{color:red; }
+</style>
+<form action="" id="newPwdForm">
+    <div class="form-row clearfloat">
+        <label class="form-label fl"><em class="required">*</em>旧密码：</label>
+        <div class="collection fl">
+            <input type="password" class="easyui-validatebox textbox" id="oldPassword" name="oldPassword" 
+                   required="true" missingMessage="不能为空" />
+        </div>
+    </div>
+    <div class="form-row clearfloat" id="div_pwd">
+        <label class="form-label fl"><em
+                class="required">*</em>新密码：</label>
+        <div class="collection fl">
+            <input type="password" class="easyui-validatebox textbox"  id="newPassword"
+                   name="newPassword" required="true" missingMessage="不能为空" data-options="validType:'length[6,18]'" />
+        </div>
+    </div>
+    <div class="form-row clearfloat" id="div_confirmpwd">
+        <label class="form-label fl"><em
+                class="required">*</em>确认密码：</label>
+        <div class="collection fl">
+            <input type="password" class="easyui-validatebox textbox"
+                   id="comfirPassWord" name="comfirPassWord" required="true" missingMessage="不能为空"
+                   validType="equalTo['#newPassword']" invalidMessage="两次输入密码不一致"/>
+        </div>
+    </div>
+    <input type="hidden" id="token" name="token"/>
+</form>
+<script type="text/javascript">
+    var modityPwdForm = {
+        id : "#newPwdForm",
+        url : "/dlsys/admin/sdk/op/updpwd/",
+        init : function() {
+            $("#token").val(op.data.token);
+            $(modityPwdForm.id).makeform({
+                url : modityPwdForm.url,                
+                onsuccess : function(data) {
+                    if (data.code == 0) {
+                    	MessageBox.info("修改成功,请重新登录");
+                    	modityPwdForm.reLongin();
+                    } else {
+                    	MessageBox.warn(data.msg);
+                    }
+                }
+            });
+        },reLongin:function(){
+        	op.del();
+            window.location.href = "login.html";
+        },bindEvent: function(event, handler, data) {
+            $(modityPwdForm.id).unbind(event);
+            $(modityPwdForm.id).bind(event, data, handler);
+        },submit: function(callback) {
+        	if($(modityPwdForm.id).form('validate')){
+        		$(modityPwdForm.id).submit();
+        	}
+        },
+        reset: function() {
+            $(modityPwdForm.id)[0].reset();
+        },
+    };
+
+    $(function() {
+    	modityPwdForm.init();       
+    });
+</script>

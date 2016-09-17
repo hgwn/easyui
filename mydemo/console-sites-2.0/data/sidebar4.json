@@ -1,0 +1,7 @@
+[{
+        "id":11,
+        "groupname":"借款产品管理",
+        "list":[
+                {"name":"借款产品记录","url":"html/p2p/product/products.html"}]
+    }
+]
