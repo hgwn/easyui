@@ -1,0 +1,123 @@
+<div class="header clearfloat">
+    <div class="logo fl" style="margin-top: 10px;"><img src="images/logo02.png" alt="logo"/></div>
+    <div class="headaer_right">
+        <ul class="header-nav" id="nav">
+
+        </ul>
+        <li class="navList" style="display:none;"><a href="#page=$name?bread=$title" class="header-nav-link"  name="$name"> $title</a></li>
+    </div>
+
+    <div class="login-out">
+        <div class="fl" style="line-height: 28px; padding-right: 15px;">欢迎您，<span id="opName"></span></div>
+        <a href="#page=admin:notice?bread=通知消息" id="btnTopMsg" class="fl top_mysg" title="消息">
+            <span id="top_msg"  style="color: #fff; display: none;"></span></a>
+        <a href="javascript:void(0)" id="btnModityPwd" class="fl">修改密码</a>
+        <a href="javascript:void(0)" id="btnLogOut" class="fl">退出</a>
+    </div>
+</div>
+<script src="html/dialogs.js"></script>
+<script type="text/javascript">
+    var mainnav = {
+        //初始化
+        init: function(url, params) {
+
+
+            $.get(url, params, function(data) {
+
+               $.extend(mainnav.menus,data.content);//合并
+                mainnav.render(mainnav.menus);
+                changeClass("#nav a.header-nav-link", "nav-active", 0);
+                var params = Router.parseHash();
+                if(params.vpage){
+                    $("#nav").find(".header-nav-link").removeClass("nav-active");
+                    $("#nav").find("[name='"+params.vpage+"']").addClass("nav-active").siblings();
+                }
+                
+                  
+            });
+            mainnav.unread();
+
+        },
+        render: function(data) {
+            var arr1 = [];
+            var home =null;
+            var result = [];
+            for(var i=0; i<data.length; i++){
+                arr1.push(data[i]);
+                if(data[i].name =="main"){
+                    home =data[i];
+                }
+            }
+            var tempArr = [];
+            var url = "/dlsys/admin/sdk/op/access/assets/owner?opId="+op.data.id+"&Token="+encodeURIComponent(op.data.token)+"&_"+new Date().getTime();
+            $.ajax({
+                type: "GET",
+                url: url,
+                data: {},
+                dataType: "json",
+                async:false,
+                success: function(resp) {
+                    tempArr = resp;
+                }
+            });
+
+            for(var i=0; i< arr1.length; i++){
+                for(var j =0; j<tempArr.length; j++){
+                    if(arr1[i].title == tempArr[j].name){
+                        result.push(arr1[i]);
+                    }
+                }
+            }
+            result.splice(0,0,home);
+            Utils.bindList("#nav", ".navList", result,null,function(item,data){
+                if(data.name =="main"){
+                    item.find("a").attr("href","#page=main:home?bread=首页");
+                }
+            });
+        },
+        //顶部未读信息
+        unread:function(){
+            var url='/dlsys/portal/sdk/msg/unread/0/'+op.data.id+'/0/?token='+encodeURIComponent(op.data.token)+"&_"+new Date().getTime();
+            $.get(url,null, function(res) {
+                if(parseInt(res.result) >99){
+                    $("#top_msg").text("99+");
+                }else{
+                    $("#top_msg").text(res.result);
+                }
+                if(res.result){
+                    $("#top_msg").show();
+                }else{
+                    $("#top_msg").hide();
+                }
+            });
+        },
+        menus: []  //add fixed module here like{"id": 13,"name": "main","title": "首页"]
+
+    };
+
+
+    $(function() {
+        op.load();
+        if(op.data.realName!=null&&op.data.realName!=""){
+            $("#opName").text(op.data.realName);
+        }else{
+            $("#opName").text(op.data.name);
+        }
+        $("#btnModityPwd").click(function() {
+            modifyPwdFormDlg.show("修改密码");
+            return false;
+        });
+
+        $("#btnLogOut").click(function() {
+            $.get("/dlsys/admin/sdk/op/logout/", function(data) {
+                if (data.code == 0) {
+                    op.del();
+                    window.location.href = "login.html";
+                }
+            });
+            return false;
+        });
+        mainnav.init("/dlsys/portal/bizmodules/list?&_"+new Date().getTime(),{"enabled":"1"});
+    });
+</script>
+

@@ -1,0 +1,270 @@
+<style>
+    #sidenav ul.dropdown{
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        text-align: left;
+        margin: 0;
+        border: 0;
+    }
+    #sidenav li.main{
+        background: #eee;
+        border-left: 5px solid #e5e5e5;
+        height: 36px;
+        line-height: 36px;
+        font-size: 12px;
+        color: #999;
+        position: relative;
+        cursor: pointer;
+        padding-left: 15px;
+        font-weight:bold;
+    }
+
+    #sidenav li.main:hover,#sidenav li.main.active{
+        border-left: 5px solid #ff9933;
+        background: #e5e5e5;
+    }
+    #sidenav li.dropdown_list{
+        position: relative;
+        background: #fff;
+        display: none;
+    }
+    #sidenav li.main.active li.dropdown_list{
+        display: block;
+    }
+    #sidenav li.dropdown_list a.sidebar-link{
+        color: #666;
+        text-decoration: none;
+        padding-left: 30px;
+        display: block;
+        height: 30px; line-height: 30px;
+    }
+    #sidenav li.dropdown_list a.sidebar-link:hover,#sidenav li.dropdown_list a.sidebar-link.on{
+        background: #ff9933;
+        color: #fff;
+    }
+    #sidenav .collapse, #sidenav .expand{
+        display: block;
+        position: absolute;
+        right: 5px;
+        top: 8px;
+        height: 16px;
+        width: 16px;
+        background: url('../../commons/css/easyui/default/images/accordion_arrows.png') no-repeat
+    }
+    #sidenav .collapse{
+        background-position: -16px 0;
+    }
+    #sidenav .expand{
+        background-position: 0 0;
+    }
+    #sidenav li.dropdown_list a.sidebar-link.on{
+        background-color: #ff9933;
+        color: #fff;
+    }
+
+</style>
+<div id="sidenav" class="easyui-accordion"  style="width:100%;height:auto;">
+
+
+</div>
+
+
+<ul class="dropdown" id="sidenavTxl" style="display: none;">
+    <li class="main" name="$code">$name<span class="collapse"></span></li>
+    <li class="dropdown_list">
+
+    </li>
+    <div class="sidebar-div" style="display: none;"><a href="$url?bread=$name&fname=$name" class="sidebar-link"  title="$name"  name ="$name">$name</a></div>
+</ul>
+<script>
+    var accesDataObj = {};
+    function loadAccesFn(){
+        var url = "/dlsys/admin/sdk/op/access/assets/owner?opId="+op.data.id+"&Token="+encodeURIComponent(op.data.token)+"&_"+new Date().getTime();
+        $.getJSON(url,function(data) {
+            accesDataObj.accesDataArr = data;
+        });
+    }
+    var sidenav = {
+        vpage:"",
+        init: function(url) {
+            $.getJSON(url, function(data) {
+                sidenav.render(data);
+            });
+        },
+        //权限控制
+        accesInit:function(){
+            var url = "/dlsys/admin/sdk/op/access/assets/owner?opId="+op.data.id+"&Token="+encodeURIComponent(op.data.token)+"&_"+new Date().getTime();
+            //加载权限菜单数据
+            if(accesDataObj.accesDataArr){
+                sidenav.accesRender(accesDataObj.accesDataArr);
+            }else{
+                $.getJSON(url,function(data) {
+                    sidenav.accesRender(data);
+                });
+            }
+        },
+        //处理过滤
+        accesRender:function(data){
+            var bread = Utils.getUrlParam("bread");
+            var params = Router.parseHash();
+            var vpage = params.vpage;
+            switch (vpage){
+                case "admin":
+                    bread ="系统管理";
+                    break;
+                case "market":
+                    bread = "积分商城";
+                    break;
+                case "report":
+                    bread = "报表统计";
+                    break;
+                case "finance":
+                    bread = "财务管理";
+                    break;
+                case "hbzc":
+                    bread = "回报众筹";
+                    break;
+                case "forum":
+                    bread = "论坛管理";
+                    break;
+            }
+            //返回过滤数组
+            var getAtrr = $.grep( data, function(n,i){
+                return n.name == bread;
+            });
+            if(getAtrr.length){
+                sidenav.render(getAtrr[0].list);
+            }else{
+                MessageBox.info("抱歉！您没有权限访问该模块下菜单！");
+            }
+        },
+        render: function(data) {
+
+            Utils.bindList("#sidenav", "#sidenavTxl", data, null, function(item, data) {
+                Utils.bindList($(item).find(".dropdown_list"), ".sidebar-div", data.list)
+            });
+
+            $("#sidenav li.main").click(function(){
+                $(this).next("li.dropdown_list").slideToggle("1500");
+                $(this).find(".collapse").toggleClass("expand");
+                $("#sidenav li.main").removeClass("active");
+                $(this).addClass("active");
+                if($(this).next("li.dropdown_list").is(":visible")){
+                    $(this).parent().siblings().find("li.dropdown_list").slideUp("1500");
+                    $(this).parent().siblings().find("li.main > span").removeClass("expand").addClass("collapse");
+                }
+            });
+
+
+            $("#sidenav  li.dropdown_list  a").click(function(){
+                $("#sidenav  li.dropdown_list  a").removeClass("on");
+                $(this).addClass("on");
+            });
+
+            this.onhashFname();
+
+
+        },
+        onhashFname:function(){
+            //清除easyui提示
+            if($(".tooltip").length){
+                $(".tooltip").remove();
+            }
+            var fname = Utils.getUrlParam("fname"); //获取url fname参数
+            //若有则根据fname定位，否则默认打开第一个
+            if(fname){
+                //获取二级菜单下的名称
+                var sub_name = $("#sidenav .dropdown_list").find("[name='"+fname+"']");
+                //index.html#page=report:hbzcProject?bread=项目统计&fname=项目统计
+                //获取虚拟页面
+                var vpage = location.hash.split("=")[1];
+
+                //获取模块
+                var vpagecode = vpage.split(":")[1];
+
+                //清除group和子菜单样式并全部隐藏
+                $("#sidenav li.main ").removeClass("active");
+                $("#sidenav a").removeClass("on");
+                $("#sidenav li.dropdown_list").hide();
+
+                //循环二级菜单
+                //若二级菜单没有相同名称，则根据fname定位
+                //否则，根据虚拟页面对应的模块进行定位
+                $("#sidenav .sidebar-div").each(function(){
+                    var _this = $(this);
+                    if(sub_name.length ==1){
+                        if(_this.find("a").attr("name") ==fname){
+                            _this.find("a").addClass("on");
+                            _this.parent().show();
+                            _this.parent().prev().addClass("active");
+                            return;
+                        }
+                    }else{
+                        if(_this.find("a").attr("href").indexOf(vpagecode) > -1){
+                            _this.find("a").addClass("on");
+                            _this.parent().show();
+                            _this.parent().prev().addClass("active");
+                        }
+                    }
+                });
+
+            }else{
+                $("#sidenav > ul").find("li.main ").eq(0).trigger("click");
+            }
+        },
+
+        reset:function(){
+            $("#sidenav").empty();
+
+        },
+        show: function() {
+
+            $("#layout").layout('show', "west");
+        },
+        hide: function() {
+            $("#layout").layout('hidden', "west");
+        }
+
+
+    };
+
+
+
+
+    $(function() {
+        loadAccesFn();
+        var refreshSidebar = function() {
+            var params = Router.parseHash();
+
+            if(params.vpage == sidenav.vpage){
+                sidenav.onhashFname();
+                return;
+            }
+            if ((!params.vpage) || (params.vpage === "main")) {
+                sidenav.vpage = params.vpage;
+                sidenav.hide();
+            } else {
+
+               /* if(params.vpage=="hbzc"){
+                    var menu = "/" + params.vpage + "/console/html/"+params.vpage+"/menu.json";
+                }else{
+                    var menu = "/portal/console/html/" + params.vpage + "/menu.json";
+                }*/
+                sidenav.reset();
+                //sidenav.init(menu);
+                sidenav.accesInit();
+                sidenav.show();
+                sidenav.vpage = params.vpage;
+
+            }
+
+        }
+        refreshSidebar();
+       Router.addListener("sidebar", refreshSidebar);
+
+    });
+
+
+</script>
+
