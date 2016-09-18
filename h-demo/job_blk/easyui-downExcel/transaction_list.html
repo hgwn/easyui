@@ -1,0 +1,129 @@
+<div id="transaction_record"  class="portal_panel_auto">
+
+<div id="transaction_record_search_div" class="portal_search_form_two">
+<form id="transaction_record_search_form" action="#" class="h-form-search clearfloat"  style="padding-bottom: 15px;padding-top: 15px;">
+    <div class="h-search-box clearfloat">
+        <ul class="form-search-row clearfloat" >
+            <li class="h-row-3" >
+              <span class="label" style="width: 25%;">交易号：</span>
+                <input type="text" id="transNo"  name="transNo"  class="easyui-textbox" style="height: 22px; width: 60%;" value=""/>
+             </li>
+            <li class="h-row-3" >
+                <span class="label" style="width: 25%;">状态：</span>
+                <select name="state"   class="easyui-combobox" data-options="panelHeight:'auto'" editable="false" style="height: 22px; width: 60%;" editable="false">
+                    <option value="">请选择</option>
+                    <option value="-1">失败</option>
+                    <option value="0">关闭</option>
+                    <option value="1">新建</option>
+                    <option value="2">待支付</option>
+                    <option value="3">异常</option>
+                    <option value="4">完成</option>
+                    <option value="5">待收款</option>
+                    <option value="6">待审核</option>
+                </select>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">业务类型：</span>
+                <select name="bizType"   class="easyui-combobox" data-options="panelHeight:'auto'" editable="false" style="height: 22px; width: 60%;" editable="false">
+                    <option value="">请选择</option>
+                    <option value="account">开户</option>
+                    <option value="charge">充值</option>
+                    <option value="pay">支付（投资）</option>
+                    <option value="draw">提现</option>
+                    <option value="accept">确认放款（授权转账）</option>
+                    <option value="batchpay">放款（直接转账）</option>
+                    <option value="refund">退款</option>
+                </select>
+            </li>
+
+        </ul>
+        <ul class="form-search-row clearfloat" style="padding: 10px 0;">
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">所属模块：</span>
+                <select name="appKey" id="transaction_record_bm_combobox"   class="easyui-combobox" data-options="panelHeight:'auto'" editable="false" style="height: 22px; width: 60%;" editable="false">
+                </select>
+            </li>
+            <li class="h-row-3">
+                <span class="label" style="width: 25%;">支付通道：</span>
+                <select name="channel" id="transaction_record_pc_combobox"   class="easyui-combobox" data-options="panelHeight:'auto'" editable="false" style="height: 22px; width: 60%;" editable="false">
+                </select>
+            </li>
+        </ul>
+        <div class="h-search-btn">
+            <a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-search'" name="submit" style="width:80px">查询</a>
+            <a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-excel'" name="excel" style="width:110px">导出EXCEL</a>
+        </div>
+    </div>
+
+</form>
+</div>
+<div class="portal_list_table_two" >
+      <table id="transfer_record_list" style="width:100%;height:90%;"></table>
+</div>
+
+<div id="updateState" style="display: none;">
+	<div id="proceeds_div" style="display: none;">
+		<table id="proceeds" class="table-detail"  style="width:100%;height: auto;"></table>
+	</div>
+	<table class="table-detail" cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<th width="135px;">备注信息：<span class="required" style="color: red;">*</span></th>
+			<td>
+			   <textarea id="updateState_remark" class="easyui-validatebox textbox"  style="width:200px;height:67px;" data-options="validType:'length[1,300]',required:true,invalidMessage:'备注信息必填'"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<th width="135px;">状态：<span class="required" style="color: red;">*</span></th>
+			<td>
+                <select id="updateState_state" class="easyui-combobox" data-options="panelHeight:'auto',required:true,invalidMessage:'状态必选'" editable="false" style="height: 22px; width: 60%;" editable="false">
+                    <option value="">请选择</option>
+                    <option value="-1">失败</option>
+                    <option value="0">关闭</option>
+                    <option value="1">新建</option>
+                    <option value="2">待支付</option>
+                    <option value="3">异常</option>
+                    <option value="4">完成</option>
+                    <option value="5">待收款</option>
+                    <option value="6">待审核</option>
+                    <option value="7">拒绝</option>
+                </select>
+			</td>
+		</tr>
+	</table>
+</div>   
+</div>
+<form id="expForm" name="expForm" method="post" target="tableExpDataSubmitIframe">
+    <input type="hidden" id="expFrozenColumnFields" name="expFrozenColumnFields"/>
+    <input type="hidden" id="expColumnFields" name="expColumnFields"/>
+    <input type="hidden" id="expQueryParams" name="expQueryParams"/>
+    <input type="hidden" id="expTableRows" name="expTableRows"/>
+    <input type="hidden" id="expTotal" name="expTotal"/>
+    <input type="hidden" id="expPageSize" name="expPageSize"/>
+    <input type="hidden" id="expPageNumber" name="expPageNumber"/>
+</form>
+<iframe src="about:blank" id="tableExpDataSubmitIframe" name="tableExpDataSubmitIframe"  width="1" height="1" style="display:none;"></iframe>
+
+<script type="text/javascript" src="html/finance/transaction_record/transaction_record_obj.js"></script>
+<script type="text/javascript" src="html/finance/combobox_data.js"></script>
+<style>
+    .icon-excel {
+        background: url('/portal/console/images/expExcel.png') no-repeat center center;
+    }
+</style>
+<script type="text/javascript">
+	$(function() {
+		 var _url = '/dlsys/portal/paygate/transaction/search';
+		 transaction_record_list_obj.init("transfer_record_list",_url,"");
+         $.parser.parse("#transaction_record");
+        
+        $("#transaction_record_search_form [name='submit']").click(function(){
+        	transaction_record_list_obj.submit("transaction_record_search_form");
+        });
+        
+        $("#transaction_record_search_form [name='excel']").click(function(){
+            var url = '/dlsys/portal/paygate/transaction/excel';
+        	transaction_record_list_obj.excel(url,"transaction_record_search_form");
+        });
+    });
+    
+</script>
