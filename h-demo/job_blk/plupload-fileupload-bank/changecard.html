@@ -1,0 +1,578 @@
+<!--银行卡  换卡注销-->
+<div class="accout_main">
+    <div class="changecard_box">
+        <div class="changecard_head rel">
+            <a href="javascript:;" class="abs change_card" data-type="change">换卡</a>
+            <a href="javascript:;" class="abs cancel_card" data-type="cancel">注销<i class="abs"></i></a>
+            <p class="abs cancel_tip"><i></i>注销后将无法再使用支付功能，请慎重。</p>
+        </div>
+        <div class="changecard_main">
+             <div class="change_card_box" style="display: none;">
+                 <div class="change_card_from">
+                     <form id="change_card_from">
+                         <div class="change_cf_d">
+                             <p class="fl change_cf_ptitle"><span>*</span>原卡情况：</p>
+                             <p class="fl">
+                                 <a class="bankstate bankcurrent" href="javascript:;" data-value="1">原银行卡正常</a>
+                                 <a class="bankstate" href="javascript:;" data-value="2">原银行卡丢失或失效</a>
+                                 <input type="hidden" id="bankState" name="type" value="1">
+                             </p>
+                         </div>
+                         <div class="change_cf_d" style="position: relative;overflow: visible;">
+                             <p class="fl change_cf_ptitle"><span>*</span>新银行卡号：</p>
+                             <p class="fl">
+                                 <input type="text" class="change_cf_input" maxlength="19" id="newBankCard" name="newBankCard"  placeholder="请输入银行卡号">
+                             </p>
+                             <p id="bandcarknumberbox" style="display:none;position:absolute; left:155px; top:33px;width:290px; padding:0 5px; background: #fffdca; border:1px solid #facf66; height:36px; line-height:36px; font-size: 16px; color: #f73200;"></p>
+                             <p class="fl error_tip_box"></p>
+                         </div>
+                         <div class="change_cf_d">
+                             <p class="fl change_cf_ptitle"><span>*</span>开户省市：</p>
+                             <select id="provincesId" name="provinceCode" class="mr10 fl">
+                                 <option value="" name="">请选择省份</option>
+                             </select>
+                             <select id="cityId"  class="fl" name="cityCode">
+                                 <option value="" name="">请选择城市</option>
+                             </select>
+                             <input type="hidden" name="provinceName" id="provinceName">
+                             <input type="hidden" name="cityName" id="cityName">
+                             <p class="fl error_tip_box"></p>
+                         </div>
+                         <div class="change_cf_d">
+                             <p class="fl change_cf_ptitle"><span>*</span>开户银行：</p>
+                             <input type="hidden" name="bankCode" id="bankCode">
+                             <input type="hidden" name="bankName" id="bankName">
+                             <input type="hidden" name="support" id="support">
+                             <input type="hidden" name="enterprise" id="enterprise">
+                             <select id="bank" name="" class="mr10 fl">
+                                 <option value="" name="">请选择银行</option>
+                             </select>
+                             <select id="branchName"  class="fl" name="bankBranch">
+                                 <option value="" name="">请选择支行</option>
+                             </select>
+                             <p class="fl error_tip_box"></p>
+                         </div>
+                         <div class="change_cf_d">
+                             <p class="fl change_cf_ptitle"><span>*</span>换卡理由：</p>
+                             <textarea id="change_reason" class="fl" placeholder="请输入换卡理由，最多可输入500个字符" name="reason"></textarea>
+                             <p class="fl error_tip_box"></p>
+                         </div>
+                         <div class="change_cf_d">
+                             <p class="fl change_cf_ptitle"><span>*</span>证件提供方式：</p>
+                             <p class="fl">
+                                 <a class="attachoffline bankcurrent" href="javascript:;" data-value="0">线上提供</a>
+                                 <a class="attachoffline" href="javascript:;" data-value="1">线下提供（请确认已与工作人员联系沟通）</a>
+                                 <input type="hidden" id="attachOffline" name="attachOffline" value="0">
+                             </p>
+                         </div>
+
+                         <div class="change_zj_box">
+                             <div class="change_zj_title">换卡证件</div>
+                             <div class="change_cf_d">
+                                 <p class="fl change_cf_pictitle"><span>*</span>身份证正面：</p>
+                                 <div class="fl change_pic_box rel">
+                                     <div class="change_pic_box_bg"></div>
+                                 	 <input type="hidden" id="idCardFrontImg" name="idCardFrontImg">
+                                 </div>
+                                 <div class="fl change_pic_des">
+                                     <p>请上传1个jpg、gif、png格式图片，图片大小不超过5M，证件上文字清晰可识别。示例如下：</p>
+                                     <img src="/desktop/html/members/images/account/card_p1.jpg" alt="">
+                                 </div>
+                             </div>
+                             <div class="change_cf_d">
+                                 <p class="fl change_cf_pictitle"><span>*</span>身份证背面：</p>
+                                 <div class="fl change_pic_box rel">
+                                     <div class="change_pic_box_bg"></div>
+                                     <input type="hidden" id="idCardBackImg" name="idCardBackImg">
+                                 </div>
+                                 <div class="fl change_pic_des">
+                                     <p>请上传1个jpg、gif、png格式图片，图片大小不超过5M，证件上文字清晰可识别。示例如下：</p>
+                                     <img src="/desktop/html/members/images/account/card_p2.jpg" alt="">
+                                 </div>
+                             </div>
+                             <div class="change_cf_d">
+                                 <p class="fl change_cf_pictitle"><span>*</span>手持身份证照片：</p>
+                                 <div class="fl change_pic_box rel">
+                                     <div class="change_pic_box_bg"></div>
+                                     <input type="hidden" id="idCardHandleImg" name="idCardHandleImg">
+                                 </div>
+                                 <div class="fl change_pic_des">
+                                     <p>请上传1个jpg、gif、png格式图片，图片大小不超过5M，证件上文字清晰可识别。示例如下：</p>
+                                     <img src="/desktop/html/members/images/account/card_p3.jpg" alt="">
+                                 </div>
+                             </div>
+                             <div class="change_cf_d" id="y_bankcard_zm">
+                                 <p class="fl change_cf_pictitle"><span>*</span>原银行卡正面 ：</p>
+                                 <div class="fl change_pic_box rel">
+                                     <div class="change_pic_box_bg"></div>
+                                     <input type="hidden" id="origBankCardFrontImg" name="origBankCardFrontImg">
+                                 </div>
+                                 <div class="fl change_pic_des">
+                                     <p>请上传1个jpg、gif、png格式图片，图片大小不超过5M，证件上文字清晰可识别。示例如下：</p>
+                                     <img src="/desktop/html/members/images/account/card_p4.jpg" alt="">
+                                 </div>
+                             </div>
+                             <div class="change_cf_d" id="zx_bankcard_pz">
+                                 <p class="fl change_cf_pictitle"><span>*</span>注销银行卡凭证 ：</p>
+                                 <div class="fl change_pic_box rel">
+                                     <div class="change_pic_box_bg"></div>
+                                     <input type="hidden" id="bankCardDestroyProofImg" name="bankCardDestroyProofImg">
+                                 </div>
+                                 <div class="fl change_pic_des" style="padding-top:50px;">
+                                     <p>请上传1个jpg、gif、png格式图片，图片大小不超过5M，证件上文字清晰可识别。</p>
+                                 </div>
+                             </div>
+                             <div class="change_cf_d">
+                                 <p class="fl change_cf_pictitle"><span>*</span>新银行卡正面 ：</p>
+                                 <div class="fl change_pic_box rel">
+                                     <div class="change_pic_box_bg"></div>
+                                     <input type="hidden" id="newBankCardFrontImg" name="newBankCardFrontImg">
+                                 </div>
+                                 <div class="fl change_pic_des">
+                                     <p>请上传1个jpg、gif、png格式图片，图片大小不超过5M，证件上文字清晰可识别。示例如下：</p>
+                                     <img src="/desktop/html/members/images/account/card_p5.jpg" alt="">
+                                 </div>
+                             </div>
+                             <div class="change_cf_d">
+                                 <p class="fl change_cf_pictitle"><span>*</span> 新银行卡背面：</p>
+                                 <div class="fl change_pic_box rel">
+                                     <div class="change_pic_box_bg"></div>
+                                     <input type="hidden" id="newBankCardBackImg" name="newBankCardBackImg">
+                                 </div>
+                                 <div class="fl change_pic_des">
+                                     <p>请上传1个jpg、gif、png格式图片，图片大小不超过5M，证件上文字清晰可识别。示例如下：</p>
+                                     <img src="/desktop/html/members/images/account/card_p6.jpg" alt="">
+                                 </div>
+                             </div>
+                             <div class="change_cf_d">
+                                 <p class="fl change_cf_pictitle"><span>*</span>手持新银行卡照片：</p>
+                                 <div class="fl change_pic_box rel">
+                                     <div class="change_pic_box_bg"></div>
+                                     <input type="hidden" id="newBankCardHandleImg" name="newBankCardHandleImg">
+                                 </div>
+                                 <div class="fl change_pic_des">
+                                     <p>请上传1个jpg、gif、png格式图片，图片大小不超过5M，证件上文字清晰可识别。示例如下：</p>
+                                     <img src="/desktop/html/members/images/account/card_p7.jpg" alt="">
+                                 </div>
+                             </div>
+                         </div>
+
+                         <div class="change_btn_box"><button title="确定" id="sumbit_change" type="button">确定</button></div>
+                         <div class="change_card_tip">
+                             <p class="change_tip_title"><i></i>温馨提示:</p>
+                             <p class="change_tip_n">1、换卡时，新银行卡必须与原银行卡开户姓名、开户身份证保持一致，否则换卡会失败。</p>
+                             <p class="change_tip_n">2、换卡后，使用原银行卡绑定的快捷支付会失效，需重新绑定。</p>
+                         </div>
+
+                     </form>
+                 </div>
+             </div>
+
+            <div class="cancel_card_box" style="display: none;">
+                <div class="change_cf_d">
+                    <p class="fl change_cf_ptitle"><span>*</span>注销理由：</p>
+                    <textarea class="fl" id="cancel_reason" placeholder="请输入注销理由，最多可输入500个字符" name="reason"></textarea>
+                    <p class="fl error_tip_box"></p>
+                </div>
+                <div class="change_cf_d" id="balanceTips" style="display: none;">
+                    <p class="fl change_cf_ptitle">&nbsp;</p>
+                    <p class="fl">提示：您的账户余额不为零，建议先将账户余额提现后再申请注销，否则申请将可能被拒绝。</p>
+                </div>
+                <div class="change_btn_box"><button title="确定" id="sumbit_cancel" type="button">确定</button></div>
+                <div class="change_card_tip">
+                    <p class="change_tip_title"><i></i>温馨提示:</p>
+                    <p class="change_tip_n">1、注销卡意味您将退出平台，不再在平台做任何业务。</p>
+                    <p class="change_tip_n">2、请在注销卡申请前后将余额提走，否则平台不会审核通过。</p>
+                </div>
+            </div>
+        </div>
+        </div>
+</div>
+
+<script>
+	(function($){  
+    	$.fn.serializeJson=function(){  
+        	var serializeObj={};  
+        	$(this.serializeArray()).each(function(){  
+            	serializeObj[this.name]=this.value;  
+        	});  
+        	return serializeObj;  
+    	};  
+	})(jQuery);  
+    var type=Utils.getUrlParam("type");
+    if(type=="cancel"){
+        $(".change_card_box").hide();
+        $(".cancel_card_box").show();
+        $(".cancel_card").addClass("current").siblings("a").removeClass("current");
+    }else{
+        $(".change_card_box").show();
+        $(".cancel_card_box").hide();
+        $(".change_card").addClass("current").siblings("a").removeClass("current");
+    };
+    $(".cancel_card").hover(function(){
+        $(".cancel_tip").show();
+    },function(){
+        $(".cancel_tip").hide();
+    });
+
+    $(".bankstate").on("click",function(){
+        var _val = $(this).attr("data-value");
+        $("#bankState").val(_val);
+        $(this).addClass("bankcurrent").siblings("a").removeClass("bankcurrent");
+        if(_val==1){
+            $("#y_bankcard_zm").show();
+            $("#zx_bankcard_pz").hide();
+        }else{
+            $("#y_bankcard_zm").hide();
+            $("#zx_bankcard_pz").show();
+        }
+    });
+    
+    $(".attachoffline").on("click",function(){
+        var _val = $(this).attr("data-value");
+        $("#attachOffline").val(_val);
+        $(this).addClass("bankcurrent").siblings("a").removeClass("bankcurrent");
+        if(_val==1){
+            $(".change_zj_box").hide();
+            jAlert.warn("您选择了线下提供变更绑定银行卡的证件，代表您已经跟平台工作人员沟通。如果不提前沟通，您的申请将可能直接被拒绝！");
+        }else{
+        	$(".change_zj_box").show()
+        }
+    });
+
+    $(".changecard_head a").on("click",function(){
+        var type= $(this).attr("data-type");
+        if(type=="cancel"){
+            $(".change_card_box").hide();
+            $(".cancel_card_box").show();
+            $(".cancel_card").addClass("current").siblings("a").removeClass("current");
+        }else{
+            $(".change_card_box").show();
+            $(".cancel_card_box").hide();
+            $(".change_card").addClass("current").siblings("a").removeClass("current");
+        };
+    })
+
+    var changecardFun={
+        init:function(){
+            this.render();
+            this.province();
+            this.banklist();
+        },
+        render:function(){
+
+        },
+        banklist:function(){
+            DeelonService.get("../members/data/bank.json",function(data){
+                var tpl='<option @value="$bankname" @name="$code&$support&$enterprise">$bankname</option>';
+                Utils.bindList("#bank",$(tpl),data.result);
+                $("#bank").change(function(){
+                	var codeAndSupportAndEnterprise,GetCodeTpey,support,enterprise;
+                    if(typeof($("#bank option:selected").attr("name")) != 'undefined'){
+                        codeAndSupportAndEnterprise=$("#bank option:selected").attr("name").split("&");
+                        GetCodeTpey = codeAndSupportAndEnterprise[0];
+                        support = codeAndSupportAndEnterprise[1];
+                        enterprise = codeAndSupportAndEnterprise[2];
+                        
+
+                        $("#bankCode").val(GetCodeTpey);
+                        $("#support").val(support);
+                        $("#enterprise").val(enterprise);
+                    }
+                    
+                    changecardFun.getBranch();
+                    var name = $("#bank option:selected").text();
+                    $("#bankName").val(name);
+                });
+            });
+        },
+        getBranch:function(){
+            var cityCode = $("#cityId option:selected").attr("value");
+            var bankCode = $("#bankCode").val();
+            if(cityCode&&bankCode){
+                $("#branchName").find("option:gt(0)").remove();
+                DeelonService.get("/dlapi/wealth/bankBranch/"+bankCode+"/"+cityCode+"/listByMapper", function(data) {
+                    var tpl='<option @value="$name" @name="$code">$name</option>';
+                    $("#branchName").empty();
+                    $("#branchName").append('<option value="">请选择支行</option>');
+                    Utils.bindList("#branchName",$(tpl),data);
+                    $("#branchName").change(function(){
+                        if($("#branchName").find("option:selected").val() !=''){
+                            $(".error_tip_box:eq(2)").empty();
+                        }
+                    });
+
+                });
+            }
+        },
+        province:function(){
+            DeelonService.get("/dlapi/wealth/area/provinces", function(data) {
+                var tpl='<option @value="$code" @name="$name">$name</option>';
+                Utils.bindList("#provincesId",$(tpl),data);
+                $("#provincesId").change(function(){
+                    var id = $("#provincesId option:selected").attr("value");
+                    changecardFun.city(id);
+                    
+                    var name = $("#provincesId option:selected").text();
+                    $("#provinceName").val(name);
+                });
+            });
+
+        },
+        city:function(ProvincesId){
+            $("#cityId").find("option:gt(0)").remove();
+            if(ProvincesId){
+                DeelonService.get("/dlapi/wealth/area/"+ProvincesId+"/citys", function(data) {
+                    var tpl='<option @value="$code" @name="$name">$name</option>';
+                    Utils.bindList("#cityId",$(tpl),data);
+                    $("#cityId").change(function(){
+                        if($("#cityId").find("option:selected").val() !=''){
+                            $(".error_tip_box:eq(1)").empty();
+                        }
+                        changecardFun.getBranch();
+                        
+                        var name = $("#cityId option:selected").text();
+                        $("#cityName").val(name);
+                    });
+                });
+            }
+        }
+
+    };
+    changecardFun.init();
+
+    $('#cardId').bind('input propertychange', function() {
+        var _this = this;
+        _this.value = _this.value.replace(/[^\d\s]/g,'');
+        if(_this.value.length==0){
+            $(".error_tip_box:eq(0)").html('<span class="error_tip">请输入银行卡号</span>');
+        }else if(_this.value.length >= 16 && _this.value.length <= 19){
+            $(".error_tip_box:eq(0)").empty();
+        }else{
+            $(".error_tip_box:eq(0)").html('<span class="error_tip">银行卡号格式不正确</span>');
+        }
+    });
+    $('#change_reason').bind('input propertychange', function() {
+        var _val = $(this).val();
+        if(_val!=''){
+            $(".error_tip_box:eq(3)").empty();
+        }else{
+            $(".error_tip_box:eq(3)").html('<span class="error_tip">请输入换卡理由</span>');
+        }
+    });
+    $('#cancel_reason').bind('input propertychange', function() {
+        var _val = $(this).val();
+        if(_val!=''){
+            $(".error_tip_box:eq(4)").empty();
+        }else{
+            $(".error_tip_box:eq(4)").html('<span class="error_tip">请输入注销理由</span>');
+        }
+    });
+
+    $("#sumbit_change").on("click",function(){
+        var card = $("#cardId").val(), city = $("#cityId").val(),branch=$("#branchName").val(),reason = $("#change_reason").val();
+        var flag = false;
+        if(card==''){
+            $(".error_tip_box:eq(0)").html('<span class="error_tip">请输入银行卡号</span>');
+            flag = true;
+        }
+        if(city==''){
+            $(".error_tip_box:eq(1)").html('<span class="error_tip">请选择省市</span>');
+            flag = true;
+        }
+        if(branch==''){
+            $(".error_tip_box:eq(2)").html('<span class="error_tip">请选择开户银行</span>');
+            flag = true;
+        }
+        if(reason=='' || reason.trim().length == 0){
+            $(".error_tip_box:eq(3)").html('<span class="error_tip">请输入换卡理由</span>');
+            flag = true;
+        }
+        if(flag){
+        	return;
+        }
+        if(reason.length>500){
+        	jAlert.warn("换卡理由不能超过500个字符");
+			return;
+        }
+
+		var attachOffline = $("#attachOffline").val();
+
+		if(attachOffline == 0){
+			var idCardFrontImg = $("#idCardFrontImg").val();
+			if(idCardFrontImg == ''){
+				jAlert.warn("请上传身份证正面照");
+				return;
+			}
+			var idCardBackImg = $("#idCardBackImg").val();
+			if(idCardBackImg == ''){
+				jAlert.warn("请上传身份证背面照");
+				return;
+			}
+			var idCardHandleImg = $("#idCardHandleImg").val();
+			if(idCardHandleImg == ''){
+				jAlert.warn("请上传手持身份证正面照");
+				return;
+			}
+			var newBankCardFrontImg = $("#newBankCardFrontImg").val();
+			if(newBankCardFrontImg == ''){
+				jAlert.warn("请上传新银行卡正面照");
+				return;
+			}
+			var newBankCardBackImg = $("#newBankCardBackImg").val();
+			if(newBankCardBackImg == ''){
+				jAlert.warn("请上传新银行卡背面照");
+				return;
+			}
+			var newBankCardHandleImg = $("#newBankCardHandleImg").val();
+			if(newBankCardHandleImg == ''){
+				jAlert.warn("请上传手持新银行卡正面照");
+				return;
+			}
+			
+			var bankState = $("#bankState").val();
+			if(bankState == 1){
+				var origBankCardFrontImg = $("#origBankCardFrontImg").val();
+				if(origBankCardFrontImg == ''){
+					jAlert.warn("请上传原银行卡正面照");
+					return;
+				}
+			}else{
+				var bankCardDestroyProofImg = $("#bankCardDestroyProofImg").val();
+				if(bankCardDestroyProofImg == ''){
+					jAlert.warn("请上传销卡凭证照");
+					return;
+				}
+			}
+		}
+		
+		var support = $("#support").val();
+		var enterprise = $("#enterprise").val();
+
+		var confirmMsg = "确定提交换卡申请？";
+		if(support == 'Mobile'){
+			confirmMsg = "您的新银行卡只支持手机充值，不支持网银充值，" + confirmMsg;
+		}else if(support == 'No'){
+			confirmMsg = "您的新银行卡不支持个人网银、企业网银和手机充值，" + confirmMsg;
+		}else{
+			if(enterprise == "Only" && support == 'PC'){
+				confirmMsg = "您的新银行卡只支持企业网银充值，" + confirmMsg;
+			}else if(enterprise == "Only" && support == 'All'){
+				confirmMsg = "您的新银行卡不支持个人网银充值，" + confirmMsg;
+			}else if(enterprise == "No"){
+				confirmMsg = "您的新银行卡不支持企业网银充值，" + confirmMsg;
+			}
+		}
+		
+		jConfirm(confirmMsg,"温馨提示",function(flag){
+			if(flag){
+				var params = $("#change_card_from").serializeJson();
+				DeelonService.postjSON("/dlapi/uc/bankcardChangeApply",params,function(){
+					jAlert.success("申请提交成功，请耐心等待平台处理",null,null,function(){
+						Utils.gotoPage("members.html#page=bankcard?bread=银行卡");
+					});
+				});
+			}
+		});
+    });
+
+    $("#sumbit_cancel").on("click",function(){
+        var reason = $("#cancel_reason").val();
+        if(reason=='' || reason.trim().length == 0){
+            $(".error_tip_box:eq(4)").html('<span class="error_tip">请输入注销理由</span>');
+            return;
+        }
+        if(reason.length>500){
+        	jAlert.warn("注销理由不能超过500个字符");
+			return;
+        }
+        
+        var confirmMsg = "注销卡意味着您不再使用平台业务，如果您只是想换卡请选择换卡申请，确认要提交销卡申请？";
+        jConfirm(confirmMsg,"温馨提示",function(flag){
+			if(flag){
+		        var params = {reason:reason,type:3,attachOffline:0};
+		        
+		        DeelonService.postjSON("/dlapi/uc/bankcardChangeApply",params,function(){
+					jAlert.success("申请提交成功，请耐心等待平台处理",null,null,function(){
+						Utils.gotoPage("members.html#page=bankcard?bread=银行卡");
+					});
+				});
+			}
+        });
+    });
+    
+    function bindUploadFile(obj){
+    	var uploader = $(obj).uploadFile({
+    		url:"/dlsys/portal/cms/uploadImage",
+    		isImage:true,
+    		params:{Token:user.data.token ? user.data.token : ""},
+    		maxFileSize:"5mb",
+    		autoUpload:true,
+    		permitDuplicate:true,
+    		fileUploaded:function(data){
+    			var rsp = data.rspJson;
+    			if(rsp.length > 0){
+    				var fileData = rsp[0];
+    				var html = "/dlapi/cms/image/download?fullPath=&id="+fileData.id;
+    				html = '<img src="' + html + '" alt=""><a href="javascript:;" class="change_pic_del"></a>'
+    				$(obj).prepend(html);
+    				$(obj).children("div").remove();
+    				$(obj).children("input").val(fileData.id);
+    				setTimeout(function(){
+    					uploader.getUploader().destroy();
+    				},1000)
+    			}
+    		}
+    		
+    	});
+    }
+
+    $(".change_pic_box").each(function(){
+    	bindUploadFile(this);
+    	if($(this).parent().attr("id") == "zx_bankcard_pz"){ //为了兼容IE9，IE9在隐藏情况下不能正常绑定
+     		setTimeout(function(){
+     			$("#zx_bankcard_pz").hide();
+     		},500)
+    	}
+    });
+    
+    $(document).on("click",".change_pic_del",function(){
+    	$(this).siblings("img").remove();
+    	var parent = $(this).parent();
+    	$(this).siblings("input").val("");
+    	$(this).remove();
+    	$(parent).append('<div class="change_pic_box_bg"></div>');
+    	bindUploadFile(parent);
+    });
+    
+    $('#newBankCard').bind('input propertychange', function() {
+		var _this = this;
+		_this.value = _this.value.replace(/[^\d\s]/g,'');
+		if(_this.value.length==0){
+			$("#bandcarknumberbox").hide();
+		}else if(_this.value.length >= 1 && $('#newBankCard').val().length <= 19){
+			var st = _this.value.replace(/\s/g,'').replace(/(\d{4})(?=\d)/g,"$1 ");
+			$("#bandcarknumberbox").html(st);
+			$("#bandcarknumberbox").show();
+		}
+
+	}).blur(function() {
+		$("#bandcarknumberbox").hide();
+	}).focus(function() {
+		var _this = this;
+		if(_this.value.length>=1){
+			$("#bandcarknumberbox").show();
+		}
+	});
+    
+    var accountUrl = "/dlsys/portal/wealth/assetJournal/incomeAndExpenses/"+user.data.account.id;
+    DeelonService.get(accountUrl,{},function(rsp){
+    	if(rsp.code == 0){
+    		var account = rsp.result.account;
+    		if(account && (account.amount > 0 || account.freezeAmount > 0)){
+    			$("#balanceTips").show();
+    		}
+    	}
+    });
+</script>
+
