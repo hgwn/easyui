@@ -1,0 +1,208 @@
+<!-- accout_main S-->
+<div class="accout_main">
+
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;">我的礼品</div>
+        <div>
+        <!--start-->
+        <div class="member_tab">
+            <ul class="member_tab_menu clearfix">
+                <li class="active" style="width: 110px;" onclick="giftlist_search.toclick(1)">虚拟礼品</li>
+                <li style="width: 110px;" onclick="giftlist_search.toclick(2)">实物礼品</li>
+            </ul>
+            <div class="member_tab_content">
+                <div class="member_tab_list">
+
+                    <table class="table-list" cellpadding="0" cellspacing="0" border="0"  style="margin-top: 15px;">
+                        <thead>
+                        <tr id="gift_th1">
+                            <th width="100">礼品名</th>
+                            <th width="100">获得时间</th>
+                            <th width="100">有效结束时间</th>
+                            <th width="100">价值</th>
+                            <th width="100">是否使用</th>
+                            <th width="100">操作</th>
+                        </tr>
+
+                        <tr id="gift_th2" style="display: none;">
+                            <th width="100">礼品名</th>
+                            <th width="100">获得时间</th>
+                            <th width="100">价值（元）</th>
+                            <th width="100">数量</th>
+                            <th width="100">是否签收</th>
+                            <th width="100">操作</th>
+                        </tr>
+
+                        </thead>
+                        <tbody id=tbody_temp>
+
+                        </tbody>
+                        <tr id="tr_temp1" style="display: none;">
+                            <td style="text-align: left;padding-left: 5px;">$giftName</td>
+                            <td>$createTime</td>
+                            <td>$validTimeEnd</td>
+                            <td>$giftValue</td>
+                            <td>$isUsed</td>
+                            <td>
+                                <a href="#page=point?bread=礼品详情&giftId=$id" class="font_blue">查看</a>
+                            </td>
+                        </tr>
+                        <tr id="tr_temp2" style="display: none;">
+                            <td style="text-align: left;padding-left: 5px;">$giftName</td>
+                            <td>$createTime</td>
+                            <td>$giftValue</td>
+                            <td>$giftAmount</td>
+                            <td>$isSign</td>
+                            <td>
+                                <a href="#page=point?bread=礼品详情&giftId=$id" class="font_blue">查看</a>
+                                <a href="#" onclick="giftlist.sign($orderId,$id)" class="font_blue sure_sign" giftModule="$giftModule" isSign="$isSign" isused="$isUsed"  style="display: none;">确认收货</a>
+                            </td>
+                        </tr>
+                    </table>
+                    <!-- 分页 S-->
+                    <div id="Pagination" class="pagination"><!-- 这里显示分页 --></div>
+                    <!-- 分页 E-->
+                </div>
+            </div>
+        </div>
+
+        <!--end-->
+        </div>
+    </div>
+
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+
+    var tmplNum = "1";
+    var giftlist_search = {
+        toclick:function(state){
+            if(state == 1){
+                tmplNum = "1";
+                giftlist.params.giftModule = 1;
+                gifturl ='/dlsys/market/userGift';
+                $("#gift_th2").hide();
+                $("#gift_th1").show();
+                location.hash = "#page=gift?bread=我的礼品";
+            }else{
+                tmplNum = "2";
+                giftlist.params.giftModule = 2;
+                gifturl ='/dlsys/market/userGift/module';
+                $("#gift_th2").show();
+                $("#gift_th1").hide();
+                location.hash = "#page=gift?bread=我的礼品&giftModule=2";
+            }
+            $("#tbody_temp").empty();
+            giftlist.render(gifturl,giftlist.params);
+        }
+    };
+    var giftSignurl ='/dlsys/market/mallOrder/sign/';
+    var gifturl ='/dlsys/market/userGift';
+    var nolist='<tr><td colspan="6">暂无数据</td></tr>';
+
+    var giftlist={
+        params:{userId:user.data.id,pageNum:1,pageSize:10,giftModule:1},
+        init:function(gifturl,params){
+            DeelonService.axse(gifturl,'get',params,function(data){
+                if(data.result.totalElements==0){
+                    $("#Pagination").empty();
+                    $("#tbody_temp").html(nolist);
+                    return false;
+                }else{
+                    giftlist.renderData(data);
+                    $("#Pagination").pagination(data.result.totalElements, {
+                        prev_text: "前一页",
+                        next_text: "后一页",
+                        num_edge_entries: 2,
+                        num_display_entries: 3,
+                        callback: giftlist.pageselectCallback,
+                        items_per_page:10
+                    });
+                }
+            });
+        },
+        sign:function(orderId,userGiftId){
+        	jConfirm('确定签收?', '温馨提示', function(r) {
+        		if(r){
+		        	DeelonService.post(giftSignurl+orderId,{userGiftId:userGiftId},function(res){
+		        		if(res.code == 0){ 
+		        			giftlist.init(gifturl,giftlist.params);
+		        			jAlert.success("签收成功!",null,null,function(){});
+		                }else{
+		        			jAlert.error("签收失败！",null,null,function(){});
+		                }
+		            });
+        		}
+			});
+
+        },
+        render:function(gifturl,params){
+            if(giftlist.isLoad){
+                DeelonService.get(gifturl,params,function(res){
+                    giftlist.renderData(res);
+                });
+            }
+            giftlist.isLoad = true;
+        },
+        renderData:function(res){
+            if(res.result.content.length=="0"){
+                $("#tbody_temp").html(nolist);
+            }else{
+                for(var i=0; i<res.result.content.length; i++){
+                    if(res.result.content[i].giftName.length > 16){
+                        res.result.content[i].giftName = res.result.content[i].giftName.substring(0,16)+"...";
+                    }
+                    if(res.result.content[i].isUsed == 1){
+                        res.result.content[i].isUsed = "是";
+                    }else if(res.result.content[i].isUsed == 0){
+                        res.result.content[i].isUsed = "否";
+                    }else{
+                        res.result.content[i].isUsed = res.result.content[i].giftModule == 2?"配送中":"冻结中";
+                    }
+
+                    if(res.result.content[i].isSign == 1){
+                        res.result.content[i].isSign = "是";
+                    }else{
+                        res.result.content[i].isSign = "否";
+                    }
+                    if(res.result.content[i].giftType == 7){//giftType=7 是加息卡
+                        res.result.content[i].giftValue = res.result.content[i].giftValue+"%"
+                    }else{
+                        res.result.content[i].giftValue = res.result.content[i].giftValue+"元"
+                    }
+                    //res.result.content[i].createTime = (new Date(res.result.content[i].createTime)).Format("yyyy-MM-dd hh:mm");
+                    res.result.content[i].createTime = dataChangeTime(res.result.content[i].createTime);
+                    res.result.content[i].validTimeEnd = dataChangeTime(res.result.content[i].validTimeEnd);
+                }
+                $("#tbody_temp").empty();
+                Utils.bindList("#tbody_temp",$("#tr_temp"+tmplNum),res.result.content);
+                $.each($(".sure_sign"),function(index,element){
+                    if($(this).attr("giftmodule") == "2" && $(this).attr("issign") == "否" && ($(this).attr("isused") == "配送中" || $(this).attr("isused") == "冻结中")){
+                        $(this).show();
+                    }
+                });
+            }
+        },
+        pageselectCallback:function(page_index, jq){
+            giftlist.params.pageNum = page_index+1;
+            giftlist.render(gifturl,giftlist.params);
+        }
+    };
+
+    $(function(){
+        //调用tab选项卡
+        myTab();
+        var giftModule = Utils.getUrlParam('giftModule');//获取礼品类型
+        if(giftModule == 2){
+            giftlist.params.giftModule =2;
+        }
+        giftlist.init(gifturl,giftlist.params);
+        if(giftModule == 2){//2=实物，1=虚拟
+        	$(".member_tab_menu li").eq(1).click();
+        }
+        
+    });
+
+
+	
+</script>

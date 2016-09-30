@@ -1,0 +1,167 @@
+<!-- accout_main S-->
+<div class="accout_main">
+   <!-- <div class="accout_headBar">
+        <a href="#" class="visit">我的账户</a><span>&gt;</span>
+        <a href="#">我的积分记录</a>
+    </div>-->
+
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;">我的积分记录</div>
+
+        <div class="pointlist_git clearfix">
+            <div class="pointlist_git_red">
+                <span class="pointlist_git_num" id="usable"></span>
+                <span class="pointlist_git_tip">可用积分</span>
+            </div>
+            <div class="pointlist_git_blue">
+                <span class="pointlist_git_num" id="comsumption"></span>
+                <span class="pointlist_git_tip">已用积分</span>
+            </div>
+            <a href="index.html#page=giftlist" class="pointlist_git_link"><img src="images/account/temp/temp1.jpg"></a>
+        </div>
+
+        <div class="member_tab">
+            <ul class="member_tab_menu clearfix">
+                <li class="active" onclick="pointlist_search.toclick(1)">积分收入记录</li>
+                <li onclick="pointlist_search.toclick(2)">积分消费记录</li>
+            </ul>
+            <div class="member_tab_content">
+                <div class="member_tab_list">
+                    <table class="table-list" style="margin-top: 20px;" cellpadding="0" cellspacing="0" border="0">
+                        <thead>
+                        <tr id="pointlist_th1">
+                            <th width="200">积分收入数量</th>
+                            <th width="200">获得时间</th>
+                            <th >备注信息</th>
+                        </tr>
+
+                        <tr id="pointlist_th2" style="display: none;">
+                            <th width="200">积分消费数量</th>
+                            <th width="200">消费时间</th>
+                            <th >备注信息</th>
+                        </tr>
+                        </thead>
+                        <tbody id="pointlist_tbody"> </tbody>
+                        <tr id="pointlist_tr1" style="display: none;">
+                            <td>$point_value</td>
+                            <td>$create_time</td>
+                            <td style="padding-left: 5px;text-align: left;">$remarks</td>
+                        </tr>
+                        <tr id="pointlist_tr2" style="display: none;">
+                            <td >$point_value</td>
+                            <td >$create_time</td>
+                            <td style="padding-left: 5px;text-align: left;">$remarks</td>
+                        </tr>
+                    </table>
+                    <!-- 分页 S-->
+                    <div id="pointlist_page" class="pagination"><!-- 这里显示分页 --></div>
+                    <!-- 分页 E-->
+                </div>
+
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+
+    var tmplNum = "1";
+    var nolist1='<tr><td colspan="3">暂无数据</td></tr>';
+    var nolist2='<tr><td colspan="3">暂无数据</td></tr>';
+    var pointlist_search = {
+        toclick:function(state){
+            if(state == 1){
+                $("#pointlist_th1").show();
+                $("#pointlist_th2").hide();
+                tmplNum = "1";
+            }else if(state == 2){
+                $("#pointlist_th1").hide();
+                $("#pointlist_th2").show();
+                tmplNum = "2";
+            }
+            pointList.params.operationType = parseInt(state);
+            pointlist_page.init(pointList.url,pointList.params);
+        }
+    };
+    //定义分页对象
+    var pointlist_page = {
+        init:function(url,params){
+            DeelonService.get(url,params,function(data){
+                if(data.result.totalElements == 0){
+                    $("#pointlist_page").empty();
+                    if(tmplNum == "1"){
+                        $("#pointlist_tbody").html(nolist1);
+                    }else if(tmplNum == "2"){
+                        $("#pointlist_tbody").html(nolist2);
+                    }
+                    return false;
+                }else{
+                    pointList.render(data);
+                    $("#pointlist_page").pagination(data.result.totalElements, {
+                        prev_text: "前一页",
+                        next_text: "后一页",
+                        num_edge_entries: 2,   //两侧显示的首尾分页的条目数
+                        num_display_entries: 5 ,   //连续分页主体部分显示的分页条目数
+                        callback: pointList.pageselectCallback,
+                        items_per_page:10    //每页显示的条目数
+                    });
+                }
+
+            })
+        }
+    };
+
+    //定义列表对象
+    var pointList = {
+        url:"/dlsys/market/pointRecord/user",
+        params:{pageNum:1,pageSize:10,userId:user.data.id,operationType:1},
+        init:function(url,params){
+            if(pointList.isLoad){
+                DeelonService.get(pointList.url,pointList.params,function(data){
+                    pointList.render(data);
+                })
+            }
+            pointList.isLoad=true;
+        },
+        render:function(data){
+            $("#pointlist_tbody").empty();
+            for(var i=0; i<data.result.content.length; i++){
+                //data.result.content[i].create_time = new Date(data.result.content[i].create_time).toLocaleString();
+                data.result.content[i].create_time = (new Date(data.result.content[i].create_time)).Format("yyyy-MM-dd hh:mm");
+            }
+            if(data.result.content.length == "0"){
+                if(tmplNum == "1"){
+                    $("#pointlist_tbody").html(nolist1);
+                }else if(tmplNum == "2"){
+                    $("#pointlist_tbody").html(nolist2);
+                }
+            }else{
+                Utils.bindList("#pointlist_tbody", "#pointlist_tr"+tmplNum, data.result.content);
+            }
+
+        },
+        pageselectCallback:function(index,jq){
+            pointList.params.pageNum = index +1;
+            pointList.init(pointList.url,pointList.params);
+            return false;
+        }
+    };
+    $(function(){
+        //调用tab选项卡
+        myTab();
+        pointlist_page.init(pointList.url,pointList.params);
+
+        DeelonService.get("/dlsys/market/pointRecord/point",{userId:user.data.id},function(data){
+            if(data.code =="0"){
+                $("#usable").text(data.result.usable);
+                $("#comsumption").text(data.result.comsumption);
+            }
+        });
+
+    });
+</script>
