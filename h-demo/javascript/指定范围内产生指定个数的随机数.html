@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title>指定范围内产生指定个数的随机数</title>
+	<script type="text/javascript">
+function my_ran(n,min,max){
+
+      var arr=[];
+
+      for(i=0;i<n;i++){
+
+        arr[i]=parseInt(Math.random()*(max-min+1)+min);
+
+      }
+
+      for(i=0;i<n;i++){
+
+        for(j=i+1;j<n;j++){
+
+          if(arr[i]==arr[j]){
+
+            my_ran(n,min,max);
+
+            return;
+
+          }
+
+        }
+
+      }
+
+      document.getElementById("content").innerHTML=arr.sort(sortNum);
+
+}
+
+
+function del(){
+
+  document.getElementById("content").innerHTML="";
+
+}
+
+
+function sortNum(a,b){
+
+    return a-b;
+
+}
+
+</script>
+</head>
+
+<body>
+
+<input type="button" value="生成随机数" onclick="my_ran(10,2,200)" id="cre" />
+<input type="button" value="清空" onclick="del();"/>
+
+<div id="content" style="width:800px;padding:10px;"></div>
+
+
+</body>
+
+</html>
