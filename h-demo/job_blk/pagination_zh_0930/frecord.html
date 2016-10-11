@@ -1,0 +1,146 @@
+<!--资金积累记录-->
+<div class="accout_main">
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding: 15px 0;">资金记录</div>
+
+        <div>
+            <form>
+                <div style="margin-bottom:15px;" class="clearfix">
+                    <ul class="p2p_accout_searchF">
+                        <li class="search_l">
+                            <label>资金类型： </label>
+                            <select id="capitaltype" class="p2p_accout_text" style="height: 32px;">
+                                <option value="">请选择</option>
+                                <option value="C">充值</option>
+                                <option value="Q">提现</option>
+                                <option value="Z">转账</option>
+                                <option value="F">冻结</option>
+                                <option value="U">解冻</option>
+                            </select>
+                            <!--<input type="text"  class="" >-->
+                        </li>
+                        <li class="search_l">
+                            <label>日期：</label>
+                            <input type="text"  class="p2p_accout_text" id="frecord_date_begin"  maxlength="10"> 至
+                            <input type="text"  class="p2p_accout_text" id="frecord_date_end"  maxlength="10">
+                            <button id="searchBtn" type="button" class="zc_btn">查询</button>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+            <table class="table-list" cellpadding="0" cellspacing="0" border="0" style="table-layout: fixed;">
+                <thead>
+                <tr>
+                    <th width="50">类型</th>
+                    <th width="80">金额（元）</th>
+                    <th width="70">说明</th>
+                    <th width="70">时间</th>
+                    <th width="80">余额（元）</th>
+                    <th width="120">来源</th>
+                </tr>
+                </thead>
+                <tbody id="capitalistBox"></tbody>
+            </table>
+            <!-- 分页 S-->
+            <div id="Pagination" class="pagination"><!-- 这里显示分页 --></div>
+            <!-- 分页 E-->
+        </div>
+
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+
+    var extraType='',incomeExpensesFlag='', pageNum= 1,pageSize='10',totalPages='',type='',begin='',end='',ascSortingFlag='';
+
+    var capitalurl ='/dlapi/wealth/assetJournals/' + user.data.account.id+'?extraType='+extraType+'&incomeExpensesFlag='+incomeExpensesFlag+'&pageSize='+pageSize+'&ascSortingFlag='+ascSortingFlag;
+
+    var tpl='<tr><td>$typeFmt</td><td></td><td>$remark</td><td>$createTime</td><td></td><td ></td></tr>';
+
+    var nolist='<tr><td colspan="6">暂无数据</td></tr>';
+
+    var capitallist={
+        init:function(capitalurl,params){
+            capitallist.isLoad = false;
+            DeelonService.get(capitalurl,params,function(data){
+                if(data.totalElements==0){
+                    $("#capitalistBox").html(nolist);
+                    $("#Pagination").empty();
+                    return false;
+                }else{
+                    capitallist.renderData(data);
+                    $("#Pagination").pagination(data.totalElements, {
+                        callback: capitallist.pageselectCallback
+                    });
+                }
+
+            });
+        },
+        render:function(capitalurl,params){
+            if(capitallist.isLoad){
+                DeelonService.get(capitalurl,params,function(res){
+                    capitallist.renderData(res);
+                });
+            }
+            capitallist.isLoad = true;
+        },
+        renderData:function(res){
+            $("#capitalistBox").empty();
+            if(res.content.length=="0"){
+                $("#capitalistBox").html(nolist);
+            }else{
+                //时间截取到分
+                arrChangeTime("createTime",res.content);
+                Utils.bindList("#capitalistBox",$(tpl),res.content,'',function(item,data){
+                    var Objamount=$(item).find('td:eq(1)');
+                    var Objbalance=$(item).find('td:eq(4)');
+                    var projectName=$(item).find('td:eq(5)');
+                    Objamount.html(addThousandSign(parseFloat(data.amount)));
+                    Objbalance.html(addThousandSign(parseFloat(data.balance)));
+                    if(data.expand_three){
+                        projectName.html("<div style='margin-left: 2px;margin-right: 2px;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;' title='"+data.expand_three+"'>"+data.expand_three+"</div>");
+                    }
+                });
+            }
+        },
+        pageselectCallback:function(page_index, jq){
+            var page=page_index+1;
+            capitallist.render(capitalurl,"pageNum="+page+"&type="+type+"&begin="+begin+"&end="+end);
+        }
+    };
+
+   capitallist.init(capitalurl,"pageNum=1&type="+type+"&begin="+begin+"&end="+end);
+
+
+    $("#searchBtn").on('click',function(){
+        type=$("#capitaltype option:selected").attr("value");
+        begin=$("#frecord_date_begin").val();
+        end=$("#frecord_date_end").val();
+        var y_begin = Fcheck.c_data(begin);
+        var y_end = Fcheck.c_data(end);
+        if(y_begin&&y_end){
+            capitallist.init(capitalurl,"pageNum=1&type="+type+"&begin="+begin+"&end="+end);
+        }
+    });
+
+    var pickerB = new Pikaday(
+            {
+                field: document.getElementById('frecord_date_begin'),
+                firstDay: 1,
+                minDate: new Date('2010-01-01'),
+                maxDate: new Date('2020-12-31'),
+                yearRange: [2000,2020]
+            });
+    var pickerE = new Pikaday(
+            {
+                field: document.getElementById('frecord_date_end'),
+                firstDay: 1,
+                minDate: new Date('2010-01-01'),
+                maxDate: new Date('2020-12-31'),
+                yearRange: [2000,2020]
+            });
+
+
+</script>
