@@ -1,0 +1,148 @@
+<!--还款管理-->
+<!-- accout_main S-->
+<div class="accout_main">
+
+    <div class="accout_main_content">
+        <div class="accout_main_title" style="padding-top: 15px;">还款管理</div>
+
+        <div class="member_tab">
+            <ul class="member_tab_menu clearfix">
+                <li class="active" onclick="p2p_businessReapy_search.toclick(4);">还款中的借款</li>
+                <li onclick="p2p_businessReapy_search.toclick(5);">已还清的借款</li>
+            </ul>
+            <div class="member_tab_content">
+
+                <div class="member_tab_list">
+
+                    <table class="table-list" cellpadding="0" cellspacing="0" border="0" style="margin-top: 15px;">
+                        <thead>
+                        <tr>
+                            <th width="100">借款标题</th>
+                            <th width="100">实际借款额（元）</th>
+                            <th width="100">年化利率（%）</th>
+                            <th width="100">期限</th>
+                            <th width="100">还款总额（元）</th>
+                            <th width="100">放款日期</th>
+                            <th width="100" class="operate">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody id="repay_temp">
+
+                        </tbody>
+                        <tr id="repay_tmpl" style="display: none;">
+                            <td>$name</td>
+                            <td><span class="font_red" id="loanReal"></span></td>
+                            <td>$rate</td>
+                            <td>$deadline$deadlineTypeName</td>
+                            <td><span class="font_red" id="sumPayBack"></span></td>
+                            <td>$havedPayTime</td>
+                            <td class="operate"><a class="font_blue">还款管理</a></td>
+                        </tr>
+                    </table>
+                    <!-- 分页 S-->
+                    <div id="p2p_businessReapy_page" class="pagination" style="display:none;"><!-- 这里显示分页 --></div>
+                    <!-- 分页 E-->
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- accout_main E-->
+<script type="text/javascript">
+    var p2p_businessReapy_search = {
+        toclick:function(state){
+        	$("#repay_temp").empty();
+            if(state){
+                p2p_businessReapy_list.params.state = parseInt(state);
+            }else{
+                p2p_businessReapy_list.params.state="";
+            }
+            p2p_businessReapy_page.init(p2p_businessReapy_list.url,p2p_businessReapy_list.params);
+            
+            if(state==5){
+            	$(".operate").hide();
+            }else{
+            	$(".operate").show();
+            }
+        }
+    };
+    //定义分页对象
+    var p2p_businessReapy_page = {
+        init:function(url,params){
+            p2p_businessReapy_list.isLoad = false;
+            DeelonService.get(url,params,function(data){
+                p2p_businessReapy_list.render(data);
+                $("#p2p_businessReapy_page").pagination(data.result.totalElements, {
+                    callback: p2p_businessReapy_list.pageselectCallback
+                });
+            })
+        }
+    };
+    //定义列表对象
+    var p2p_businessReapy_list = {
+        url:"/dlbiz/p2p/projects",
+        params:{userId:user.data.id,pageNum:1,pageSize:10,state:4,requestChannel:1},
+        init:function(url,params){
+            if(p2p_businessReapy_list.isLoad){
+                DeelonService.get(p2p_businessReapy_list.url,p2p_businessReapy_list.params,function(data){
+                    p2p_businessReapy_list.render(data);
+                })
+            }
+            p2p_businessReapy_list.isLoad = true;
+        },
+        render:function(data){
+            $("#repay_temp").empty();
+            if(data.result.content.length==0){
+            	if(p2p_businessReapy_list.params.state==5){
+	            	$("#repay_temp").html('<tr><td colspan="6">暂无数据</td></tr>');
+                }else{
+                    $("#repay_temp").html('<tr><td colspan="7">暂无数据</td></tr>');
+                }
+            }else{
+            	$("#p2p_businessReapy_list").show();
+	            var temp = ["新申请","平台初审通过","担保审核通过","招标中","满标","还款中","已还完","流标"];
+	            for(var i=0; i<data.result.content.length; i++){
+	                data.result.content[i].stateName = temp[parseInt(data.result.content[i].state)-1];
+	                //截取时间到分
+	                data.result.content[i].havedPayTime = dataChangeTime(data.result.content[i].havedPayTime);
+	                if(data.result.content[i].deadlineType == "DAY"){
+	                	data.result.content[i].deadlineTypeName = "天";
+	                }else if(data.result.content[i].deadlineType == "MONTH"){
+	                    data.result.content[i].deadlineTypeName = "个月";
+	                }else if(data.result.content[i].deadlineType == "YEAR"){
+	                    data.result.content[i].deadlineTypeName = "年";
+	                }
+	            }
+	            Utils.bindList("#repay_temp", "#repay_tmpl", data.result.content,null,function(item,data){
+	                item.find("a").attr('onclick','p2p_businessReapy_list.toClick(' + data.projectId + ',"' + data.name + '");');
+	                item.find("#loanReal").html(addThousandSign(data.loanReal));
+	                //已还清展示已偿还总额
+	                if(data.state==5){
+	                	item.find("#sumPayBack").html(addThousandSign(data.sumHavedPay));
+	                }else{
+	                	item.find("#sumPayBack").html(addThousandSign(data.sumPayBack));
+	                }
+	            });
+            }
+        },
+        pageselectCallback:function(index,jq){
+            p2p_businessReapy_list.params.pageNum = index +1;
+            p2p_businessReapy_list.init(p2p_businessReapy_list.url,p2p_businessReapy_list.params);
+            return false;
+        },
+        toClick:function(projectId,name){
+            location.href="#page=repayment?bread="+name+"&projectId="+projectId;
+        }
+    };
+    $(function(){
+        //调用tab选项卡
+        myTab();
+        //分页初始化
+        p2p_businessReapy_page.init(p2p_businessReapy_list.url,p2p_businessReapy_list.params);
+    });
+</script>
