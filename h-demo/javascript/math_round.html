@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title>指定范围内产生指定个数的随机数</title>
+	<style type="text/css">
+		.para{margin: 10px;}
+		#content{width:90%;padding:10px;word-wrap:break-word;line-height: 25px;}
+	</style>
+	<script type="text/javascript">
+function my_ran(n,min,max){
+			n = parseInt(n); min = parseInt(min); max = parseInt(max);
+      var arr=[];
+      for(i=0;i<n;i++){
+        arr[i]=parseInt(Math.random()*(max-min+1)+min);
+      }
+      for(i=0;i<n;i++){
+        for(j=i+1;j<n;j++){
+          if(arr[i]==arr[j]){
+            my_ran(n,min,max);
+            return;
+          }
+        }
+      }
+	 
+	    document.getElementById("content").innerHTML=arr.sort(sortNum);
+}
+
+
+function del(){
+  document.getElementById("content").innerHTML="";
+	document.getElementById("num").value = "";
+	document.getElementById("min").value = "";
+	document.getElementById("max").value = "";
+}
+
+
+function sortNum(a,b){
+    return a-b;
+}
+
+window.onload = function(){
+	var btn = document.getElementById("btn");
+	btn.onclick = function(){
+		var num = document.getElementById("num").value;
+		var min = document.getElementById("min").value;
+		var max = document.getElementById("max").value;
+		if(num && min && max && parseInt(max) > parseInt(min)){
+			my_ran(num,min,max);
+		}
+	}
+}
+</script>
+</head>
+<body>
+<div class="para"><label>个数：</label><input type="text" id="num"></div>
+<div class="para"><label>范围：</label><input type="text" id="min"><span>至</span><input type="text" id="max"></div>
+<div class="para">
+	<button type="button" id="btn">生产随机数</button>
+	<input type="button" value="清空" onclick="del();"/>
+</div>
+<div id="content"></div>
+</body>
+</html>
