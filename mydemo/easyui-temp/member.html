@@ -1,0 +1,337 @@
+<div class="portal_panel_auto">
+    <div class="portal_search_form_two">
+        <form id="member_search_form" class="h-form-search clearfloat">
+            <!-- start h-search-box-->
+            <div class="h-search-box clearfloat">
+                <ul class="form-search-row clearfloat" >
+                    <li class="h-row-3" >
+                        <span class="label" style="width: 25%;">登录名：</span>
+                        <input type="text" name="name"  class="easyui-textbox" style="width: 60%;" />
+                    </li>
+                    <li class="h-row-3" >
+                        <span class="label" style="width: 25%;">邮箱地址：</span>
+                        <input type="text" name="email"  class="easyui-textbox" style="width: 60%;" />
+                    </li>
+                    <li class="h-row-3" >
+                        <span class="label" style="width: 25%;">手机号：</span>
+                        <input type="text" name="mobile"  class="easyui-textbox" style="width: 60%;" />
+                    </li>
+                </ul>
+                <ul class="form-search-row clearfloat" style="padding-top: 10px;">
+                    <li class="h-row-3">
+                        <span class="label" style="width: 25%;">身份证号：</span>
+                        <input type="text" name="idCard"  class="easyui-textbox" style="width: 60%;" />
+                    </li>
+                </ul>
+                <div class="h-search-btn">
+                    <a href="javascript:void(0);" name="submit"
+                       class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a> <a
+                        href="javascript:void(0);" name="reset" class="easyui-linkbutton"
+                        data-options="iconCls:'icon-reload'">清空</a>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="portal_list_table_two">
+        <table id="memberList" class="easyui-datagrid" style="height: 450px;"></table>
+    </div>
+</div>
+
+<script>
+    var memberQuery = {
+        id: "#member_search_form",
+        init: function() {
+            $("#member_search_form [name='submit']").click(function() {
+                memberQuery.submit();
+
+            });
+
+            $("#member_search_form [name='reset']").click(function() {
+                memberQuery.reset();
+                memberQuery.submit();
+
+            });
+
+            $.parser.parse(memberQuery.id);
+        },
+        submit: function() {
+            //memberList.init();
+            memberList.render(1,20);
+        },
+        reset: function() {
+            $("#member_search_form").form("clear");
+        }
+
+    };
+    var memberList = {
+        rootScope:{},
+        pageNumber:1,
+        pageSize:20,
+        init:function(){
+            memberList.render(memberList.pageNumber,memberList.pageSize);
+        },
+        render:function(page,pagesize){
+            $('#memberList').datagrid({
+                url: null,
+                width: "100%",
+                height:"100%",
+                pagination : true,
+                fitColumns: true,
+                nowrap:false,
+                rownumbers:true,
+// 					onDblClickRow: function(index,rows){
+// 			        	    memberList.rootScope = rows;
+// 			                $(this).datagrid('clearSelections');
+// 			                $(this).datagrid('selectRow',index);
+// 			                mainTab.addTab("会员详细信息","html/admin/member/memberInfoForm.html",true);
+// 			        },
+                columns:[[
+                    {field:'id',checkbox:true,align:'center'},
+                    {field:'name',title:'登录名',width:60,
+                        formatter: function(value,obj,index) {
+                            return obj.user.name;
+                        }
+                    },
+                    {field:'realName',title:'真实姓名',width:90},
+                    {field:'mobile',title:'手机号',width:100,
+                        formatter: function(value,obj,index) {
+                            return obj.user.mobile;
+                        }
+                    },
+                    {field:'email',title:'邮箱地址',width:100,
+                        formatter: function(value,obj,index) {
+                            return obj.user.email;
+                        }
+                    },
+                    {field:'idCard',title:'身份证号',width:130},
+                    {field:'lastLoginTime',title:'最后登录时间',width:130,
+                        formatter: function(value,obj,index) {
+                            //return obj.user.lastLoginTime;
+                            return dataGridChangeTime(obj.user.lastLoginTime);
+                        }
+                    },
+                    {field:'lockFlag',title:'锁定',width:60,
+                        formatter: function(value,obj,index) {
+                            var jsonstr = obj.extension;
+                            var json_obj = JSON.parse(jsonstr);
+                            var text = "";
+                            if(json_obj.lockFlag == "0"){
+                                text = "未锁定";
+                            }else if(json_obj.lockFlag == "1"){
+                                text = "已锁定";
+                            }
+                            return text;
+                        }
+                    },
+                    {field:'activeteFlag',title:'激活',width:60,
+                        formatter: function(value,obj,index) {
+                            var text = "";
+                            var jsonstr = obj.extension;
+                            var json_obj = JSON.parse(jsonstr);
+                            if(json_obj.activateFlag == "0"){
+                                text = "未激活";
+                            }else if(json_obj.activateFlag == "1"){
+                                text = "已激活";
+                            }
+                            return text;
+                        }
+                    }
+                ]],
+                //定义工具条
+                toolbar:['-',{
+                    text:'查看',
+                    iconCls:'icon-edit',
+                    handler:function(){
+                        var rows = $('#memberList').datagrid('getSelections');
+                        if(rows.length != 1){
+                            $.messager.alert('提示','请选择一条记录进行查看!','info');
+                            return false;
+                        }
+                        memberList.rootScope = rows[0];
+                        // mainTab.addTab("会员详细信息","html/admin/member/memberInfoForm.html",true);
+                        Utils.gotoPage("#page=admin:member_view?bread=会员详细信息&fname=会员查询&id="+rows[0].user.id);
+                    }
+                },'-',{
+                    text:'锁定',
+                    iconCls:'icon-lock-001',
+                    handler:function(){
+                        memberList.userlockactivate("lock");
+                    }
+                },'-',{
+                    text:'解锁',
+                    iconCls:'icon-unlock-001',
+                    handler:function(){
+                        memberList.userlockactivate("unlock");
+                    }
+                },'-',{
+                    text:'激活',
+                    iconCls:'icon-activate-001',
+                    handler:function(){
+                        memberList.userlockactivate("activate");
+                    }
+                },'-',{
+                    text:'账户信息',
+                    iconCls:'icon-edit',
+                    handler:function(){
+                        var rows = $('#memberList').datagrid('getSelections');
+                        if(rows.length != 1){
+                            $.messager.alert('提示','请选择一条记录进行查看账户信息!','info');
+                            return false;
+                        }
+                        memberList.rootScope = rows[0];
+                        //mainTab.addTab("会员账户信息","html/admin/member/memberInfoAccountForm.html",true);
+                        Utils.gotoPage("#page=admin:member_info?bread=会员账户信息&fname=会员查询&id="+rows[0].user.id);
+                    }
+                }
+                ]
+            });
+            var jsonObj = commons.formToJsonNoEmpty($("#member_search_form"));
+            var params = JSON.stringify(jsonObj);
+            var rows = null;
+            var total = null;
+            $.ajax({
+                url:'/dlapi/uc/user/list/infos/'+page+'/'+pagesize,
+                contentType:'application/json',
+                dataType:'json',
+                data:params,
+                type:'POST',
+                async:false,
+                success:function(data){
+                    rows = data.content;
+                    total = data.totalElements;
+                }
+            });
+            var obj01 = {'total':total,'rows':rows};
+            $('#memberList').datagrid('loadData', obj01);
+
+            var p = $('#memberList').datagrid('getPager');
+            $(p).pagination({
+                onSelectPage: function (pageNumber, pageSize) {
+                    memberList.pageNumber = pageNumber;
+                    memberList.pageSize = pageSize;
+                    $.ajax({
+                        url:'/dlapi/uc/user/list/infos/'+pageNumber+'/'+pageSize,
+                        contentType:'application/json',
+                        dataType:'json',
+                        data:params,
+                        type:'POST',
+                        success:function(data){
+                            var rows001 = data.content;
+                            var total001 = data.totalElements;
+                            var objData = {'total':total001,'rows':rows001};
+                            $('#memberList').datagrid('loadData', objData);
+                        }
+                    });
+                }
+            });
+        },
+        userlockactivate:function(flag){
+            var rows = $('#memberList').datagrid("getSelections");
+            var msg = "";
+            var ids = "";
+            var text = "";
+            var activate_email = "0";
+            if(flag == "lock"){
+                text = "锁定";
+            }else if(flag == "unlock"){
+                text = "解锁";
+            }else if(flag == "activate"){
+                text = "激活";
+            }
+            if(rows.length == 0){
+                MessageBox.info("请选择要"+text+"的用户 !");
+                return false;
+            }
+            if(flag == "lock" || flag == "unlock" ){
+                $.each(rows,function(i,item){
+                    var jsonstr = item.extension;
+                    var json_obj = JSON.parse(jsonstr);
+                    var status = json_obj.lockFlag;
+                    //状态是未锁定状态
+                    if(status == "0" && flag == "unlock"){
+                        msg = ','+item.user.name;
+                    }
+                    //状态是已锁定状态
+                    else if(status == "1" && flag == "lock"){
+                        msg = ','+item.user.name;
+                    }
+                    ids += ','+item.user.id;
+                });
+            }
+
+            else if(flag == "activate"){
+                $.each(rows,function(i,item){
+                    if(!item.user.email){
+                        activate_email = "1";
+                        return false;
+                    }
+                    var jsonstr = item.extension;
+                    var json_obj = JSON.parse(jsonstr);
+                    var status = json_obj.activateFlag;
+                    //状态是已是激活状态
+                    if(status == "1"){
+                        msg = '='+item.user.email;
+                    }
+                    ids += '='+item.user.email;
+                });
+            }
+            if(activate_email == "1"){
+                MessageBox.info("用户必须有邮箱地址,且是未激活状态才能执行激活操作!");
+                return false;
+            }
+            if(msg != ''){
+                msg = msg.substring(1);
+                if(flag == "activate"){
+                    MessageBox.info("用户邮箱 "+msg+" 已经是"+text+"状态!");
+                }else{
+                    MessageBox.info("用户 "+msg+" 已经是"+text+"状态!");
+                }
+                return false;
+            }
+            if(ids != ''){
+                ids = ids.substring(1);
+            }
+            var token = encodeURIComponent(op.data.token);
+            if(flag == "lock"){
+                _url ='/dlsys/admin/sdk/group/lockUsers/'+ids+"?token="+token;
+            }else if(flag == "unlock"){
+                _url ='/dlsys/admin/sdk/group/unlockUsers/'+ids+"?token="+token;
+            }else if(flag == "activate"){
+                _url ='/dlsys/admin/sdk/group/activateUsers/'+ids;
+            }
+            $.messager.confirm("系统提示", '您确定要'+text+'该用户吗？',
+                    function(bln) {
+                        if(bln) {
+                            $.get(_url, function(data) {
+                                $.messager.alert("操作提示", data.msg, "info", function () {
+                                    var jsonObj = commons.formToJsonNoEmpty($("#member_search_form"));
+                                    var params = JSON.stringify(jsonObj);
+                                    $.ajax({
+                                        url:'/dlapi/uc/user/list/infos/'+memberList.pageNumber+'/'+memberList.pageSize,
+                                        contentType:'application/json',
+                                        dataType:'json',
+                                        data:params,
+                                        type:'POST',
+                                        success:function(data){
+                                            var rows001 = data.content;
+                                            var total001 = data.totalElements;
+                                            var objData = {'total':total001,'rows':rows001};
+                                            $('#memberList').datagrid('loadData', objData);
+                                        }
+                                    });
+                                });
+                            });
+                        }
+                    }
+            );
+        }
+    }
+
+    $(function(){
+        memberQuery.init();
+        //调用表格初始化函数
+        memberList.init();
+        //解决jq/easyui异步加载组件
+        $.parser.parse("#memberList");
+    });
+</script>
